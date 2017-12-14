@@ -14,7 +14,7 @@ public class Notification {
     String sku;
     @DateTimeFormat(iso = ISO.DATE_TIME)
 	private Date createdDate;
-    boolean sent;
+    Boolean sent;
     @DateTimeFormat(iso = ISO.DATE_TIME)
 	private Date sentDate;
     
@@ -22,6 +22,7 @@ public class Notification {
     	this.email = email;
     	this.sku = sku;
     	this.createdDate = new Date();
+    	this.sent = new Boolean(false);
     }
     
 	public String getId() {
@@ -47,12 +48,20 @@ public class Notification {
 	public void setCreatedDate(Date createdDate) {
 		this.createdDate = createdDate;
 	}
+	
+	public String getSku() {
+		return sku;
+	}
 
-	public boolean isSent() {
+	public void setSku(String sku) {
+		this.sku = sku;
+	}
+
+	public Boolean getIsSent() {
 		return sent;
 	}
 
-	public void setSent(boolean sent) {
+	public void setIsSent(Boolean sent) {
 		this.sent = sent;
 	}
 
