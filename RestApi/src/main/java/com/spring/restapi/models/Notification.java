@@ -10,17 +10,20 @@ import org.springframework.format.annotation.DateTimeFormat.ISO;
 public class Notification {
     @Id
     String id;
-    
     String email;
-    
+    String sku;
     @DateTimeFormat(iso = ISO.DATE_TIME)
 	private Date createdDate;
-
     boolean sent;
-    
     @DateTimeFormat(iso = ISO.DATE_TIME)
 	private Date sentDate;
-
+    
+    public Notification(String email, String sku) {
+    	this.email = email;
+    	this.sku = sku;
+    	this.createdDate = new Date();
+    }
+    
 	public String getId() {
 		return id;
 	}
