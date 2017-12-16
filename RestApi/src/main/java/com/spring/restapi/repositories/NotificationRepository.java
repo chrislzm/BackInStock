@@ -19,4 +19,6 @@ public interface NotificationRepository extends CrudRepository<Notification, Str
     void delete(Notification deleted);
     
     List<Notification> findByEmailAndSku(String email, String sku);
+    
+    List<Notification> findBySent(Boolean sent);
 }
