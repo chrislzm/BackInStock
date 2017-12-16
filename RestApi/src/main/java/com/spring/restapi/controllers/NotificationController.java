@@ -50,12 +50,12 @@ public class NotificationController {
     public Map<String,Boolean> save(@RequestBody Notification notification) {
     	Map<String,Boolean> response = new HashMap<>();
     	List<Notification> results = notificationRepository.findByEmailAndSku(notification.getEmail(), notification.getSku());
+    	boolean saved = false;
     	if(results.size() == 0) {
     		notificationRepository.save(notification);
-    		response.put("saved", true);
-    	} else {
-    		response.put("saved", false);
+    		saved = true;
     	}
+		response.put("saved", saved);
         return response;
     }
 
