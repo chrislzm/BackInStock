@@ -2,6 +2,11 @@ package com.spring.restapi.controllers;
 
 import com.spring.restapi.models.Notification;
 import com.spring.restapi.repositories.NotificationRepository;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -36,10 +41,16 @@ public class NotificationController {
     }
 
     @RequestMapping(method=RequestMethod.POST, value="/notifications")
-    public String save(@RequestBody Notification notification) {
-    	notificationRepository.save(notification);
-
-        return notification.getId();
+    public Map<String,Boolean> save(@RequestBody Notification notification) {
+    	Map<String,Boolean> response = new HashMap<>();
+    	List<Notification> results = notificationRepository.findByEmailAndSku(notification.getEmail(), notification.getSku());
+    	if(results.size() == 0) {
+    		notificationRepository.save(notification);
+    		response.put("saved", true);
+    	} else {
+    		response.put("saved", false);
+    	}
+        return response;
     }
 
     @RequestMapping(method=RequestMethod.GET, value="/notifications/{id}")
