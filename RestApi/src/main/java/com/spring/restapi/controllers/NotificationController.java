@@ -9,6 +9,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * RESTful controller for accessing Notification data
+ * 
+ * <table>
+ * <tr>td>Method</td><td>Endpoint</td><td>Notes</td></tr>
+ * <tr><td>GET</td><td>/notifications</td><td>Get all notifications data</td></tr>
+ * <tr><td>GET</td><td>/notifications/59be3c34b1a24167ad2779b5</td><td>Get single notification</td></tr>
+ * <tr><td>POST</td><td>/notifications</td><td>Post data</td></tr>
+ * <tr><td>PUT</td><td>/notifications/59be3c34b1a24167ad2779b5</td><td>Update data</td></tr>
+ * <tr><td>DELETE</td><td>/products/59be3c34b1a24167ad2779b5</td><td>Delete data/<td></tr>
+ * </table>
+ * 
+ * @author Chris Leung
+ *
+ */
 @RestController
 public class NotificationController {
 

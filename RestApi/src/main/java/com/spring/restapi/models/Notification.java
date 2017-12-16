@@ -6,6 +6,11 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 
+/**
+ * Notification model - Maps to notifications collections in MongoDB 
+ * @author Chris Leung
+ *
+ */
 @Document(collection = "notifications")
 public class Notification {
     @Id
