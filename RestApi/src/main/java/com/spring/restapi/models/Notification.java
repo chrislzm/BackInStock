@@ -18,20 +18,20 @@ public class Notification {
     String email;
     String sku;
     @DateTimeFormat(iso = ISO.DATE_TIME)
-	private Date createdDate;
+	Date createdDate;
     Boolean sent;
     @DateTimeFormat(iso = ISO.DATE_TIME)
-	private Date sentDate;
+	Date sentDate;
     
     public Notification() {
-    	
+    	this.createdDate = new Date();
+    	this.sent = new Boolean(false);
     }
     
     public Notification(String email, String sku) {
+    	this();
     	this.email = email;
     	this.sku = sku;
-    	this.createdDate = new Date();
-    	this.sent = new Boolean(false);
     }
     
 	public String getId() {
