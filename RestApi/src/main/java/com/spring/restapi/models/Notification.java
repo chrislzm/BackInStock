@@ -23,6 +23,10 @@ public class Notification {
     @DateTimeFormat(iso = ISO.DATE_TIME)
 	private Date sentDate;
     
+    public Notification() {
+    	
+    }
+    
     public Notification(String email, String sku) {
     	this.email = email;
     	this.sku = sku;
