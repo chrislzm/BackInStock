@@ -7,11 +7,19 @@
   <link rel="stylesheet" href="node_modules/jquery-modal/jquery.modal.min.css" />
 </head>
 <body>
+  <h1>Select a Product</h1>
+  <select id="product-selector">
+    <option value="DEMOSKU1">iPhone 6</option>
+    <option value="DEMOSKU2">iPhone 7</option>
+    <option value="DEMOSKU3">iPhone 8</option>
+    <option value="DEMOSKU4" selected="selected">iPhone X</option>
+  </select>
   <a href="#stock-notification" rel="modal:open">Notify Me When Available</a>
   <form id="stock-notification" class="modal" onsubmit="return onSubmit(this)">
     <h1>EMAIL WHEN AVAILABLE</h1>
     <p>Enter your email address below to be notified when this product is available.</p>
     Email Address <input name="email">
+    <input id="sku" name="sku" type="hidden">
     <button type="submit">Email me when available</button>
   </form>
   <script src="frontend.js"></script>
