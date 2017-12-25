@@ -1,5 +1,5 @@
 const NOTIFICATION_FORM_ID = "stock-notification";
-const NOTIFICATION_FORM_SKU_ID = "sku";
+const NOTIFICATION_FORM_SKU_ID = "stock-notification-sku";
 const INPUT_SKU_ID = "product-selector";
 
 function onSubmit( form ){
