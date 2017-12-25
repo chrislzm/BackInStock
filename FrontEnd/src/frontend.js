@@ -1,8 +1,13 @@
 const STATUS_DIV_ID = "#stock-notification-status"
+const NOTIFICATION_FORM_ID ="#stock-notification-form"
 const NOTIFICATION_FORM_SKU_ID = "#stock-notification-sku";
 const INPUT_SKU_ID = "#product-selector";
 const PRODUCT_TYPE = "cell phone";
 
+function openStockNotificationForm() {
+  $(STATUS_DIV_ID).empty();
+  $(NOTIFICATION_FORM_ID).modal();
+}
 function onSubmit(form){
   // Copy required data into hidden form fields
   $(NOTIFICATION_FORM_SKU_ID).val($(INPUT_SKU_ID).val());
