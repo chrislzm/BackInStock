@@ -18,7 +18,6 @@ function onSubmit(form){
   var json = getFormDataAsJSON(form);
   if(isValidEmail(json['email'])) {
     $(STATUS_DIV_ID).text("Submitting...");
-    console.log(json);
     submitNotification(json).then(function(response) {
       if(response['saved']) {
         $(STATUS_DIV_ID).html("Your notification has been saved. <a href='#' rel='modal:close'>Close</a>");
