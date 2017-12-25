@@ -2,11 +2,13 @@ const STATUS_DIV_ID = "#stock-notification-status"
 const NOTIFICATION_FORM_ID ="#stock-notification-form"
 const NOTIFICATION_FORM_SKU_ID = "#stock-notification-sku";
 const NOTIFICATION_FORM_EMAIL_ID = "#stock-notification-email";
+const NOTIFICATION_FORM_EMAIL_INPUT_ID = "#stock-notification-email-input";
 const INPUT_SKU_ID = "#product-selector";
 const PRODUCT_TYPE = "cell phone";
 
 function openStockNotificationForm() {
   $(NOTIFICATION_FORM_EMAIL_ID).show();
+  $(NOTIFICATION_FORM_EMAIL_INPUT_ID).val("");
   $(STATUS_DIV_ID).empty();
   $(NOTIFICATION_FORM_ID).modal();
 }
