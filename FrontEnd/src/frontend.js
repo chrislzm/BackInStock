@@ -1,19 +1,24 @@
 const STATUS_DIV_ID = "#stock-notification-status"
 const NOTIFICATION_FORM_SKU_ID = "#stock-notification-sku";
 const INPUT_SKU_ID = "#product-selector";
+const PRODUCT_TYPE = "cell phone";
 
 function onSubmit(form){
   // Copy required data into hidden form fields
   $(NOTIFICATION_FORM_SKU_ID).val($(INPUT_SKU_ID).val());
   var json = getFormDataAsJSON(form);
-  if(isValidEmail(json["email"])) {
+  if(isValidEmail(json['email'])) {
     $(STATUS_DIV_ID).text("Submitting...");
     console.log(json);
     submitNotification(json).then(function(response) {
-      console.log(response);
+      if(response['saved']) {
+        $(STATUS_DIV_ID).html("Your notification has been saved. <a href='#' rel='modal:close'>Close</a>");
+      } else {
+        $(STATUS_DIV_ID).html(`You have already registered for a notification for this ${PRODUCT_TYPE}.`);
+      }
     });
   } else {
-    $(STATUS_DIV_ID).text("Please enter a valid email address");
+    $(STATUS_DIV_ID).text("The email address you entered is invalid");
   }
   return false;
 }
