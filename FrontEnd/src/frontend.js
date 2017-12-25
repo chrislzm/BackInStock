@@ -3,6 +3,8 @@ const NOTIFICATION_FORM_SKU_ID = "stock-notification-sku";
 const INPUT_SKU_ID = "product-selector";
 
 function onSubmit(form){
+  // Copy required data into hidden form fields
+  copyInputValue(INPUT_SKU_ID,NOTIFICATION_FORM_SKU_ID);
   var data = getFormDataAsJSON(form);
   console.log(data);
   if(!isValidEmail(data["email"])) alert("Please enter a valid email address");
@@ -11,10 +13,6 @@ function onSubmit(form){
 
 function getFormDataAsJSON(form){
   var $form = $(form)
-
-  // Copy required data into hidden form fields
-  copyInputValue(INPUT_SKU_ID,NOTIFICATION_FORM_SKU_ID);
-
   // Create JSON Object
   var unindexed_array = $form.serializeArray();
   var indexed_array = {};
