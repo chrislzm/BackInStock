@@ -5,9 +5,9 @@ const INPUT_SKU_ID = "product-selector";
 function onSubmit(form){
   // Copy required data into hidden form fields
   copyInputValue(INPUT_SKU_ID,NOTIFICATION_FORM_SKU_ID);
-  var data = getFormDataAsJSON(form);
-  console.log(data);
-  if(!isValidEmail(data["email"])) alert("Please enter a valid email address");
+  var json = getFormDataAsJSON(form);
+  console.log(json);
+  if(!isValidEmail(json["email"])) alert("Please enter a valid email address");
   return false;
 }
 
