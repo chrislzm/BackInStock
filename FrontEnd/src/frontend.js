@@ -2,13 +2,15 @@ const NOTIFICATION_FORM_ID = "stock-notification";
 const NOTIFICATION_FORM_SKU_ID = "stock-notification-sku";
 const INPUT_SKU_ID = "product-selector";
 
-function onSubmit( form ){
-  var data = getFormData($(`#${NOTIFICATION_FORM_ID}`));
+function onSubmit(form){
+  var data = getFormDataAsJSON(form);
   console.log(data);
+  if(!isValidEmail(data["email"])) alert("Please enter a valid email address");
   return false;
 }
 
-function getFormData($form){
+function getFormDataAsJSON(form){
+  var $form = $(form)
 
   // Copy required data into hidden form fields
   copyInputValue(INPUT_SKU_ID,NOTIFICATION_FORM_SKU_ID);
@@ -19,8 +21,7 @@ function getFormData($form){
   $.map(unindexed_array, function(n, i){
       indexed_array[n['name']] = n['value'];
   });
-  if(isValidEmail(indexed_array["email"])) return indexed_array;
-  else alert("Please enter a valid email address.");
+  return indexed_array;
 }
 
 function copyInputValue(id1,id2){
