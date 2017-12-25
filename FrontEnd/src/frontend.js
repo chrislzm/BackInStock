@@ -1,10 +1,9 @@
-const NOTIFICATION_FORM_ID = "stock-notification";
-const NOTIFICATION_FORM_SKU_ID = "stock-notification-sku";
-const INPUT_SKU_ID = "product-selector";
+const NOTIFICATION_FORM_SKU_ID = "#stock-notification-sku";
+const INPUT_SKU_ID = "#product-selector";
 
 function onSubmit(form){
   // Copy required data into hidden form fields
-  copyInputValue(INPUT_SKU_ID,NOTIFICATION_FORM_SKU_ID);
+  $(NOTIFICATION_FORM_SKU_ID).val($(INPUT_SKU_ID).val());
   var json = getFormDataAsJSON(form);
   console.log(json);
   if(!isValidEmail(json["email"])) alert("Please enter a valid email address");
@@ -20,10 +19,6 @@ function getFormDataAsJSON(form){
       indexed_array[n['name']] = n['value'];
   });
   return indexed_array;
-}
-
-function copyInputValue(id1,id2){
-  document.getElementById(id2).value = document.getElementById(id1).value;
 }
 
 function isValidEmail(address)
