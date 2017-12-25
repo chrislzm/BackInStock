@@ -1,3 +1,4 @@
+const STATUS_DIV_ID = "#stock-notification-status"
 const NOTIFICATION_FORM_SKU_ID = "#stock-notification-sku";
 const INPUT_SKU_ID = "#product-selector";
 
@@ -5,8 +6,15 @@ function onSubmit(form){
   // Copy required data into hidden form fields
   $(NOTIFICATION_FORM_SKU_ID).val($(INPUT_SKU_ID).val());
   var json = getFormDataAsJSON(form);
-  console.log(json);
-  if(!isValidEmail(json["email"])) alert("Please enter a valid email address");
+  if(isValidEmail(json["email"])) {
+    $(STATUS_DIV_ID).text("Submitting...");
+    console.log(json);
+    submitNotification(json).then(function(response) {
+      console.log(response);
+    });
+  } else {
+    $(STATUS_DIV_ID).text("Please enter a valid email address");
+  }
   return false;
 }
 
