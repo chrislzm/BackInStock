@@ -21,6 +21,8 @@ function onSubmit(form){
       } else {
         $(STATUS_DIV_ID).html(`You have already registered for a notification for this ${PRODUCT_TYPE}.`);
       }
+    }).catch(function(error) {
+      $(STATUS_DIV_ID).html(`Sorry, a problem occurred when submitting your request. Please contact our customer support.`);
     });
   } else {
     $(STATUS_DIV_ID).text("The email address you entered is invalid");
