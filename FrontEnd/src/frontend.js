@@ -20,8 +20,8 @@ function onSubmit(form){
     $(STATUS_DIV_ID).text("Submitting...");
     submitNotification(json).then(function(response) {
       if(response['saved']) {
-        $(STATUS_DIV_ID).html("Your notification has been saved. <a href='#' rel='modal:close'>Close</a>");
         $(NOTIFICATION_FORM_EMAIL_ID).hide();
+        $(STATUS_DIV_ID).html("Your notification has been saved. <a href='#' rel='modal:close'>Close</a>");
       } else {
         $(STATUS_DIV_ID).html(`You have already registered for a notification for this ${PRODUCT_TYPE}.`);
       }
