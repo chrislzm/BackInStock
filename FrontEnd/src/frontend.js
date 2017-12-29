@@ -34,9 +34,13 @@ function onSubmit(form){
   return false;
 }
 
+/**
+ * Converts form data to a JSON object
+ * @param  {Object} form HTML DOM Form Object
+ * @return {Object}      JSON object
+ */
 function getFormDataAsJSON(form){
   var $form = $(form)
-  // Create JSON Object
   var unindexed_array = $form.serializeArray();
   var indexed_array = {};
   $.map(unindexed_array, function(n, i){
