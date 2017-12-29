@@ -12,6 +12,7 @@ function openStockNotificationForm() {
   $(STATUS_DIV_ID).empty();
   $(NOTIFICATION_FORM_ID).modal();
 }
+
 function onSubmit(form){
   // Copy required data into hidden form fields
   $(NOTIFICATION_FORM_SKU_ID).val($(INPUT_SKU_ID).val());
@@ -49,6 +50,11 @@ function getFormDataAsJSON(form){
   return indexed_array;
 }
 
+/**
+ * Checks if string contains a valid email address format
+ * @param  {String}  address email
+ * @return {Boolean}
+ */
 function isValidEmail(address)
 {
  if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(address)) return true;
