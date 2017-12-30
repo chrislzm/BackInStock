@@ -6,6 +6,9 @@ const NOTIFICATION_FORM_EMAIL_INPUT_ID = "#stock-notification-email-input";
 const INPUT_SKU_ID = "#product-selector";
 const PRODUCT_TYPE = "cell phone";
 
+/**
+ * Sets up and displays the modal
+ */
 function openStockNotificationForm() {
   $(NOTIFICATION_FORM_EMAIL_ID).show();
   $(NOTIFICATION_FORM_EMAIL_INPUT_ID).val("");
