@@ -22,7 +22,7 @@ function openStockNotificationForm() {
  * @return {Boolean}      Returns false to prevent the page from reloading
  */
 function onSubmit(form){
-  // Copy required data into hidden form fields
+  // Copy selected SKU from product page into hidden form field
   $(NOTIFICATION_FORM_SKU_ID).val($(INPUT_SKU_ID).val());
   var json = getFormDataAsJSON(form);
   if(isValidEmail(json['email'])) {
