@@ -18,7 +18,7 @@ function openStockNotificationForm() {
 
 /**
  * Handles form submission in demo.html
- * @param  {Object} form  The form
+ * @param  {Object} form  The form object
  * @return {Boolean}      Returns false to prevent the page from reloading
  */
 function onSubmit(form){
