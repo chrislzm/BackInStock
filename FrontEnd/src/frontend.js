@@ -16,6 +16,11 @@ function openStockNotificationForm() {
   $(NOTIFICATION_FORM_ID).modal();
 }
 
+/**
+ * Handles form submission in demo.html
+ * @param  {Object} form  The form
+ * @return {Boolean}      Returns false to prevent the page from reloading
+ */
 function onSubmit(form){
   // Copy required data into hidden form fields
   $(NOTIFICATION_FORM_SKU_ID).val($(INPUT_SKU_ID).val());
