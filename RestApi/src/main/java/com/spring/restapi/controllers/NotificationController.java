@@ -44,9 +44,9 @@ public class NotificationController {
     @RequestMapping(method=RequestMethod.GET, value="/notifications")
     public Iterable<Notification> notification(
     		@RequestParam(value="sent", required=false) Boolean sent,
-    		@RequestParam(value="createdDate", required=false) Long createdDateMs) {
+    		@RequestParam(value="createdDate", required=false) Long createdDateMilliseconds) {
     	
-    	Date createdDate = createdDateMs == null ? null : new Date(createdDateMs);
+    	Date createdDate = createdDateMilliseconds == null ? null : new Date(createdDateMilliseconds);
     	
     	if(sent == null && createdDate == null) {
             return notificationRepository.findAll();
