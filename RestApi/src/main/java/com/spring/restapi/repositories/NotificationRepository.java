@@ -2,9 +2,12 @@ package com.spring.restapi.repositories;
 
 import com.spring.restapi.models.Notification;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.DateTimeFormat.ISO;
 
 /**
  * Interface that connects Notification model and controller. (We only add these two methods as CrudRepository handles the rest.)
@@ -20,5 +23,11 @@ public interface NotificationRepository extends CrudRepository<Notification, Str
     
     List<Notification> findByEmailAndSku(String email, String sku);
     
-    List<Notification> findBySent(Boolean sent);
+    List<Notification> findBySentTrue();
+    List<Notification> findBySentFalse();
+    
+    List<Notification> findByCreatedDateAfter(@DateTimeFormat(iso = ISO.DATE_TIME) Date createdDate);
+    
+    List<Notification> findByCreatedDateAfterAndSentTrue(@DateTimeFormat(iso = ISO.DATE_TIME) Date createdDate);
+    List<Notification> findByCreatedDateAfterAndSentFalse(@DateTimeFormat(iso = ISO.DATE_TIME) Date createdDate);
 }

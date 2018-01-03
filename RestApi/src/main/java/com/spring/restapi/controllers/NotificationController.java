@@ -3,11 +3,14 @@ package com.spring.restapi.controllers;
 import com.spring.restapi.models.Notification;
 import com.spring.restapi.repositories.NotificationRepository;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -39,13 +42,21 @@ public class NotificationController {
     NotificationRepository notificationRepository;
 
     @RequestMapping(method=RequestMethod.GET, value="/notifications")
-    public Iterable<Notification> notification() {
-        return notificationRepository.findAll();
-    }
-
-    @RequestMapping(method=RequestMethod.GET, params = "sent", value="/notifications")
-    public Iterable<Notification> notification(@RequestParam("sent") Boolean sent) {
-        return notificationRepository.findBySent(sent);
+    public Iterable<Notification> notification(
+    		@RequestParam(value="sent", required=false) Boolean sent,
+    		@RequestParam(value="createdDate", required=false) Long createdDateMs) {
+    	
+    	Date createdDate = createdDateMs == null ? null : new Date(createdDateMs);
+    	
+    	if(sent == null && createdDate == null) {
+            return notificationRepository.findAll();
+    	} else if(sent == null && createdDate != null) {
+    		return notificationRepository.findByCreatedDateAfter(createdDate);
+    	} else if(sent != null && createdDate == null) {
+    		return sent ? notificationRepository.findBySentTrue() : notificationRepository.findBySentFalse();
+    	} else {
+    		return sent ? notificationRepository.findByCreatedDateAfterAndSentTrue(createdDate) : notificationRepository.findByCreatedDateAfterAndSentFalse(createdDate);
+    	}
     }
 
     @RequestMapping(method=RequestMethod.POST, value="/notifications")
