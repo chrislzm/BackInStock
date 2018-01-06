@@ -8,6 +8,7 @@
   <script src="frontend.js"></script>
 </head>
 <body>
+  <!-- Product Page -->
   <h1>Select a Product</h1>
   <select id="product-selector">
     <option value="DEMOSKU1">iPhone 6</option>
@@ -16,6 +17,7 @@
     <option value="DEMOSKU4" selected="selected">iPhone X</option>
   </select>
   <button onclick="openStockNotificationForm()">Notify Me When Available</button>
+  <!-- Notification Modal -->
   <form id="stock-notification-form" class="modal" onsubmit="return onSubmit(this)">
     <h1>EMAIL WHEN AVAILABLE</h1>
     <div id="stock-notification-instructions">Enter your email address below to be notified when this product is available.</div>
