@@ -22,6 +22,9 @@ repositories {
 	mavenCentral()
 }
 
+springBoot {
+    executable = true
+}
 
 dependencies {
 	compile('org.springframework.boot:spring-boot-starter-data-mongodb')
