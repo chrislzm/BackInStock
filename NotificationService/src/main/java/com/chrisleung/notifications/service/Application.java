@@ -1,6 +1,10 @@
 package com.chrisleung.notifications.service;
 
 import java.util.List;
+
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,6 +16,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.client.support.BasicAuthorizationInterceptor;
 import org.springframework.web.client.RestTemplate;
 
@@ -41,7 +46,14 @@ public class Application {
 	@Bean
 	public CommandLineRunner run(RestTemplate restTemplate) throws Exception {
 		return args -> {
-			log.info(String.format("Username: %s Password: %s URL: %s", username, password, url));
+
+		    /* Configure HTTP to accept unverified certificates */
+		    CloseableHttpClient httpClient = HttpClients.custom().setSSLHostnameVerifier(new NoopHostnameVerifier()).build();
+        	    HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
+        	    requestFactory.setHttpClient(httpClient);
+        	    restTemplate.setRequestFactory(requestFactory);
+
+        	    log.info(String.format("Username: %s Password: %s URL: %s", username, password, url));
 			restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor(username, password));
 			ResponseEntity<List<Notification>> notificationsResponse = restTemplate.exchange(url, HttpMethod.GET, null, new ParameterizedTypeReference<List<Notification>>() {});
 			List<Notification> notifications = notificationsResponse.getBody();
