@@ -16,3 +16,10 @@ Important: Be sure to update the following properties in src/main/resources/appl
 6. Use "gradlew bootRun" to compile and run, or "gradlew build" to build an executable JAR file
 
 For more instructions on running the REST API as a service, or if you are having trouble executing the JAR file, see: https://docs.spring.io/spring-boot/docs/current/reference/html/deployment-install.html
+
+# RunniUng
+
+Compile and run the application using `./gradlew bootRun`
+
+Build the JAR file using `./gradlew build` then run the JAR file using `./build/libs/RestApi-0.0.1-SNAPSHOT.jar`
+* Please note that the JAR file is "executable" because we have enabled the "executable" option in build.gradle. If this does not work on your system, feel free to remove this from build.gradle and execute the application with the command `java -jar build/libs/RestApi-0.0.1-SNAPSHOT.jar`
