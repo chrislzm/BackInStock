@@ -1,0 +1,18 @@
+buildscript {
+  repositories {
+    mavenCentral()
+  }
+  dependencies {
+    classpath "org.springframework.boot:spring-boot-gradle-plugin:1.5.9.RELEASE"
+  }
+}
+
+apply plugin:'java'
+
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+  compile 'org.springframework.data:spring-data-mongodb:2.0.2.RELEASE'
+}
