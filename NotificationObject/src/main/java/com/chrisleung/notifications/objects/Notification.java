@@ -1,16 +1,19 @@
 package com.chrisleung.notifications.objects;
 
 import java.util.Date;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  * Notification model - Maps to notifications collections in MongoDB 
  * @author Chris Leung
  *
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 @Document(collection = "notifications")
 public class Notification {
     @Id
