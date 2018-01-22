@@ -45,21 +45,29 @@ public class Application {
 
 	@Bean
 	public CommandLineRunner run(RestTemplate restTemplate) throws Exception {
-		return args -> {
-
-		    /* Configure HTTP to accept unverified certificates */
+		return args -> {		    
+		    /* Security Setup (Configure to accept unverified SSL certificates + username, password auth) */
 		    CloseableHttpClient httpClient = HttpClients.custom().setSSLHostnameVerifier(new NoopHostnameVerifier()).build();
         	    HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
         	    requestFactory.setHttpClient(httpClient);
         	    restTemplate.setRequestFactory(requestFactory);
+            restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor(username, password));
 
-        	    log.info(String.format("Username: %s Password: %s URL: %s", username, password, url));
-			restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor(username, password));
+        	    /* 1. Download all unsent notifications */
 			ResponseEntity<List<Notification>> notificationsResponse = restTemplate.exchange(url, HttpMethod.GET, null, new ParameterizedTypeReference<List<Notification>>() {});
 			List<Notification> notifications = notificationsResponse.getBody();
 			for(Notification n : notifications) {
 				log.info(n.toString());
 			}
+			
+			/* Program Loop (Step 2, 3, 4) */
+			
+			/* 2. Detect products that are Back in Stock */
+			
+			/* 3. Send notifications (if any) */
+			
+			/* 4. Poll for new notifications */
+			
 		};
 	}
 }
