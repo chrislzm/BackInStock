@@ -31,7 +31,10 @@ public class Application {
 	
 	@Value("${my.notifications.api.server.url}")
 	private String url;
-	
+
+   @Value("${my.notifications.refresh.interval}")
+    private int interval;
+
 	private static final Logger log = LoggerFactory.getLogger(Application.class);
 
 	public static void main(String args[]) {
