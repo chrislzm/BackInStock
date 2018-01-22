@@ -13,7 +13,7 @@ apply plugin: 'idea'
 apply plugin: 'org.springframework.boot'
 
 jar {
-    baseName = 'gs-consuming-rest'
+    baseName = 'notification-service'
     version =  '0.1.0'
 }
 
@@ -23,6 +23,10 @@ repositories {
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
+
+springBoot {
+    executable = true
+}
 
 dependencies {
     compile("org.springframework.boot:spring-boot-starter")
