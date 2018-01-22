@@ -4,6 +4,7 @@ buildscript {
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:1.5.9.RELEASE")
+        files('/Users/cleung/version-control/java/StockNotifications/RestApi/build/libs/RestApi-0.0.1-SNAPSHOT.jar')
     }
 }
 
@@ -33,5 +34,6 @@ dependencies {
     compile("org.springframework:spring-web")
     compile("com.fasterxml.jackson.core:jackson-databind")
     compile("org.apache.httpcomponents:httpclient:4.5")
+    compile files("../NotificationObject/build/libs/NotificationObject.jar")
     testCompile("junit:junit")
 }
