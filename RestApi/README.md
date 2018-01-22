@@ -10,7 +10,8 @@ Important: Be sure to update the following properties in src/main/resources/appl
 3. Install Gradle
 4. Open network ports 8080 and 8090 for inbound connections
 5. Setup SSL in one of the following ways:
-    1. Quick method: Generate a user certificate using the command "keytool -genkey -storetype PKCS12 -keyalg RSA -keysize 2048 -keystore keystore.p12 -validity 3650", and make sure the file is in the same directory as the JAR file
+    1. Quick method: Generate a user certificate using the command "keytool -genkey -storetype PKCS12 -keyalg RSA -keysize 2048 -keystore keystore.p12 -validity 3650". Remember your password! And, make sure the file is in the same directory as the JAR file
+        * Note: If you use this method, you'll also want to generate a .crt file which will need to be added to the NotificationService Java CA store . You can do this using the command "openssl pkcs12 -in filename.pfx -clcerts -nokeys -out filename.crt". Then add the file to your JVM's cacerts file using the commend: "sudo keytool -importcert -file ~/example.crt -alias example -keystore $(/usr/libexec/java_home)/jre/lib/security/cacerts -storepass changeit"
     2. Use Existing Certificate: Update SSL parameters under SSL Certificate accordingly in: src/main/resouces/application.properties
 6. Use "gradlew bootRun" to compile and run, or "gradlew build" to build an executable JAR file
 
