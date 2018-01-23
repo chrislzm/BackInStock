@@ -33,6 +33,12 @@ public class Application {
 	@Value("${my.notifications.restapi.url}")
 	private String restApiUrl;
 
+    @Value("${my.notifications.restapi.param.sent}")
+    private String restApiParamSent;
+
+    @Value("${my.notifications.restapi.param.createdDate}")
+    private String restApiParamCreatedDate;
+
     @Value("${my.notifications.refresh}")
     private int interval;
 
@@ -42,10 +48,10 @@ public class Application {
     @Value("${my.notifications.shopifyapi.password}")
     private String shopifyPassword;
    
-	private static final Logger log = LoggerFactory.getLogger(Application.class);
-	
-	private static final String PARAM_SENT = "sent";
-	private static final String PARAM_CREATED = "createdDate";
+    @Value("${my.notifications.shopifyapi.product.variant.url}")
+    private String shopifyVariantUrl;
+
+    private static final Logger log = LoggerFactory.getLogger(Application.class);
 
 	public static void main(String args[]) {
 		SpringApplication.run(Application.class);
@@ -67,7 +73,7 @@ public class Application {
             restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor(restApiUsername, restApiPassword));
 
         	    /* 1. Download all unsent notifications */
-            String urlQuery = String.format("%s?%s=%s",restApiUrl,PARAM_SENT,false);
+            String urlQuery = String.format("%s?%s=%s",restApiUrl,restApiParamSent,false);
 			ResponseEntity<List<Notification>> notificationsResponse = restTemplate.exchange(urlQuery, HttpMethod.GET, null, new ParameterizedTypeReference<List<Notification>>() {});
 			List<Notification> unsentNotifications = notificationsResponse.getBody();
 			for(Notification n : unsentNotifications) {
