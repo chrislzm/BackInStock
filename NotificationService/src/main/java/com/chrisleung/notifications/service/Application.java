@@ -25,19 +25,19 @@ import com.chrisleung.notifications.objects.Notification;
 public class Application {
 
 	@Value("${my.notifications.restapi.username}")
-	private String restApiUsername;
+	private String notificationApiUsername;
 
 	@Value("${my.notifications.restapi.password}")
-	private String restApiPassword;
+	private String notificationApiPassword;
 	
 	@Value("${my.notifications.restapi.url}")
-	private String restApiUrl;
+	private String notificationApiUrl;
 
     @Value("${my.notifications.restapi.param.sent}")
-    private String restApiParamSent;
+    private String notificationApiParamSent;
 
     @Value("${my.notifications.restapi.param.createdDate}")
-    private String restApiParamCreatedDate;
+    private String notificationApiParamCreatedDate;
 
     @Value("${my.notifications.refresh}")
     private int interval;
@@ -70,10 +70,10 @@ public class Application {
         	    HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
         	    requestFactory.setHttpClient(httpClient);
         	    restTemplate.setRequestFactory(requestFactory);
-            restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor(restApiUsername, restApiPassword));
+            restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor(notificationApiUsername, notificationApiPassword));
 
         	    /* 1. Download all unsent notifications */
-            String urlQuery = String.format("%s?%s=%s",restApiUrl,restApiParamSent,false);
+            String urlQuery = String.format("%s?%s=%s",notificationApiUrl,notificationApiParamSent,false);
 			ResponseEntity<List<Notification>> notificationsResponse = restTemplate.exchange(urlQuery, HttpMethod.GET, null, new ParameterizedTypeReference<List<Notification>>() {});
 			List<Notification> unsentNotifications = notificationsResponse.getBody();
 			for(Notification n : unsentNotifications) {
