@@ -1,6 +1,14 @@
 # Installation Notes
 
-Be sure to update /src/main/resources/application.properties with the username, password, and URL of the REST API.
+Be sure to update /src/main/resources/application.properties with the following information:
+* Notifications REST API
+    * Username
+    * Password
+    * URL
+* Shopify API - [Generate API Credentials](https://help.shopify.com/api/getting-started/api-credentials#generate-private-api-credentials) 
+    * API Key
+    * Password
+* Refresh interval (in seconds)
 
 # Enabling HTTPS
 
