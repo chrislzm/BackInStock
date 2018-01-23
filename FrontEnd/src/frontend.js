@@ -1,9 +1,9 @@
 const STATUS_DIV_ID = "#stock-notification-status"
 const NOTIFICATION_FORM_ID ="#stock-notification-form"
-const NOTIFICATION_FORM_SKU_ID = "#stock-notification-sku";
+const NOTIFICATION_FORM_VARIANT_ID = "#stock-notification-variant-id";
 const NOTIFICATION_FORM_EMAIL_ID = "#stock-notification-email";
 const NOTIFICATION_FORM_EMAIL_INPUT_ID = "#stock-notification-email-input";
-const INPUT_SKU_ID = "#product-selector";
+const INPUT_VARIANT_ID = "#product-selector";
 const PRODUCT_TYPE = "cell phone";
 
 /**
@@ -22,8 +22,8 @@ function openStockNotificationForm() {
  * @return {Boolean}      Returns false to prevent the page from reloading
  */
 function onSubmit(form){
-  // Copy selected SKU from product page into hidden form field
-  $(NOTIFICATION_FORM_SKU_ID).val($(INPUT_SKU_ID).val());
+  // Copy selected variant ID from product page into hidden form field
+  $(NOTIFICATION_FORM_VARIANT_ID).val($(INPUT_VARIANT_ID).val());
   var json = getFormDataAsJSON(form);
   if(isValidEmail(json['email'])) {
     $(STATUS_DIV_ID).text("Submitting...");
