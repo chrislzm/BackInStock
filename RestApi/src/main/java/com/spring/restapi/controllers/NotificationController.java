@@ -1,6 +1,6 @@
 package com.spring.restapi.controllers;
 
-import com.spring.restapi.models.Notification;
+import com.chrisleung.notifications.objects.Notification;
 import com.spring.restapi.repositories.NotificationRepository;
 
 import java.util.Date;
