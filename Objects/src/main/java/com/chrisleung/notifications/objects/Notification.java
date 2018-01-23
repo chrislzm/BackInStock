@@ -19,7 +19,7 @@ public class Notification {
     @Id
     String id;
     String email;
-    String sku;
+    Integer variantId;
     @DateTimeFormat(iso = ISO.DATE_TIME)
 	Date createdDate;
     Boolean sent;
@@ -31,10 +31,10 @@ public class Notification {
     	this.sent = new Boolean(false);
     }
     
-    public Notification(String email, String sku) {
+    public Notification(String email, Integer variantId) {
     	this();
     	this.email = email;
-    	this.sku = sku;
+    	this.variantId = variantId;
     }
     
 	public String getId() {
@@ -61,12 +61,12 @@ public class Notification {
 		this.createdDate = createdDate;
 	}
 	
-	public String getSku() {
-		return sku;
+	public Integer getVariantId() {
+		return variantId;
 	}
 
-	public void setSku(String sku) {
-		this.sku = sku;
+	public void setVariantId(Integer variantId) {
+		this.variantId = variantId;
 	}
 
 	public Boolean getIsSent() {
@@ -90,7 +90,7 @@ public class Notification {
         return "Notification{" +
                 "id='" + id + '\'' +
                 ", email='" + email + '\'' +
-                ", sku='" + sku + '\'' +
+                ", variantId='" + variantId + '\'' +
                 ", createdDate='" + createdDate + '\'' +
                 ", sent='" + sent + '\'' +
                 ", sentDate='" + sentDate + '\'' +

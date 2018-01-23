@@ -61,7 +61,7 @@ public class NotificationController {
     @RequestMapping(method=RequestMethod.POST, value="/notifications")
     public Map<String,Boolean> save(@RequestBody Notification notification) {
     	Map<String,Boolean> response = new HashMap<>();
-    	List<Notification> results = notificationRepository.findByEmailAndSku(notification.getEmail(), notification.getSku());
+    	List<Notification> results = notificationRepository.findByEmailAndVariantId(notification.getEmail(), notification.getVariantId());
     	boolean saved = false;
     	if(results.size() == 0) {
     		notificationRepository.save(notification);
@@ -88,8 +88,8 @@ public class NotificationController {
         if(notification.getSentDate() != null) {
         	n.setSentDate(notification.getSentDate());
         }
-        if(notification.getSku() != null)
-            n.setSku(notification.getSku());
+        if(notification.getVariantId() != null)
+            n.setVariantId(notification.getVariantId());
         notificationRepository.save(n);
         return n;
     }
