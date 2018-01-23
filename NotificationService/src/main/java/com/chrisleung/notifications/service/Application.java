@@ -91,12 +91,12 @@ public class Application {
             String urlQuery = String.format("%s?%s=%s",notificationApiUrl,notificationApiParamSent,false);
 			ResponseEntity<List<Notification>> notificationsResponse = restTemplate.exchange(urlQuery, HttpMethod.GET, null, new ParameterizedTypeReference<List<Notification>>() {});
 			List<Notification> unsentNotifications = notificationsResponse.getBody();
+            restTemplate.getInterceptors().remove(0);
 			
 			/* Program Loop (Step 2, 3, 4) */
 			while(true) {
 			    
         			/* 2. Add email notification to queue for products that are Back in Stock */
-			    restTemplate.getInterceptors().remove(0);
 			    restTemplate.getInterceptors().add(shopifyAuth);
 	            for(Notification n : unsentNotifications) {
 	                urlQuery = String.format("%s%s%s",shopifyVariantUrl,n.getVariantId(),shopifyVariantPostfix);
@@ -105,6 +105,7 @@ public class Application {
 	                Variant v = shopifyResponse.getBody().getVariant();
 	                log.info(String.format("%s has inventory %s", v.getSku(), v.getInventory_quantity()));
 	            }
+	            restTemplate.getInterceptors().remove(0);
 			    
         			/* 3. Send notifications (if any) */
         			
