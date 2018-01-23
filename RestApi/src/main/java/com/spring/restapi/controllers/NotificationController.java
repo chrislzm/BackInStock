@@ -20,16 +20,15 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * RESTful controller for accessing Notification data
  * 
- * API Endpoints:
- * 
- * <table>
- * <tr>td>Method</td><td>Endpoint</td><td>Notes</td></tr>
- * <tr><td>GET</td><td>/notifications</td><td>Get all notifications data</td></tr>
- * <tr><td>GET</td><td>/notifications/59be3c34b1a24167ad2779b5</td><td>Get single notification</td></tr>
- * <tr><td>POST</td><td>/notifications</td><td>Post data</td></tr>
- * <tr><td>PUT</td><td>/notifications/59be3c34b1a24167ad2779b5</td><td>Update data</td></tr>
- * <tr><td>DELETE</td><td>/products/59be3c34b1a24167ad2779b5</td><td>Delete data/<td></tr>
- * </table>
+ * | Method | EndPoint                |  Parameters             | Auth   | Description                  |
+ * |--------|-------------------------|-------------------------|--------|------------------------------|
+ * | POST   | /notifications          | none                    | No     |  Submit new notification     |
+ * | GET    | /notifications          | none                    | Yes    |  All notifications           |
+ * | GET    | /notifications/id       | none                    | Yes    |  Single notifications        |
+ * | GET    | /notifications          | sent (boolean)          | Yes    |  Sent/unsent notifications   |
+ * | GET    | /notifications          | createdDate (unix date) | Yes    |  Notifications created after |
+ * | PUT    | /notifications/id       | none                    | Yes    |  Update notification         |
+ * | DELETE | /notifications/id       | none                    | Yes    |  Delete notification         |
  * 
  * @author Chris Leung
  *
