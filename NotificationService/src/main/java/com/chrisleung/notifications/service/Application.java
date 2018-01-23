@@ -31,12 +31,15 @@ public class Application {
 	private String password;
 	
 	@Value("${my.notifications.api.server.url}")
-	private String url;
+	private String serverUrl;
 
    @Value("${my.notifications.refresh.interval}")
     private int interval;
 
 	private static final Logger log = LoggerFactory.getLogger(Application.class);
+	
+	private static final String PARAM_SENT = "sent";
+	private static final String PARAM_CREATED = "createdDate";
 
 	public static void main(String args[]) {
 		SpringApplication.run(Application.class);
@@ -58,9 +61,10 @@ public class Application {
             restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor(username, password));
 
         	    /* 1. Download all unsent notifications */
-			ResponseEntity<List<Notification>> notificationsResponse = restTemplate.exchange(url, HttpMethod.GET, null, new ParameterizedTypeReference<List<Notification>>() {});
-			List<Notification> notifications = notificationsResponse.getBody();
-			for(Notification n : notifications) {
+            String urlQuery = String.format("%s?%s=%s",serverUrl,PARAM_SENT,false);
+			ResponseEntity<List<Notification>> notificationsResponse = restTemplate.exchange(urlQuery, HttpMethod.GET, null, new ParameterizedTypeReference<List<Notification>>() {});
+			List<Notification> unsentNotifications = notificationsResponse.getBody();
+			for(Notification n : unsentNotifications) {
 				log.info(n.toString());
 			}
 			
