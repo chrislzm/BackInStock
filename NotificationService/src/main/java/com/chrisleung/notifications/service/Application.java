@@ -19,7 +19,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.client.support.BasicAuthorizationInterceptor;
 import org.springframework.web.client.RestTemplate;
+
 import com.chrisleung.notifications.objects.Notification;
+import com.shopify.api.Variant;
+import com.shopify.api.VariantWrapper;
 
 @SpringBootApplication
 public class Application {
@@ -51,6 +54,9 @@ public class Application {
     @Value("${my.notifications.shopifyapi.product.variant.url}")
     private String shopifyVariantUrl;
 
+    @Value("${my.notifications.shopifyapi.product.variant.url.postfix}")
+    private String shopifyVariantPostfix;
+
     private static final Logger log = LoggerFactory.getLogger(Application.class);
 
 	public static void main(String args[]) {
@@ -64,30 +70,49 @@ public class Application {
 
 	@Bean
 	public CommandLineRunner run(RestTemplate restTemplate) throws Exception {
-		return args -> {		    
-		    /* Security Setup (Configure to accept unverified SSL certificates + username, password auth) */
+		return args -> {
+		    long sleepMs = interval * 1000;
+		    
+		    /* 1. Connect + Security Setup */
+		    
+		    /* 1a. Notification API - Configure to accept unverified SSL certificates */
 		    CloseableHttpClient httpClient = HttpClients.custom().setSSLHostnameVerifier(new NoopHostnameVerifier()).build();
         	    HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
         	    requestFactory.setHttpClient(httpClient);
         	    restTemplate.setRequestFactory(requestFactory);
-            restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor(notificationApiUsername, notificationApiPassword));
+        	    BasicAuthorizationInterceptor notificationAuth = new BasicAuthorizationInterceptor(notificationApiUsername, notificationApiPassword); 
 
-        	    /* 1. Download all unsent notifications */
+        	    /* 1b. Shopify API - API Key + Password Auth */
+        	    BasicAuthorizationInterceptor shopifyAuth = new BasicAuthorizationInterceptor(shopifyApiKey, shopifyPassword); 
+
+                
+        	    /* 1. Download unsent notifications */
+        	    restTemplate.getInterceptors().add(notificationAuth);
             String urlQuery = String.format("%s?%s=%s",notificationApiUrl,notificationApiParamSent,false);
 			ResponseEntity<List<Notification>> notificationsResponse = restTemplate.exchange(urlQuery, HttpMethod.GET, null, new ParameterizedTypeReference<List<Notification>>() {});
 			List<Notification> unsentNotifications = notificationsResponse.getBody();
-			for(Notification n : unsentNotifications) {
-				log.info(n.toString());
-			}
 			
 			/* Program Loop (Step 2, 3, 4) */
-			
-			/* 2. Detect products that are Back in Stock */
-			
-			/* 3. Send notifications (if any) */
-			
-			/* 4. Poll for new notifications */
-			
+			while(true) {
+			    
+        			/* 2. Add email notification to queue for products that are Back in Stock */
+			    restTemplate.getInterceptors().remove(0);
+			    restTemplate.getInterceptors().add(shopifyAuth);
+	            for(Notification n : unsentNotifications) {
+	                urlQuery = String.format("%s%s%s",shopifyVariantUrl,n.getVariantId(),shopifyVariantPostfix);
+	                log.info("Contacting - " + urlQuery);
+	                ResponseEntity<VariantWrapper> shopifyResponse = restTemplate.exchange(urlQuery, HttpMethod.GET, null, VariantWrapper.class); 
+	                Variant v = shopifyResponse.getBody().getVariant();
+	                log.info(String.format("%s has inventory %s", v.getSku(), v.getInventory_quantity()));
+	            }
+			    
+        			/* 3. Send notifications (if any) */
+        			
+			    /* 4. Sleep */
+			    Thread.sleep(sleepMs);
+			    
+        			/* 5. Poll for new notifications */
+			}			
 		};
 	}
 }
