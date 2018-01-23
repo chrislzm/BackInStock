@@ -75,18 +75,18 @@ public class Application {
 		    
 		    /* 1. Connect + Security Setup */
 		    
-		    /* 1a. Notification API - Configure to accept unverified SSL certificates */
+		    /* 1a. Configure to accept unverified SSL certificates */
+		    /* TODO: This should be removed in production code    */
 		    CloseableHttpClient httpClient = HttpClients.custom().setSSLHostnameVerifier(new NoopHostnameVerifier()).build();
         	    HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
         	    requestFactory.setHttpClient(httpClient);
         	    restTemplate.setRequestFactory(requestFactory);
+        	    
+        	    /* 1b. Username + Password Auths */
         	    BasicAuthorizationInterceptor notificationAuth = new BasicAuthorizationInterceptor(notificationApiUsername, notificationApiPassword); 
+       	    BasicAuthorizationInterceptor shopifyAuth = new BasicAuthorizationInterceptor(shopifyApiKey, shopifyPassword); 
 
-        	    /* 1b. Shopify API - API Key + Password Auth */
-        	    BasicAuthorizationInterceptor shopifyAuth = new BasicAuthorizationInterceptor(shopifyApiKey, shopifyPassword); 
-
-                
-        	    /* 1. Download unsent notifications */
+        	    /* 2. Download unsent notifications from Notifications REST API */
         	    restTemplate.getInterceptors().add(notificationAuth);
             String urlQuery = String.format("%s?%s=%s",notificationApiUrl,notificationApiParamSent,false);
 			ResponseEntity<List<Notification>> notificationsResponse = restTemplate.exchange(urlQuery, HttpMethod.GET, null, new ParameterizedTypeReference<List<Notification>>() {});
