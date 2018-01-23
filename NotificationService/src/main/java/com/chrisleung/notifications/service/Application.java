@@ -24,18 +24,24 @@ import com.chrisleung.notifications.objects.Notification;
 @SpringBootApplication
 public class Application {
 
-	@Value("${my.notifications.api.server.auth.username}")
-	private String username;
+	@Value("${my.notifications.restapi.username}")
+	private String restApiUsername;
 
-	@Value("${my.notifications.api.server.auth.password}")
-	private String password;
+	@Value("${my.notifications.restapi.password}")
+	private String restApiPassword;
 	
-	@Value("${my.notifications.api.server.url}")
-	private String serverUrl;
+	@Value("${my.notifications.restapi.url}")
+	private String restApiUrl;
 
-   @Value("${my.notifications.refresh.interval}")
+    @Value("${my.notifications.refresh}")
     private int interval;
 
+    @Value("${my.notifications.shopifyapi.apikey}")
+    private String shopifyApiKey;
+
+    @Value("${my.notifications.shopifyapi.password}")
+    private String shopifyPassword;
+   
 	private static final Logger log = LoggerFactory.getLogger(Application.class);
 	
 	private static final String PARAM_SENT = "sent";
@@ -58,10 +64,10 @@ public class Application {
         	    HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
         	    requestFactory.setHttpClient(httpClient);
         	    restTemplate.setRequestFactory(requestFactory);
-            restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor(username, password));
+            restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor(restApiUsername, restApiPassword));
 
         	    /* 1. Download all unsent notifications */
-            String urlQuery = String.format("%s?%s=%s",serverUrl,PARAM_SENT,false);
+            String urlQuery = String.format("%s?%s=%s",restApiUrl,PARAM_SENT,false);
 			ResponseEntity<List<Notification>> notificationsResponse = restTemplate.exchange(urlQuery, HttpMethod.GET, null, new ParameterizedTypeReference<List<Notification>>() {});
 			List<Notification> unsentNotifications = notificationsResponse.getBody();
 			for(Notification n : unsentNotifications) {
