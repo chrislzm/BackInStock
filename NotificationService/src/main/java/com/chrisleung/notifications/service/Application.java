@@ -73,7 +73,7 @@ public class Application {
 		return args -> {
 		    long sleepMs = interval * 1000;
 		    
-		    /* 1. Connect + Security Setup */
+		    /* 1. Security Setup */
 		    
 		    /* 1a. Configure to accept unverified SSL certificates */
 		    /* TODO: This should be removed in production code    */
@@ -86,10 +86,10 @@ public class Application {
         	    BasicAuthorizationInterceptor notificationAuth = new BasicAuthorizationInterceptor(notificationApiUsername, notificationApiPassword); 
        	    BasicAuthorizationInterceptor shopifyAuth = new BasicAuthorizationInterceptor(shopifyApiKey, shopifyPassword); 
 
-        	    /* 2. Download unsent notifications from Notifications REST API */
+        	    /* 2. Retrieve unsent notifications from Notifications REST API */
         	    restTemplate.getInterceptors().add(notificationAuth);
-            String urlQuery = String.format("%s?%s=%s",notificationApiUrl,notificationApiParamSent,false);
-			ResponseEntity<List<Notification>> notificationsResponse = restTemplate.exchange(urlQuery, HttpMethod.GET, null, new ParameterizedTypeReference<List<Notification>>() {});
+            String url = String.format("%s?%s=%s",notificationApiUrl,notificationApiParamSent,false);
+			ResponseEntity<List<Notification>> notificationsResponse = restTemplate.exchange(url, HttpMethod.GET, null, new ParameterizedTypeReference<List<Notification>>() {});
 			List<Notification> unsentNotifications = notificationsResponse.getBody();
             restTemplate.getInterceptors().remove(0);
 			
@@ -99,9 +99,9 @@ public class Application {
         			/* 2. Add email notification to queue for products that are Back in Stock */
 			    restTemplate.getInterceptors().add(shopifyAuth);
 	            for(Notification n : unsentNotifications) {
-	                urlQuery = String.format("%s%s%s",shopifyVariantUrl,n.getVariantId(),shopifyVariantPostfix);
-	                log.info("Contacting - " + urlQuery);
-	                ResponseEntity<VariantWrapper> shopifyResponse = restTemplate.exchange(urlQuery, HttpMethod.GET, null, VariantWrapper.class); 
+	                url = String.format("%s%s%s",shopifyVariantUrl,n.getVariantId(),shopifyVariantPostfix);
+	                log.info("Contacting - " + url);
+	                ResponseEntity<VariantWrapper> shopifyResponse = restTemplate.exchange(url, HttpMethod.GET, null, VariantWrapper.class); 
 	                Variant v = shopifyResponse.getBody().getVariant();
 	                log.info(String.format("%s has inventory %s", v.getSku(), v.getInventory_quantity()));
 	            }
