@@ -4,6 +4,7 @@ import com.chrisleung.notifications.objects.Notification;
 import com.chrisleung.notifications.objects.NotificationWrapper;
 import com.spring.restapi.repositories.NotificationRepository;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -78,12 +79,14 @@ public class NotificationController {
     }
 
     @RequestMapping(method=RequestMethod.GET, value="/notifications/{id}")
-    public Notification show(@PathVariable String id) {
-        return notificationRepository.findOne(id);
+    public NotificationWrapper show(@PathVariable String id) {
+        Date currentDate = new Date();
+        return wrapSingleNotification(notificationRepository.findOne(id),currentDate);
     }
 
     @RequestMapping(method=RequestMethod.PUT, value="/notifications/{id}")
-    public Notification update(@PathVariable String id, @RequestBody Notification notification) {
+    public NotificationWrapper update(@PathVariable String id, @RequestBody Notification notification) {
+        Date currentDate = new Date();
         Notification n = notificationRepository.findOne(id);
         if(notification.getCreatedDate() != null)
             n.setCreatedDate(notification.getCreatedDate());
@@ -97,7 +100,7 @@ public class NotificationController {
         if(notification.getVariantId() != null)
             n.setVariantId(notification.getVariantId());
         notificationRepository.save(n);
-        return n;
+        return wrapSingleNotification(n,currentDate);
     }
 
     @RequestMapping(method=RequestMethod.DELETE, value="/notifications/{id}")
@@ -106,5 +109,11 @@ public class NotificationController {
         notificationRepository.delete(notification);
 
         return "notification deleted";
+    }
+    
+    private NotificationWrapper wrapSingleNotification(Notification n, Date d) {
+        List<Notification> l = new ArrayList<>();
+        l.add(n);
+        return new NotificationWrapper(l,d);
     }
 }
