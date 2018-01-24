@@ -194,6 +194,8 @@ public class Application {
                     Notification n = newNotificationsIterator.next();
                     if(allNotifications.contains(n.toString()))
                         newNotificationsIterator.remove();
+                    else 
+                        allNotifications.add(n.toString());
                 }
 			}			
 		};
