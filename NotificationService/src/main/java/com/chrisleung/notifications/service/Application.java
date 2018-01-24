@@ -153,7 +153,6 @@ public class Application {
         			while(variantsToNotify.hasNext()) {
         			    Variant v = variantsToNotify.next();
         			    List<Notification> variantNotifications = variantIdToNotificationMap.get(v.getId());
-        			    log.info(String.format("%s Detected back-in-stock SKU: %s (Variant ID %s). Notification(s) to Send: %s", logTag, v.getSku(), v.getId(), variantNotifications.size()));
         			    Iterator<Notification> toNotify = variantNotifications.iterator();
                     int numFailed = 0;
                     int numSent = 0;
