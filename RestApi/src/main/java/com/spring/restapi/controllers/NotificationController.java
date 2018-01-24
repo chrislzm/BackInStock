@@ -1,6 +1,7 @@
 package com.spring.restapi.controllers;
 
 import com.chrisleung.notifications.objects.Notification;
+import com.chrisleung.notifications.objects.NotificationWrapper;
 import com.spring.restapi.repositories.NotificationRepository;
 
 import java.util.Date;
@@ -41,20 +42,25 @@ public class NotificationController {
     NotificationRepository notificationRepository;
 
     @RequestMapping(method=RequestMethod.GET, value="/notifications")
-    public Iterable<Notification> notification(
+    public NotificationWrapper notification(
     		@RequestParam(value="sent", required=false) Boolean sent,
     		@RequestParam(value="createdDate", required=false) Long createdDateMilliseconds) {
     	
     	Date createdDate = createdDateMilliseconds == null ? null : new Date(createdDateMilliseconds);
+    	Date currentDate = new Date();
     	
     	if(sent == null && createdDate == null) {
-            return notificationRepository.findAll();
+    	    return new NotificationWrapper(notificationRepository.findAll(),currentDate);
     	} else if(sent == null && createdDate != null) {
-    		return notificationRepository.findByCreatedDateAfter(createdDate);
+    		return new NotificationWrapper(notificationRepository.findByCreatedDateAfter(createdDate),currentDate);
     	} else if(sent != null && createdDate == null) {
-    		return sent ? notificationRepository.findBySentTrue() : notificationRepository.findBySentFalse();
+    		return sent ?
+    		        new NotificationWrapper(notificationRepository.findBySentTrue(),currentDate) :
+    		        new NotificationWrapper(notificationRepository.findBySentFalse(),currentDate);
     	} else {
-    		return sent ? notificationRepository.findByCreatedDateAfterAndSentTrue(createdDate) : notificationRepository.findByCreatedDateAfterAndSentFalse(createdDate);
+    		return sent ?
+    		        new NotificationWrapper(notificationRepository.findByCreatedDateAfterAndSentTrue(createdDate),currentDate) :
+    		        new NotificationWrapper(notificationRepository.findByCreatedDateAfterAndSentFalse(createdDate),currentDate);
     	}
     }
 
