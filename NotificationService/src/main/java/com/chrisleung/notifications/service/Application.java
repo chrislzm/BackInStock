@@ -86,10 +86,7 @@ public class Application {
 		    
 		    /* 1a. Configure to accept unverified SSL certificates */
 		    /* TODO: This should be removed in production code    */
-		    CloseableHttpClient httpClient = HttpClients.custom().setSSLHostnameVerifier(new NoopHostnameVerifier()).build();
-        	    HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
-        	    requestFactory.setHttpClient(httpClient);
-        	    restTemplate.setRequestFactory(requestFactory);
+		    configure(restTemplate);
         	    
         	    /* 1b. Username + Password Auths */
         	    BasicAuthorizationInterceptor notificationApiAuth = new BasicAuthorizationInterceptor(notificationApiUsername, notificationApiPassword); 
@@ -203,5 +200,12 @@ public class Application {
                 }
 			}			
 		};
+	}
+	
+	private void configure(RestTemplate restTemplate) {
+        CloseableHttpClient httpClient = HttpClients.custom().setSSLHostnameVerifier(new NoopHostnameVerifier()).build();
+        HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
+        requestFactory.setHttpClient(httpClient);
+        restTemplate.setRequestFactory(requestFactory);
 	}
 }
