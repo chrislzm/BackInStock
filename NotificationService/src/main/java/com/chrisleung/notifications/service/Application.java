@@ -89,6 +89,7 @@ public class Application {
 		    /* 1. Security Setup */
         	    notificationApiAuth = new BasicAuthorizationInterceptor(notificationApiUsername, notificationApiPassword); 
        	    shopifyApAuth = new BasicAuthorizationInterceptor(shopifyApiKey, shopifyPassword);
+       	    /* TODO: Following line should be removed in production code */
             configAcceptUnverifiedSSLCert(restTemplate);
 
         	    /* 2. Retrieve unsent notifications from Notifications REST API */
@@ -100,13 +101,13 @@ public class Application {
 			    allNotifications.add(n.getId());
 			}
 			
-			/* Program Loop (Step 2, 3, 4) */
+			/* Program Loop */
             long sleepMs = interval * 1000;
             Map<Integer,List<Notification>> variantIdToNotificationMap = new HashMap<Integer,List<Notification>>();
             int totalSent = 0;
             int totalFails = 0;
             
-            log.info(String.format("%s Beginning program loop", logTag));
+            log.info(String.format("%s Starting...", logTag));
 			while(true) {
 			    
         			/* 2. Detect notifications that have back-in-stock products */
@@ -157,7 +158,6 @@ public class Application {
         			            totalSent++;
         			        } else {
         			            numFailed++;
-        			            totalFails++;
         			        }
         			    }
         			    String result = String.format("%s Notification(s) Sent, %s Failed for SKU %s (Variant ID %s)", numSent, numFailed, v.getSku(), v.getId()); 
@@ -167,10 +167,18 @@ public class Application {
         			        variantIdToNotificationMap.remove(v.getId());
         			    } else {
         			        log.info(String.format("%s Failure: %s",logTag,result));
+        			        totalFails++;
         			    }
         			}
 	            
-        			log.info(String.format("%s Status: %s Total Notification(s), %s Out of Stock, %s Sent, %s Failed Send Attempts",logTag, allNotifications.size(),totalOutOfStock,totalSent,totalFails));
+        			log.info(String.format("%s Status: %s Total Notification(s), %s Sent, %s Unsent, %s Failed to Send (%s Attempts), %s Out of Stock",
+        			        logTag,
+        			        allNotifications.size(),
+        			        totalSent,
+        			        allNotifications.size()-totalSent,
+        			        allNotifications.size()-totalSent-totalOutOfStock,
+                        totalFails,
+        			        totalOutOfStock));
         			
 			    /* 4. Sleep */
 			    Thread.sleep(sleepMs);
@@ -192,7 +200,6 @@ public class Application {
 	}
 	
     /* Configure to accept unverified SSL certificates */
-    /* TODO: This should be removed in production code */
 	private void configAcceptUnverifiedSSLCert(RestTemplate restTemplate) {
         CloseableHttpClient httpClient = HttpClients.custom().setSSLHostnameVerifier(new NoopHostnameVerifier()).build();
         HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
