@@ -171,14 +171,14 @@ public class Application {
         			    }
         			}
 	            
-        			log.info(String.format("%s Status: %s Total Notification(s), %s Sent, %s Unsent, %s Failed to Send (%s Attempts), %s Out of Stock",
+        			log.info(String.format("%s Status: %s Total Notification(s), %s Sent, %s Unsent (%s Failed/%s Out of Stock), %s Total Failed Attempts",
         			        logTag,
         			        allNotifications.size(),
         			        totalSent,
         			        allNotifications.size()-totalSent,
         			        allNotifications.size()-totalSent-totalOutOfStock,
-                        totalFails,
-        			        totalOutOfStock));
+        			        totalOutOfStock,
+        			        totalFails));
         			
 			    /* 4. Sleep */
 			    Thread.sleep(sleepMs);
