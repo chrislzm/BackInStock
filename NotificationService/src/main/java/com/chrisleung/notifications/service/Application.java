@@ -67,6 +67,10 @@ public class Application {
     @Value("${my.notifications.log.tag}")
     private String logTag;
 
+    // Username+Password Authentication
+    private BasicAuthorizationInterceptor notificationApiAuth;
+    private BasicAuthorizationInterceptor shopifyApAuth;
+    
     private static final Logger log = LoggerFactory.getLogger(Application.class);
 
 	public static void main(String args[]) {
@@ -83,21 +87,18 @@ public class Application {
 		return args -> {
 		    
 		    /* 1. Security Setup */
-		    configure(restTemplate);
-        	    BasicAuthorizationInterceptor notificationApiAuth = new BasicAuthorizationInterceptor(notificationApiUsername, notificationApiPassword); 
-       	    BasicAuthorizationInterceptor shopifyApAuth = new BasicAuthorizationInterceptor(shopifyApiKey, shopifyPassword); 
+        	    notificationApiAuth = new BasicAuthorizationInterceptor(notificationApiUsername, notificationApiPassword); 
+       	    shopifyApAuth = new BasicAuthorizationInterceptor(shopifyApiKey, shopifyPassword);
+            configAcceptUnverifiedSSLCert(restTemplate);
 
         	    /* 2. Retrieve unsent notifications from Notifications REST API */
-        	    restTemplate.getInterceptors().add(notificationApiAuth);
-            String url = String.format("%s?%s=%s",notificationApiUrl,notificationApiParamSent,false);
-			ResponseEntity<NotificationWrapper> notificationsResponse = restTemplate.exchange(url, HttpMethod.GET, null, NotificationWrapper.class);
-			Iterable<Notification> newNotifications = notificationsResponse.getBody().getNotifications();
-			Date lastUpdate = notificationsResponse.getBody().getCurrentDate();
+       	    NotificationWrapper notificationResponse = getAllUnsentNotifications(restTemplate); 
+			Iterable<Notification> newNotifications = notificationResponse.getNotifications();
+			Date lastUpdate = notificationResponse.getCurrentDate();
 			Set<String> allNotifications = new HashSet<>();
 			for(Notification n : newNotifications) {
 			    allNotifications.add(n.getId());
 			}
-            restTemplate.getInterceptors().remove(0);
 			
 			/* Program Loop (Step 2, 3, 4) */
             long sleepMs = interval * 1000;
@@ -124,22 +125,18 @@ public class Application {
 			    if(numNew > 0)
 			        log.info(String.format("%s Fetched %s new notification(s)", logTag, numNew));
 			    
-			    /* 2b. Check inventory levels for back-in-stock variants */
+			    /* 2b. Check Shopify inventory levels for back-in-stock variants */
 			    List<Variant> inStock = new LinkedList<>();
-			    restTemplate.getInterceptors().add(shopifyApAuth);
-			    int numOutOfStock = 0;
+			    int totalOutOfStock = 0;
 			    for(Integer variantId : variantIdToNotificationMap.keySet()) {
-                    url = String.format("%s%s%s",shopifyVariantUrl,variantId,shopifyVariantPostfix);
-                    ResponseEntity<VariantWrapper> shopifyResponse = restTemplate.exchange(url, HttpMethod.GET, null, VariantWrapper.class); 
-                    Variant v = shopifyResponse.getBody().getVariant();
+			        Variant v = getVariant(variantId, restTemplate);
                     if(v.getInventory_quantity() > 0) {
                         inStock.add(v);
                     } else {
-                        numOutOfStock += variantIdToNotificationMap.get(variantId).size();
+                        totalOutOfStock += variantIdToNotificationMap.get(variantId).size();
                     }
 			    }
-	            restTemplate.getInterceptors().remove(0);
-			    
+
         			/* 3. Send notifications */ 
 	            Iterator<Variant> variantsToNotify = inStock.iterator();
         			while(variantsToNotify.hasNext()) {
@@ -173,18 +170,15 @@ public class Application {
         			    }
         			}
 	            
-        			log.info(String.format("%s Status: %s Total Notification(s), %s Out of Stock, %s Sent, %s Failed Send Attempts",logTag, allNotifications.size(),numOutOfStock,totalSent,totalFails));
+        			log.info(String.format("%s Status: %s Total Notification(s), %s Out of Stock, %s Sent, %s Failed Send Attempts",logTag, allNotifications.size(),totalOutOfStock,totalSent,totalFails));
         			
 			    /* 4. Sleep */
 			    Thread.sleep(sleepMs);
 			    
         			/* 5. Get new notifications */
-                restTemplate.getInterceptors().add(notificationApiAuth);
-                url = String.format("%s?%s=%s",notificationApiUrl,notificationApiParamCreatedDate,lastUpdate.getTime());
-                notificationsResponse = restTemplate.exchange(url, HttpMethod.GET, null, NotificationWrapper.class);
-                restTemplate.getInterceptors().remove(0);
-                newNotifications = notificationsResponse.getBody().getNotifications();
-                lastUpdate = notificationsResponse.getBody().getCurrentDate();
+			    notificationResponse = getNewNotificationsSince(lastUpdate,restTemplate);
+                newNotifications = notificationResponse.getNotifications();
+                lastUpdate = notificationResponse.getCurrentDate();
                 Iterator<Notification> newNotificationsIterator = newNotifications.iterator();
                 while(newNotificationsIterator.hasNext()) {
                     Notification n = newNotificationsIterator.next();
@@ -199,10 +193,34 @@ public class Application {
 	
     /* Configure to accept unverified SSL certificates */
     /* TODO: This should be removed in production code */
-	private void configure(RestTemplate restTemplate) {
+	private void configAcceptUnverifiedSSLCert(RestTemplate restTemplate) {
         CloseableHttpClient httpClient = HttpClients.custom().setSSLHostnameVerifier(new NoopHostnameVerifier()).build();
         HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
         requestFactory.setHttpClient(httpClient);
         restTemplate.setRequestFactory(requestFactory);
+	}
+	
+	private NotificationWrapper getAllUnsentNotifications(RestTemplate restTemplate) {
+        restTemplate.getInterceptors().add(notificationApiAuth);
+        String url = String.format("%s?%s=%s",notificationApiUrl,notificationApiParamSent,false);
+        ResponseEntity<NotificationWrapper> response = restTemplate.exchange(url, HttpMethod.GET, null, NotificationWrapper.class);
+        restTemplate.getInterceptors().remove(0);
+        return response.getBody();
+	}
+	
+	private NotificationWrapper getNewNotificationsSince(Date lastUpdate, RestTemplate restTemplate) {
+        restTemplate.getInterceptors().add(notificationApiAuth);
+        String url = String.format("%s?%s=%s",notificationApiUrl,notificationApiParamCreatedDate,lastUpdate.getTime());
+        ResponseEntity<NotificationWrapper> response = restTemplate.exchange(url, HttpMethod.GET, null, NotificationWrapper.class);
+        restTemplate.getInterceptors().remove(0);
+        return response.getBody();
+	}
+	
+	private Variant getVariant(int variantId, RestTemplate restTemplate) {
+        restTemplate.getInterceptors().add(shopifyApAuth);
+        String url = String.format("%s%s%s",shopifyVariantUrl,variantId,shopifyVariantPostfix);
+        ResponseEntity<VariantWrapper> shopifyResponse = restTemplate.exchange(url, HttpMethod.GET, null, VariantWrapper.class);
+        restTemplate.getInterceptors().remove(0);
+        return shopifyResponse.getBody().getVariant();
 	}
 }
