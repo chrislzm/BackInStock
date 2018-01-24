@@ -1,6 +1,11 @@
 package com.chrisleung.notifications.service;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -71,7 +76,6 @@ public class Application {
 	@Bean
 	public CommandLineRunner run(RestTemplate restTemplate) throws Exception {
 		return args -> {
-		    long sleepMs = interval * 1000;
 		    
 		    /* 1. Security Setup */
 		    
@@ -90,25 +94,53 @@ public class Application {
         	    restTemplate.getInterceptors().add(notificationAuth);
             String url = String.format("%s?%s=%s",notificationApiUrl,notificationApiParamSent,false);
 			ResponseEntity<List<Notification>> notificationsResponse = restTemplate.exchange(url, HttpMethod.GET, null, new ParameterizedTypeReference<List<Notification>>() {});
-			List<Notification> unsentNotifications = notificationsResponse.getBody();
+			List<Notification> newNotifications = notificationsResponse.getBody();
+			Set<String> allDownloadedNotifications = new HashSet<>();
+			for(Notification n : newNotifications) {
+			    allDownloadedNotifications.add(n.getId());
+			}
             restTemplate.getInterceptors().remove(0);
 			
 			/* Program Loop (Step 2, 3, 4) */
+            long sleepMs = interval * 1000;
+            Map<Integer,List<Notification>> variantIdToNotificationMap = new HashMap<Integer,List<Notification>>();
+            
 			while(true) {
 			    
-        			/* 2. Add email notification to queue for products that are Back in Stock */
+        			/* 2. Detect notifications that have back-in-stock products */
+			    
+			    /* 2a. Prep for batch API reads - One request per variant id  */
+			    for(Notification n : newNotifications) {
+			        List<Notification> l = variantIdToNotificationMap.get(n.getVariantId());
+			        if(l == null) {
+			            l = new LinkedList<>();
+			            variantIdToNotificationMap.put(n.getVariantId(), l);
+			        }
+			        l.add(n);
+			    }
+			    newNotifications.clear();
+			    /* 2b. Check inventory levels for back-in-stock variants */
+			    List<Variant> backInStockVariants = new LinkedList<>();
 			    restTemplate.getInterceptors().add(shopifyAuth);
-	            for(Notification n : unsentNotifications) {
-	                url = String.format("%s%s%s",shopifyVariantUrl,n.getVariantId(),shopifyVariantPostfix);
-	                log.info("Contacting - " + url);
-	                ResponseEntity<VariantWrapper> shopifyResponse = restTemplate.exchange(url, HttpMethod.GET, null, VariantWrapper.class); 
-	                Variant v = shopifyResponse.getBody().getVariant();
-	                log.info(String.format("%s has inventory %s", v.getSku(), v.getInventory_quantity()));
-	            }
+			    for(Integer variantId : variantIdToNotificationMap.keySet()) {
+                    url = String.format("%s%s%s",shopifyVariantUrl,variantId,shopifyVariantPostfix);
+                    ResponseEntity<VariantWrapper> shopifyResponse = restTemplate.exchange(url, HttpMethod.GET, null, VariantWrapper.class); 
+                    Variant v = shopifyResponse.getBody().getVariant();
+                    if(v.getInventory_quantity() > 0) {
+                        backInStockVariants.add(v);
+                    }
+			    }
 	            restTemplate.getInterceptors().remove(0);
 			    
-        			/* 3. Send notifications (if any) */
-        			
+        			/* 3. Send notifications (if any) */ 
+        			for(Variant v : backInStockVariants) {
+        			    List<Notification> toSend = variantIdToNotificationMap.get(v.getId());
+        			    log.info(String.format("Detected back-in-stock SKU: %s (Variant ID %s). Notification(s) to Send: %s", v.getId(), v.getSku(), toSend.size()));
+        			    for(Notification n : toSend) {
+        			        // Tell API server to email the notification
+        			    }
+        			}
+	            
 			    /* 4. Sleep */
 			    Thread.sleep(sleepMs);
 			    
