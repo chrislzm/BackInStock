@@ -168,7 +168,7 @@ public class Application {
         			    // If all notifications sent, remove the variant
         			    if(variantIdToNotificationMap.get(v.getId()).size() == 0) {
         			        log.info(String.format("%s Success: All notification(s) sent for SKU: %s (Variant ID %s).",logTag,v.getSku(), v.getId()));
-        			        variantsToNotify.remove();
+        			        variantIdToNotificationMap.remove(v.getId());
         			    } else {
         			        log.info(String.format("%s Failure: Unsuccessfully sent %s notification(s:) ",logTag,variantNotifications.size()));
         			    }
