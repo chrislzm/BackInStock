@@ -43,37 +43,37 @@ public class NotificationController {
 
     @RequestMapping(method=RequestMethod.GET, value="/notifications")
     public NotificationWrapper notification(
-    		@RequestParam(value="sent", required=false) Boolean sent,
-    		@RequestParam(value="createdDate", required=false) Long createdDateMilliseconds) {
-    	
-    	Date createdDate = createdDateMilliseconds == null ? null : new Date(createdDateMilliseconds);
-    	Date currentDate = new Date();
-    	
-    	if(sent == null && createdDate == null) {
-    	    return new NotificationWrapper(notificationRepository.findAll(),currentDate);
-    	} else if(sent == null && createdDate != null) {
-    		return new NotificationWrapper(notificationRepository.findByCreatedDateAfter(createdDate),currentDate);
-    	} else if(sent != null && createdDate == null) {
-    		return sent ?
-    		        new NotificationWrapper(notificationRepository.findBySentTrue(),currentDate) :
-    		        new NotificationWrapper(notificationRepository.findBySentFalse(),currentDate);
-    	} else {
-    		return sent ?
-    		        new NotificationWrapper(notificationRepository.findByCreatedDateAfterAndSentTrue(createdDate),currentDate) :
-    		        new NotificationWrapper(notificationRepository.findByCreatedDateAfterAndSentFalse(createdDate),currentDate);
-    	}
+            @RequestParam(value="sent", required=false) Boolean sent,
+            @RequestParam(value="createdDate", required=false) Long createdDateMilliseconds) {
+
+        Date createdDate = createdDateMilliseconds == null ? null : new Date(createdDateMilliseconds);
+        Date currentDate = new Date();
+
+        if(sent == null && createdDate == null) {
+            return new NotificationWrapper(notificationRepository.findAll(),currentDate);
+        } else if(sent == null && createdDate != null) {
+            return new NotificationWrapper(notificationRepository.findByCreatedDateAfter(createdDate),currentDate);
+        } else if(sent != null && createdDate == null) {
+            return sent ?
+                    new NotificationWrapper(notificationRepository.findBySentTrue(),currentDate) :
+                        new NotificationWrapper(notificationRepository.findBySentFalse(),currentDate);
+        } else {
+            return sent ?
+                    new NotificationWrapper(notificationRepository.findByCreatedDateAfterAndSentTrue(createdDate),currentDate) :
+                        new NotificationWrapper(notificationRepository.findByCreatedDateAfterAndSentFalse(createdDate),currentDate);
+        }
     }
 
     @RequestMapping(method=RequestMethod.POST, value="/notifications")
     public Map<String,Boolean> save(@RequestBody Notification notification) {
-    	Map<String,Boolean> response = new HashMap<>();
-    	List<Notification> results = notificationRepository.findByEmailAndVariantId(notification.getEmail(), notification.getVariantId());
-    	boolean saved = false;
-    	if(results.size() == 0) {
-    		notificationRepository.save(notification);
-    		saved = true;
-    	}
-		response.put("saved", saved);
+        Map<String,Boolean> response = new HashMap<>();
+        List<Notification> results = notificationRepository.findByEmailAndVariantId(notification.getEmail(), notification.getVariantId());
+        boolean saved = false;
+        if(results.size() == 0) {
+            notificationRepository.save(notification);
+            saved = true;
+        }
+        response.put("saved", saved);
         return response;
     }
 
@@ -84,7 +84,7 @@ public class NotificationController {
 
     @RequestMapping(method=RequestMethod.PUT, value="/notifications/{id}")
     public Notification update(@PathVariable String id, @RequestBody Notification notification) {
-    	Notification n = notificationRepository.findOne(id);
+        Notification n = notificationRepository.findOne(id);
         if(notification.getCreatedDate() != null)
             n.setCreatedDate(notification.getCreatedDate());
         if(notification.getEmail() != null)
@@ -92,7 +92,7 @@ public class NotificationController {
         if(notification.getIsSent() != null)
             n.setIsSent(notification.getIsSent());
         if(notification.getSentDate() != null) {
-        	n.setSentDate(notification.getSentDate());
+            n.setSentDate(notification.getSentDate());
         }
         if(notification.getVariantId() != null)
             n.setVariantId(notification.getVariantId());
@@ -102,7 +102,7 @@ public class NotificationController {
 
     @RequestMapping(method=RequestMethod.DELETE, value="/notifications/{id}")
     public String delete(@PathVariable String id) {
-    	Notification notification = notificationRepository.findOne(id);
+        Notification notification = notificationRepository.findOne(id);
         notificationRepository.delete(notification);
 
         return "notification deleted";
