@@ -83,9 +83,6 @@ public class Application {
 		return args -> {
 		    
 		    /* 1. Security Setup */
-		    
-		    /* 1a. Configure to accept unverified SSL certificates */
-		    /* TODO: This should be removed in production code    */
 		    configure(restTemplate);
         	    
         	    /* 1b. Username + Password Auths */
@@ -202,6 +199,8 @@ public class Application {
 		};
 	}
 	
+    /* Configure to accept unverified SSL certificates */
+    /* TODO: This should be removed in production code */
 	private void configure(RestTemplate restTemplate) {
         CloseableHttpClient httpClient = HttpClients.custom().setSSLHostnameVerifier(new NoopHostnameVerifier()).build();
         HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
