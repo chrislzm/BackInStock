@@ -89,8 +89,6 @@ public class Application {
 		    /* 1. Security Setup */
         	    notificationApiAuth = new BasicAuthorizationInterceptor(notificationApiUsername, notificationApiPassword); 
        	    shopifyApAuth = new BasicAuthorizationInterceptor(shopifyApiKey, shopifyPassword);
-       	    /* TODO: Following line should be removed in production code */
-            configAcceptUnverifiedSSLCert(restTemplate);
 
         	    /* 2. Retrieve unsent notifications from Notifications REST API */
        	    NotificationWrapper notificationResponse = getAllUnsentNotifications(restTemplate); 
@@ -197,14 +195,6 @@ public class Application {
                 }
 			}			
 		};
-	}
-	
-    /* Configure to accept unverified SSL certificates */
-	private void configAcceptUnverifiedSSLCert(RestTemplate restTemplate) {
-        CloseableHttpClient httpClient = HttpClients.custom().setSSLHostnameVerifier(new NoopHostnameVerifier()).build();
-        HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
-        requestFactory.setHttpClient(httpClient);
-        restTemplate.setRequestFactory(requestFactory);
 	}
 	
 	private NotificationWrapper getAllUnsentNotifications(RestTemplate restTemplate) {
