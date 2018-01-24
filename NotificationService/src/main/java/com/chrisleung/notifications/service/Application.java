@@ -134,12 +134,15 @@ public class Application {
 			    /* 2b. Check inventory levels for back-in-stock variants */
 			    List<Variant> inStock = new LinkedList<>();
 			    restTemplate.getInterceptors().add(shopifyAuth);
+			    int numOutOfStock = 0;
 			    for(Integer variantId : variantIdToNotificationMap.keySet()) {
                     url = String.format("%s%s%s",shopifyVariantUrl,variantId,shopifyVariantPostfix);
                     ResponseEntity<VariantWrapper> shopifyResponse = restTemplate.exchange(url, HttpMethod.GET, null, VariantWrapper.class); 
                     Variant v = shopifyResponse.getBody().getVariant();
                     if(v.getInventory_quantity() > 0) {
                         inStock.add(v);
+                    } else {
+                        numOutOfStock += variantIdToNotificationMap.get(variantId).size();
                     }
 			    }
 	            restTemplate.getInterceptors().remove(0);
@@ -174,12 +177,24 @@ public class Application {
         			    }
         			}
 	            
-        			log.info(String.format("%s Current Status: %s Total Notification(s), %s Out of Stock, %s Sent, %s Failed to Send",logTag, allNotifications.size(),allNotifications.size()-numSent-numFailed,numSent,numFailed));
+        			log.info(String.format("%s Current Status: %s Total Notification(s), %s Out of Stock, %s Sent, %s Failed to Send",logTag, allNotifications.size(),numOutOfStock,numSent,numFailed));
         			
 			    /* 4. Sleep */
 			    Thread.sleep(sleepMs);
 			    
         			/* 5. Poll for new notifications */
+                restTemplate.getInterceptors().add(notificationApiAuth);
+                url = String.format("%s?%s=%s",notificationApiUrl,notificationApiParamCreatedDate,lastUpdate.getTime());
+                notificationsResponse = restTemplate.exchange(url, HttpMethod.GET, null, NotificationWrapper.class);
+                restTemplate.getInterceptors().remove(0);
+                newNotifications = notificationsResponse.getBody().getNotifications();
+                lastUpdate = notificationsResponse.getBody().getCurrentDate();
+                Iterator<Notification> newNotificationsIterator = newNotifications.iterator();
+                while(newNotificationsIterator.hasNext()) {
+                    Notification n = newNotificationsIterator.next();
+                    if(allNotifications.contains(n.toString()))
+                        newNotificationsIterator.remove();
+                }
 			}			
 		};
 	}
