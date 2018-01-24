@@ -208,16 +208,17 @@ public class Application {
 	}
 	
 	private NotificationWrapper getAllUnsentNotifications(RestTemplate restTemplate) {
-        restTemplate.getInterceptors().add(notificationApiAuth);
         String url = String.format("%s?%s=%s",notificationApiUrl,notificationApiParamSent,false);
-        ResponseEntity<NotificationWrapper> response = restTemplate.exchange(url, HttpMethod.GET, null, NotificationWrapper.class);
-        restTemplate.getInterceptors().remove(0);
-        return response.getBody();
+        return getNotifications(url, restTemplate);
 	}
 	
 	private NotificationWrapper getNewNotificationsSince(Date lastUpdate, RestTemplate restTemplate) {
-        restTemplate.getInterceptors().add(notificationApiAuth);
         String url = String.format("%s?%s=%s",notificationApiUrl,notificationApiParamCreatedDate,lastUpdate.getTime());
+        return getNotifications(url, restTemplate);
+	}
+	
+	private NotificationWrapper getNotifications(String url, RestTemplate restTemplate) {
+	    restTemplate.getInterceptors().add(notificationApiAuth);
         ResponseEntity<NotificationWrapper> response = restTemplate.exchange(url, HttpMethod.GET, null, NotificationWrapper.class);
         restTemplate.getInterceptors().remove(0);
         return response.getBody();
