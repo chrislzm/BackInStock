@@ -84,10 +84,8 @@ public class Application {
 		    
 		    /* 1. Security Setup */
 		    configure(restTemplate);
-        	    
-        	    /* 1b. Username + Password Auths */
         	    BasicAuthorizationInterceptor notificationApiAuth = new BasicAuthorizationInterceptor(notificationApiUsername, notificationApiPassword); 
-       	    BasicAuthorizationInterceptor shopifyAuth = new BasicAuthorizationInterceptor(shopifyApiKey, shopifyPassword); 
+       	    BasicAuthorizationInterceptor shopifyApAuth = new BasicAuthorizationInterceptor(shopifyApiKey, shopifyPassword); 
 
         	    /* 2. Retrieve unsent notifications from Notifications REST API */
         	    restTemplate.getInterceptors().add(notificationApiAuth);
@@ -128,7 +126,7 @@ public class Application {
 			    
 			    /* 2b. Check inventory levels for back-in-stock variants */
 			    List<Variant> inStock = new LinkedList<>();
-			    restTemplate.getInterceptors().add(shopifyAuth);
+			    restTemplate.getInterceptors().add(shopifyApAuth);
 			    int numOutOfStock = 0;
 			    for(Integer variantId : variantIdToNotificationMap.keySet()) {
                     url = String.format("%s%s%s",shopifyVariantUrl,variantId,shopifyVariantPostfix);
