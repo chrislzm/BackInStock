@@ -92,18 +92,18 @@ public class Application {
         	    restTemplate.setRequestFactory(requestFactory);
         	    
         	    /* 1b. Username + Password Auths */
-        	    BasicAuthorizationInterceptor notificationAuth = new BasicAuthorizationInterceptor(notificationApiUsername, notificationApiPassword); 
+        	    BasicAuthorizationInterceptor notificationApiAuth = new BasicAuthorizationInterceptor(notificationApiUsername, notificationApiPassword); 
        	    BasicAuthorizationInterceptor shopifyAuth = new BasicAuthorizationInterceptor(shopifyApiKey, shopifyPassword); 
 
         	    /* 2. Retrieve unsent notifications from Notifications REST API */
-        	    restTemplate.getInterceptors().add(notificationAuth);
+        	    restTemplate.getInterceptors().add(notificationApiAuth);
             String url = String.format("%s?%s=%s",notificationApiUrl,notificationApiParamSent,false);
 			ResponseEntity<NotificationWrapper> notificationsResponse = restTemplate.exchange(url, HttpMethod.GET, null, NotificationWrapper.class);
 			Iterable<Notification> newNotifications = notificationsResponse.getBody().getNotifications();
 			Date lastUpdate = notificationsResponse.getBody().getCurrentDate();
-			Set<String> allDownloadedNotifications = new HashSet<>();
+			Set<String> allNotifications = new HashSet<>();
 			for(Notification n : newNotifications) {
-			    allDownloadedNotifications.add(n.getId());
+			    allNotifications.add(n.getId());
 			}
             restTemplate.getInterceptors().remove(0);
 			
@@ -118,48 +118,48 @@ public class Application {
         			/* 2. Detect notifications that have back-in-stock products */
 			    
 			    /* 2a. Prep for batch API reads - One request per variant id  */
-			    int numNotifications = 0;
+			    int numNew = 0;
 			    for(Notification n : newNotifications) {
-			        List<Notification> l = variantIdToNotificationMap.get(n.getVariantId());
-			        if(l == null) {
-			            l = new LinkedList<>();
-			            variantIdToNotificationMap.put(n.getVariantId(), l);
-			        }
-			        l.add(n);
-			        numNotifications++;
+    			        List<Notification> l = variantIdToNotificationMap.get(n.getVariantId());
+    			        if(l == null) {
+    			            l = new LinkedList<>();
+    			            variantIdToNotificationMap.put(n.getVariantId(), l);
+    			        }
+    			        l.add(n);
+                    numNew++;
 			    }
-			    if(numNotifications > 0)
-			        log.info(String.format("%s Fetched %s new notification(s)", logTag, numNotifications));
+			    if(numNew > 0)
+			        log.info(String.format("%s Fetched %s new notification(s)", logTag, numNew));
 			    
 			    /* 2b. Check inventory levels for back-in-stock variants */
-			    List<Variant> backInStockVariants = new LinkedList<>();
+			    List<Variant> inStock = new LinkedList<>();
 			    restTemplate.getInterceptors().add(shopifyAuth);
 			    for(Integer variantId : variantIdToNotificationMap.keySet()) {
                     url = String.format("%s%s%s",shopifyVariantUrl,variantId,shopifyVariantPostfix);
                     ResponseEntity<VariantWrapper> shopifyResponse = restTemplate.exchange(url, HttpMethod.GET, null, VariantWrapper.class); 
                     Variant v = shopifyResponse.getBody().getVariant();
                     if(v.getInventory_quantity() > 0) {
-                        backInStockVariants.add(v);
+                        inStock.add(v);
                     }
 			    }
 	            restTemplate.getInterceptors().remove(0);
 			    
         			/* 3. Send notifications */ 
-	            Iterator<Variant> bisvIterator = backInStockVariants.iterator();
+	            Iterator<Variant> variantsToNotify = inStock.iterator();
 	            int numFailed = 0;
-        			while(bisvIterator.hasNext()) {
-        			    Variant v = bisvIterator.next();
-        			    List<Notification> toSend = variantIdToNotificationMap.get(v.getId());
-        			    log.info(String.format("%s Detected back-in-stock SKU: %s (Variant ID %s). Notification(s) to Send: %s", logTag, v.getSku(), v.getId(), toSend.size()));
-        			    Iterator<Notification> nIterator = toSend.iterator();
-        			    while(nIterator.hasNext()) {
-        			        Notification n = nIterator.next();
+        			while(variantsToNotify.hasNext()) {
+        			    Variant v = variantsToNotify.next();
+        			    List<Notification> variantNotifications = variantIdToNotificationMap.get(v.getId());
+        			    log.info(String.format("%s Detected back-in-stock SKU: %s (Variant ID %s). Notification(s) to Send: %s", logTag, v.getSku(), v.getId(), variantNotifications.size()));
+        			    Iterator<Notification> toNotify = variantNotifications.iterator();
+        			    while(toNotify.hasNext()) {
+        			        Notification n = toNotify.next();
         			        // Tell API server to email the notification
         			        boolean sentSuccess = true;
         			        
         			        // If success, remove the notification from the list
         			        if(sentSuccess) {
-        			            nIterator.remove();
+        			            toNotify.remove();
         			            numSent++;
         			        } else {
         			            numFailed++;
@@ -168,13 +168,13 @@ public class Application {
         			    // If all notifications sent, remove the variant
         			    if(variantIdToNotificationMap.get(v.getId()).size() == 0) {
         			        log.info(String.format("%s Success: All notification(s) sent for SKU: %s (Variant ID %s).",logTag,v.getSku(), v.getId()));
-        			        bisvIterator.remove();
+        			        variantsToNotify.remove();
         			    } else {
-        			        log.info(String.format("%s Failure: Unsuccessfully sent %s notification(s:) ",logTag,toSend.size()));
+        			        log.info(String.format("%s Failure: Unsuccessfully sent %s notification(s:) ",logTag,variantNotifications.size()));
         			    }
         			}
 	            
-        			log.info(String.format("%s Current Status: %s Total Notification(s), %s Out of Stock, %s Sent, %s Failed to Send",logTag, allDownloadedNotifications.size(),allDownloadedNotifications.size()-numSent-numFailed,numSent,numFailed));
+        			log.info(String.format("%s Current Status: %s Total Notification(s), %s Out of Stock, %s Sent, %s Failed to Send",logTag, allNotifications.size(),allNotifications.size()-numSent-numFailed,numSent,numFailed));
         			
 			    /* 4. Sleep */
 			    Thread.sleep(sleepMs);
