@@ -110,7 +110,8 @@ public class Application {
 			/* Program Loop (Step 2, 3, 4) */
             long sleepMs = interval * 1000;
             Map<Integer,List<Notification>> variantIdToNotificationMap = new HashMap<Integer,List<Notification>>();
-            int numSent = 0;
+            int totalSent = 0;
+            int totalFails = 0;
             
             log.info(String.format("%s Beginning program loop", logTag));
 			while(true) {
@@ -149,40 +150,44 @@ public class Application {
 			    
         			/* 3. Send notifications */ 
 	            Iterator<Variant> variantsToNotify = inStock.iterator();
-	            int numFailed = 0;
         			while(variantsToNotify.hasNext()) {
         			    Variant v = variantsToNotify.next();
         			    List<Notification> variantNotifications = variantIdToNotificationMap.get(v.getId());
         			    log.info(String.format("%s Detected back-in-stock SKU: %s (Variant ID %s). Notification(s) to Send: %s", logTag, v.getSku(), v.getId(), variantNotifications.size()));
         			    Iterator<Notification> toNotify = variantNotifications.iterator();
+                    int numFailed = 0;
+                    int numSent = 0;
         			    while(toNotify.hasNext()) {
         			        Notification n = toNotify.next();
         			        // Tell API server to email the notification
-        			        boolean sentSuccess = true;
+        			        boolean sentSuccess = false;
         			        
         			        // If success, remove the notification from the list
         			        if(sentSuccess) {
         			            toNotify.remove();
         			            numSent++;
+        			            totalSent++;
         			        } else {
         			            numFailed++;
+        			            totalFails++;
         			        }
         			    }
-        			    // If all notifications sent, remove the variant
+        			    String result = String.format("%s Notification(s) Sent, %s Failed for SKU %s (Variant ID %s)", numSent, numFailed, v.getSku(), v.getId()); 
         			    if(variantIdToNotificationMap.get(v.getId()).size() == 0) {
-        			        log.info(String.format("%s Success: All notification(s) sent for SKU: %s (Variant ID %s).",logTag,v.getSku(), v.getId()));
+                        // If all notifications sent, remove the variant
+        			        log.info(String.format("%s Success: %s",logTag,result));
         			        variantIdToNotificationMap.remove(v.getId());
         			    } else {
-        			        log.info(String.format("%s Failure: Unsuccessfully sent %s notification(s:) ",logTag,variantNotifications.size()));
+        			        log.info(String.format("%s Failure: %s",logTag,result));
         			    }
         			}
 	            
-        			log.info(String.format("%s Current Status: %s Total Notification(s), %s Out of Stock, %s Sent, %s Failed to Send",logTag, allNotifications.size(),numOutOfStock,numSent,numFailed));
+        			log.info(String.format("%s Status: %s Total Notification(s), %s Out of Stock, %s Sent, %s Failed Send Attempts",logTag, allNotifications.size(),numOutOfStock,totalSent,totalFails));
         			
 			    /* 4. Sleep */
 			    Thread.sleep(sleepMs);
 			    
-        			/* 5. Poll for new notifications */
+        			/* 5. Get new notifications */
                 restTemplate.getInterceptors().add(notificationApiAuth);
                 url = String.format("%s?%s=%s",notificationApiUrl,notificationApiParamCreatedDate,lastUpdate.getTime());
                 notificationsResponse = restTemplate.exchange(url, HttpMethod.GET, null, NotificationWrapper.class);
