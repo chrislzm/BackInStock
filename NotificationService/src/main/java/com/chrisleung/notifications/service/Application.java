@@ -60,6 +60,8 @@ public class Application {
     private String shopifyPostfix;
     @Value("${my.notifications.log.tag}")
     private String logTag;
+    @Value("${my.notifications.log.verbose}")
+    private boolean logVerbose;
 
     @Value("${my.notifications.email.smtp.address}")
     private String emailServer;
@@ -288,8 +290,8 @@ public class Application {
 	        emailer.sendMail(email);
 	        success = true;
 	    } catch(Exception e) {
+	        if(logVerbose) e.printStackTrace();
 	    }
 	    return success;
-	    
 	}
 }
