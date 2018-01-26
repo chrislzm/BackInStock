@@ -1,5 +1,7 @@
 package com.chrisleung.notifications.service;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -67,7 +69,8 @@ public class Application {
     private String emailUsername;
     @Value("${my.notifications.email.smtp.password}")
     private String emailPassword;
-
+    @Value("${my.notifications.email.template}")
+    private String emailTemplatePath;
     @Value("${my.notifications.email.sender.name}")
     private String emailSenderName;
     @Value("${my.notifications.email.sender.address}")
@@ -86,7 +89,8 @@ public class Application {
     private BasicAuthorizationInterceptor shopifyApAuth;
     
     // For sending emails
-    Mailer mailer;
+    Mailer emailer;
+    String emailTemplate;
     
     private static final Logger log = LoggerFactory.getLogger(Application.class);
 
@@ -103,11 +107,12 @@ public class Application {
 	public CommandLineRunner run(RestTemplate restTemplate) throws Exception {
 		return args -> {
 		    
-		    /* 0. Email Server Setup */
-		    mailer = MailerBuilder
+		    /* 0. Email Setup */
+		    emailer = MailerBuilder
 		                .withSMTPServer(emailServer, emailPort, emailUsername, emailPassword)
 		                .withTransportStrategy(TransportStrategy.SMTPS)
 		                .buildMailer();
+		    emailTemplate = new String(Files.readAllBytes(Paths.get(emailTemplatePath)));
 		    
 		    /* 1. REST API Security Setup */
         	    notificationApiAuth = new BasicAuthorizationInterceptor(notificationApiUsername, notificationApiPassword); 
@@ -274,13 +279,13 @@ public class Application {
 	                    .to(emailTestName,emailTestAddress)
 	                    .from(emailSenderName, emailSenderAddress)
 	                    .withSubject(emailSubject)
-	                    .withPlainText("Hey Chris.")
+	                    .withHTMLText(emailTemplate)
 	                    .buildEmail();
 	    
         boolean success = false;
-	    if(!mailer.validate(email)) return false;
+	    if(!emailer.validate(email)) return false;
 	    try {
-	        mailer.sendMail(email);
+	        emailer.sendMail(email);
 	        success = true;
 	    } catch(Exception e) {
 	    }
