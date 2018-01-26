@@ -32,34 +32,24 @@ public class Application {
 
 	@Value("${my.notifications.restapi.username}")
 	private String notificationApiUsername;
-
 	@Value("${my.notifications.restapi.password}")
 	private String notificationApiPassword;
-	
 	@Value("${my.notifications.restapi.url}")
 	private String notificationApiUrl;
-
     @Value("${my.notifications.restapi.param.sent}")
     private String notificationApiParamSent;
-
     @Value("${my.notifications.restapi.param.createdDate}")
     private String notificationApiParamCreatedDate;
-
     @Value("${my.notifications.refresh}")
     private int interval;
-
     @Value("${my.notifications.shopifyapi.apikey}")
     private String shopifyApiKey;
-
     @Value("${my.notifications.shopifyapi.password}")
     private String shopifyPassword;
-   
     @Value("${my.notifications.shopifyapi.product.variant.url}")
     private String shopifyVariantUrl;
-
     @Value("${my.notifications.shopifyapi.product.variant.url.postfix}")
     private String shopifyVariantPostfix;
-    
     @Value("${my.notifications.log.tag}")
     private String logTag;
 
