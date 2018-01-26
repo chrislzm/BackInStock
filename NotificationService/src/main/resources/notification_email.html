@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
 <title>
-  {{ product.title }} is now available
+  {{product.title}} is now available
 </title>
 
 </head>
@@ -27,9 +27,6 @@
 </div>
       </td>
     </tr></table>
-    <table width="600" cellpadding="0" cellspacing="0" style="font-family:Helvetica, Arial, sans-serif;font-size:12px;color:#787878"><tr style="padding:0"><td valign="bottom" align="center" height="6" style="padding:0">
-          <img src="http://backinstock.info/images/email/stock_available/shadow_bottom.png" alt="" title="" width="600" height="6" border="0" style="display:block">
-    </td></tr></table>
 <table width="600" cellpadding="0" cellspacing="0" class="headertbl" bgcolor="#FFFFFF" style="font-family:Helvetica, Arial, sans-serif;font-size:12px;color:#787878;background-color:#FFFFFF; border-bottom:1px solid #DDD;"><tr style="padding:0">
 <td valign="top" align="center" style="padding:0">
         <table width="552" cellpadding="0" cellspacing="0" style="font-family:Helvetica, Arial, sans-serif;font-size:12px;color:#787878">
@@ -39,7 +36,7 @@
   <td valign="middle" align="left" style="padding:0">
     <div style="line-height:18px;color:#505050">
       <div style="line-height:18px;color:#505050;font-size:16px;letter-spacing:-1px;font-weight:bold">
-        <a href="http://{{shop.domain}}{{product.url}}?utm_source=inbox&utm_medium=email&utm_campaign=stocknotification" style="color:#505050;text-decoration: none;" target="_blank">{{product.title}} - {{ variant.title }}</a>
+        <a href="http://{{shop.domain}}/products/{{product.handle}}?utm_source=inbox&utm_medium=email&utm_campaign=stocknotification" style="color:#505050;text-decoration: none;" target="_blank">{{product.title}} - {{variant.title}}</a>
     </div></div>
     <div style="line-height:18px;color:#505050; font-weight:bold;">
       is available now from {{shop.name}}!
@@ -48,7 +45,7 @@
 
   <td width="24" style="padding:0">&nbsp;</td>
   <td valign="top" align="right" class="invert toc" style="padding:0">
-    <div style="line-height:18px;color:#505050"><a href="http://{{shop.domain}}{{product.url}}?utm_source=inbox&utm_medium=email&utm_campaign=stocknotification" target="_blank" style="line-height:18px;color:#505050;font-size:16px;letter-spacing:-1px;font-weight:bold;text-decoration:none;">
+    <div style="line-height:18px;color:#505050"><a href="http://{{shop.domain}}/products/{{product.handle}}?utm_source=inbox&utm_medium=email&utm_campaign=stocknotification" target="_blank" style="line-height:18px;color:#505050;font-size:16px;letter-spacing:-1px;font-weight:bold;text-decoration:none;">
         View now &rarr;
     </a></div>
   </td>
@@ -66,7 +63,7 @@
 <td valign="top" style="padding:0" align="center" >
   <!-- CONTENT start -->
   <a href="http://{{shop.domain}}{{product.url}}?utm_source=inbox&utm_medium=email&utm_campaign=stocknotification" target="_blank">
-    <img src="{{ product.images[0].src | product_img_url: 'grande' }}" alt="" title="" width="560"  border="0" style="max-width:560px;display:block"><!-- CONTENT end -->
+    <img src="{{product.image}}" alt="" title="" width="560"  border="0" style="max-width:560px;display:block"><!-- CONTENT end -->
   </a>
 </td>
     </tr></table>
@@ -78,10 +75,10 @@
     <td valign="top" align="left" style="padding:0">
       <!-- CONTENT start -->
       <div class="h" style="line-height:24px;color:#787878"><div style="line-height:24px;color:#505050;font-family:Helvetica,Arial,sans-serif;font-size:20px;letter-spacing:-1px;margin-bottom:16px;margin-top:4px">
-          {{ product.title }} is now available!
+          {{product.title}} is now available!
       </div></div>
       <div style="line-height:24px;color:#505050; font-size:14px;">
-        You asked us to tell you when {{ product.title }} - {{ variant.title }} would be available for ordering.  We are pleased to tell you it is now available!  Click below to view the artwork.
+        You asked us to tell you when {{product.title}} - {{variant.title}} would be available for ordering.  We are pleased to tell you it is now available!  Click below to view the artwork.
       </div>
       <div class="btn" style="line-height:24px;color:#787878;margin-top:10px;display:block;text-align: right;">
         <a target="_blank" href="http://{{shop.domain}}/products/{{product.handle}}?utm_source=inbox&utm_medium=email&utm_campaign=stocknotification" style="color:#689C5E;text-decoration:none;padding:2px 0px"><img src="http://cdn.shopify.com/s/files/1/0118/6582/files/view_now_btn.png" width="123" height="35" alt="View now" title="View now" border="0" style="display:inline"></a>
@@ -119,7 +116,6 @@
     </tr>
 <tr style="padding:0"><td height="24" style="padding:0">&nbsp;</td></tr>
 </table>
-<table width="600" cellpadding="0" cellspacing="0" style="font-family:Helvetica, Arial, sans-serif;font-size:12px;color:#787878"><tr style="padding:0"><td valign="top" align="center" height="48" style="padding:0"><img src="http://backinstock.info/images/email/stock_available/shadow_top.png" alt="" title="" width="600" height="12" border="0" style="display:block"></td></tr></table>
 <!--  Footer end -->
 </td>
 </tr></table>
