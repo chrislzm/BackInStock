@@ -20,7 +20,7 @@ Important: Be sure to update the following properties in src/main/resources/appl
 
 For more instructions on running the REST API as a service, or if you are having trouble executing the JAR file, see: https://docs.spring.io/spring-boot/docs/current/reference/html/deployment-install.html
 
-# RunniUng
+# Running
 
 Compile and run the application using `./gradlew bootRun`
 
