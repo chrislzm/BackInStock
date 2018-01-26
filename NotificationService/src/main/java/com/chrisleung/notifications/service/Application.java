@@ -149,9 +149,7 @@ public class Application {
     			        l.add(n);
                     numNew++;
 			    }
-			    if(numNew > 0)
-			        log.info(String.format("%s Fetched %s new notification(s)", logTag, numNew));
-			    
+
 			    /* 2b. Check inventory levels for variants that are back in stock */
                 int totalOutOfStock = 0; // For log output
                 List<Variant> inStock = new LinkedList<>();
@@ -208,8 +206,9 @@ public class Application {
         			}
 	            
         			/* 5. Log Output: Summary for this iteration */ 
-        			log.info(String.format("%s Status: %s Total Notification(s), %s Sent, %s Unsent (%s Failed/%s Out of Stock), %s Total Failed Attempts",
+        			log.info(String.format("%s Status: %s New Notification(s), %s Total, %s Sent, %s Unsent (%s Failed/%s Out of Stock), %s Total Failed Attempts",
         			        logTag,
+        			        numNew,
         			        allNotifications.size(),
         			        totalSent,
         			        allNotifications.size()-totalSent,
