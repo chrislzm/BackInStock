@@ -90,29 +90,34 @@ public class Application {
        	    NotificationWrapper notificationResponse = getAllUnsentNotifications(restTemplate); 
 			Iterable<Notification> newNotifications = notificationResponse.getNotifications();
 			Date lastUpdate = notificationResponse.getCurrentDate();
-			Set<String> allNotifications = new HashSet<>();
+			Set<String> allNotifications = new HashSet<>(); // For ignoring duplicates when updating
 			for(Notification n : newNotifications) {
 			    allNotifications.add(n.getId());
 			}
 			
-			/* Program Loop */
-            long sleepMs = interval * 1000;
-            Map<Integer,List<Notification>> variantIdToNotificationMap = new HashMap<Integer,List<Notification>>();
+			/* Setup for Program Loop */
+			
+			long sleepMs = interval * 1000;
+            // Maps a variant ID to a list of notifications for it
+            Map<Integer,List<Notification>> variantNotificationMap = new HashMap<Integer,List<Notification>>();
+            // Used for log output
             int totalSent = 0;
             int totalFails = 0;
             
+            /* Program Loop */
             log.info(String.format("%s Starting...", logTag));
-			while(true) {
+
+            while(true) {
 			    
         			/* 2. Detect notifications that have back-in-stock products */
+                int numNew = 0; // For log output
 			    
-			    /* 2a. Prep for batch API reads - One request per variant id  */
-			    int numNew = 0;
+			    /* 2a. Add new variants+notifications to variant-notification map */
 			    for(Notification n : newNotifications) {
-    			        List<Notification> l = variantIdToNotificationMap.get(n.getVariantId());
+    			        List<Notification> l = variantNotificationMap.get(n.getVariantId());
     			        if(l == null) {
     			            l = new LinkedList<>();
-    			            variantIdToNotificationMap.put(n.getVariantId(), l);
+    			            variantNotificationMap.put(n.getVariantId(), l);
     			        }
     			        l.add(n);
                     numNew++;
@@ -120,15 +125,15 @@ public class Application {
 			    if(numNew > 0)
 			        log.info(String.format("%s Fetched %s new notification(s)", logTag, numNew));
 			    
-			    /* 2b. Check Shopify inventory levels for back-in-stock variants */
-			    List<Variant> inStock = new LinkedList<>();
-			    int totalOutOfStock = 0;
-			    for(Integer variantId : variantIdToNotificationMap.keySet()) {
+			    /* 2b. Check inventory levels for variants that are back in stock */
+                int totalOutOfStock = 0; // For log output
+                List<Variant> inStock = new LinkedList<>();
+			    for(Integer variantId : variantNotificationMap.keySet()) {
 			        Variant v = getVariant(variantId, restTemplate);
                     if(v.getInventory_quantity() > 0) {
                         inStock.add(v);
                     } else {
-                        totalOutOfStock += variantIdToNotificationMap.get(variantId).size();
+                        totalOutOfStock += variantNotificationMap.get(variantId).size();
                     }
 			    }
 
@@ -136,15 +141,14 @@ public class Application {
 	            Iterator<Variant> variantsToNotify = inStock.iterator();
         			while(variantsToNotify.hasNext()) {
         			    Variant v = variantsToNotify.next();
-        			    List<Notification> variantNotifications = variantIdToNotificationMap.get(v.getId());
+        			    List<Notification> variantNotifications = variantNotificationMap.get(v.getId());
         			    Iterator<Notification> toNotify = variantNotifications.iterator();
                     int numFailed = 0;
                     int numSent = 0;
         			    while(toNotify.hasNext()) {
         			        Notification n = toNotify.next();
-        			        // Tell API server to email the notification
-        			        boolean sentSuccess = false;
-        			        
+        			        // Email the notification
+        			        boolean sentSuccess = sendNotification(n);
         			        // If success, remove the notification from the list
         			        if(sentSuccess) {
         			            toNotify.remove();
@@ -154,17 +158,20 @@ public class Application {
         			            numFailed++;
         			        }
         			    }
+        			    
+        			    // Log output: Summary for this variant
         			    String result = String.format("%s Notification(s) Sent, %s Failed for SKU %s (Variant ID %s)", numSent, numFailed, v.getSku(), v.getId()); 
-        			    if(variantIdToNotificationMap.get(v.getId()).size() == 0) {
+        			    if(variantNotificationMap.get(v.getId()).size() == 0) {
                         // If all notifications sent, remove the variant
         			        log.info(String.format("%s Success: %s",logTag,result));
-        			        variantIdToNotificationMap.remove(v.getId());
+        			        variantNotificationMap.remove(v.getId());
         			    } else {
         			        log.info(String.format("%s Failure: %s",logTag,result));
         			        totalFails++;
         			    }
         			}
 	            
+        			/* 4. Log Output: Summary for this iteration */ 
         			log.info(String.format("%s Status: %s Total Notification(s), %s Sent, %s Unsent (%s Failed/%s Out of Stock), %s Total Failed Attempts",
         			        logTag,
         			        allNotifications.size(),
@@ -177,10 +184,10 @@ public class Application {
 			    /* 4. Sleep */
 			    Thread.sleep(sleepMs);
 			    
-        			/* 5. Get new notifications */
+        			/* 5. Fetch new notifications */
 			    notificationResponse = getNewNotificationsSince(lastUpdate,restTemplate);
                 newNotifications = notificationResponse.getNotifications();
-                lastUpdate = notificationResponse.getCurrentDate();
+                // Remove any duplicates
                 Iterator<Notification> newNotificationsIterator = newNotifications.iterator();
                 while(newNotificationsIterator.hasNext()) {
                     Notification n = newNotificationsIterator.next();
@@ -189,6 +196,7 @@ public class Application {
                     else 
                         allNotifications.add(n.toString());
                 }
+                lastUpdate = notificationResponse.getCurrentDate();
 			}			
 		};
 	}
@@ -216,5 +224,9 @@ public class Application {
         ResponseEntity<VariantWrapper> shopifyResponse = restTemplate.exchange(url, HttpMethod.GET, null, VariantWrapper.class);
         restTemplate.getInterceptors().remove(0);
         return shopifyResponse.getBody().getVariant();
+	}
+	
+	private boolean sendNotification(Notification n) {
+	    return true;
 	}
 }
