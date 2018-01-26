@@ -9,6 +9,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.simplejavamail.email.Email;
+import org.simplejavamail.email.EmailBuilder;
+import org.simplejavamail.mailer.Mailer;
+import org.simplejavamail.mailer.MailerBuilder;
+import org.simplejavamail.mailer.config.TransportStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -54,9 +59,34 @@ public class Application {
     @Value("${my.notifications.log.tag}")
     private String logTag;
 
+    @Value("${my.notifications.email.smtp.address}")
+    private String emailServer;
+    @Value("${my.notifications.email.smtp.port}")
+    private int emailPort;
+    @Value("${my.notifications.email.smtp.username}")
+    private String emailUsername;
+    @Value("${my.notifications.email.smtp.password}")
+    private String emailPassword;
+
+    @Value("${my.notifications.email.sender.name}")
+    private String emailSenderName;
+    @Value("${my.notifications.email.sender.address}")
+    private String emailSenderAddress;
+    @Value("${my.notifications.email.subject}")
+    private String emailSubject;
+
+    @Value("${my.notifications.email.test.address}")
+    private String emailTestAddress;
+    @Value("${my.notifications.email.test.name}")
+    private String emailTestName;
+
+    
     // Username+Password Authentication
     private BasicAuthorizationInterceptor notificationApiAuth;
     private BasicAuthorizationInterceptor shopifyApAuth;
+    
+    // For sending emails
+    Mailer mailer;
     
     private static final Logger log = LoggerFactory.getLogger(Application.class);
 
@@ -73,7 +103,13 @@ public class Application {
 	public CommandLineRunner run(RestTemplate restTemplate) throws Exception {
 		return args -> {
 		    
-		    /* 1. Security Setup */
+		    /* 0. Email Server Setup */
+		    mailer = MailerBuilder
+		                .withSMTPServer(emailServer, emailPort, emailUsername, emailPassword)
+		                .withTransportStrategy(TransportStrategy.SMTPS)
+		                .buildMailer();
+		    
+		    /* 1. REST API Security Setup */
         	    notificationApiAuth = new BasicAuthorizationInterceptor(notificationApiUsername, notificationApiPassword); 
        	    shopifyApAuth = new BasicAuthorizationInterceptor(shopifyApiKey, shopifyPassword);
 
@@ -133,15 +169,12 @@ public class Application {
 			    for(Variant v : inStock) {
 			        variantProductMap.put(v, getProduct(v,restTemplate));
 			    }
-			    // TODO: Remove this test
-			    for(Product p : variantProductMap.values()) {
-			        log.info(p.toString());
-			    }
 			    
 			    /* 4. Send the notifications */
 	            Iterator<Variant> variantsToNotify = inStock.iterator();
         			while(variantsToNotify.hasNext()) {
         			    Variant v = variantsToNotify.next();
+        			    Product p = variantProductMap.get(v);
         			    List<Notification> variantNotifications = variantNotificationMap.get(v.getId());
         			    Iterator<Notification> toNotify = variantNotifications.iterator();
                     int numFailed = 0;
@@ -149,7 +182,7 @@ public class Application {
         			    while(toNotify.hasNext()) {
         			        Notification n = toNotify.next();
         			        // Email the notification
-        			        boolean sentSuccess = sendNotification(n);
+        			        boolean sentSuccess = sendNotification(n,p,v);
         			        // If success, remove the notification from the list
         			        if(sentSuccess) {
         			            toNotify.remove();
@@ -160,6 +193,7 @@ public class Application {
         			        }
         			    }
         			    
+        			    /* TODO: This section should be enabled for verbose logging output
         			    // Log output: Summary for this variant
         			    String result = String.format("%s Notification(s) Sent, %s Failed for SKU %s (Variant ID %s)", numSent, numFailed, v.getSku(), v.getId()); 
         			    if(variantNotificationMap.get(v.getId()).size() == 0) {
@@ -170,6 +204,7 @@ public class Application {
         			        log.info(String.format("%s Failure: %s",logTag,result));
         			        totalFails++;
         			    }
+        			    */
         			}
 	            
         			/* 5. Log Output: Summary for this iteration */ 
@@ -235,7 +270,22 @@ public class Application {
         return shopifyResponse.getBody().getProduct();
 	}
 	
-	private boolean sendNotification(Notification n) {
-	    return true;
+	private boolean sendNotification(Notification n, Product p, Variant v) {
+	    Email email = EmailBuilder.startingBlank()
+	                    .to(emailTestName,emailTestAddress)
+	                    .from(emailSenderName, emailSenderAddress)
+	                    .withSubject(emailSubject)
+	                    .withPlainText("Hey Chris.")
+	                    .buildEmail();
+	    
+        boolean success = false;
+	    if(!mailer.validate(email)) return false;
+	    try {
+	        mailer.sendMail(email);
+	        success = true;
+	    } catch(Exception e) {
+	    }
+	    return success;
+	    
 	}
 }
