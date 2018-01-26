@@ -24,8 +24,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.chrisleung.notifications.objects.Notification;
 import com.chrisleung.notifications.objects.NotificationWrapper;
-import com.shopify.api.Variant;
-import com.shopify.api.VariantWrapper;
+import com.shopify.api.*;
 
 @SpringBootApplication
 public class Application {
@@ -48,8 +47,10 @@ public class Application {
     private String shopifyPassword;
     @Value("${my.notifications.shopifyapi.product.variant.url}")
     private String shopifyVariantUrl;
-    @Value("${my.notifications.shopifyapi.product.variant.url.postfix}")
-    private String shopifyVariantPostfix;
+    @Value("${my.notifications.shopifyapi.product.url}")
+    private String shopifyProductUrl;
+    @Value("${my.notifications.shopifyapi.postfix}")
+    private String shopifyPostfix;
     @Value("${my.notifications.log.tag}")
     private String logTag;
 
@@ -127,7 +128,17 @@ public class Application {
                     }
 			    }
 
-        			/* 3. Send notifications */ 
+        			/* 3. Populate product information for back in stock variants */ 
+			    Map<Variant,Product> variantProductMap = new HashMap<>();
+			    for(Variant v : inStock) {
+			        variantProductMap.put(v, getProduct(v,restTemplate));
+			    }
+			    // TODO: Remove this test
+			    for(Product p : variantProductMap.values()) {
+			        log.info(p.toString());
+			    }
+			    
+			    /* 4. Send the notifications */
 	            Iterator<Variant> variantsToNotify = inStock.iterator();
         			while(variantsToNotify.hasNext()) {
         			    Variant v = variantsToNotify.next();
@@ -161,7 +172,7 @@ public class Application {
         			    }
         			}
 	            
-        			/* 4. Log Output: Summary for this iteration */ 
+        			/* 5. Log Output: Summary for this iteration */ 
         			log.info(String.format("%s Status: %s Total Notification(s), %s Sent, %s Unsent (%s Failed/%s Out of Stock), %s Total Failed Attempts",
         			        logTag,
         			        allNotifications.size(),
@@ -171,10 +182,10 @@ public class Application {
         			        totalOutOfStock,
         			        totalFails));
         			
-			    /* 4. Sleep */
+			    /* 6. Sleep */
 			    Thread.sleep(sleepMs);
 			    
-        			/* 5. Fetch new notifications */
+        			/* 7. Fetch new notifications */
 			    notificationResponse = getNewNotificationsSince(lastUpdate,restTemplate);
                 newNotifications = notificationResponse.getNotifications();
                 // Remove any duplicates
@@ -210,10 +221,18 @@ public class Application {
 	
 	private Variant getVariant(int variantId, RestTemplate restTemplate) {
         restTemplate.getInterceptors().add(shopifyApAuth);
-        String url = String.format("%s%s%s",shopifyVariantUrl,variantId,shopifyVariantPostfix);
+        String url = String.format("%s%s%s",shopifyVariantUrl,variantId,shopifyPostfix);
         ResponseEntity<VariantWrapper> shopifyResponse = restTemplate.exchange(url, HttpMethod.GET, null, VariantWrapper.class);
         restTemplate.getInterceptors().remove(0);
         return shopifyResponse.getBody().getVariant();
+	}
+	
+	private Product getProduct(Variant v, RestTemplate restTemplate) {
+        restTemplate.getInterceptors().add(shopifyApAuth);
+        String url = String.format("%s%s%s",shopifyProductUrl,v.getProduct_id(),shopifyPostfix);
+        ResponseEntity<ProductWrapper> shopifyResponse = restTemplate.exchange(url, HttpMethod.GET, null, ProductWrapper.class);
+        restTemplate.getInterceptors().remove(0);
+        return shopifyResponse.getBody().getProduct();
 	}
 	
 	private boolean sendNotification(Notification n) {
