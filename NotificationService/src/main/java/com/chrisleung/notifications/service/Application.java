@@ -198,18 +198,18 @@ public class Application {
         			        }
         			    }
         			    
-        			    /* TODO: This section should be enabled for verbose logging output
         			    // Log output: Summary for this variant
-        			    String result = String.format("%s Notification(s) Sent, %s Failed for SKU %s (Variant ID %s)", numSent, numFailed, v.getSku(), v.getId()); 
-        			    if(variantNotificationMap.get(v.getId()).size() == 0) {
-                        // If all notifications sent, remove the variant
-        			        log.info(String.format("%s Success: %s",logTag,result));
-        			        variantNotificationMap.remove(v.getId());
-        			    } else {
-        			        log.info(String.format("%s Failure: %s",logTag,result));
-        			        totalFails++;
+        			    if(logVerbose) {
+            			    String result = String.format("%s Notification(s) Sent, %s Failed for SKU %s (Variant ID %s)", numSent, numFailed, v.getSku(), v.getId()); 
+            			    if(variantNotificationMap.get(v.getId()).size() == 0) {
+                            // If all notifications sent, remove the variant
+            			        log.info(String.format("%s Success: %s",logTag,result));
+            			        variantNotificationMap.remove(v.getId());
+            			    } else {
+            			        log.info(String.format("%s Failure: %s",logTag,result));
+            			        totalFails++;
+            			    }
         			    }
-        			    */
         			}
 	            
         			/* 5. Log Output: Summary for this iteration */ 
