@@ -114,25 +114,24 @@ public class Application {
 		                .buildMailer();
 		    emailTemplate = new String(Files.readAllBytes(Paths.get(emailTemplatePath)));
 		    
-		    /* 1. REST API Security Setup */
+		    /* 1. REST APIs Security Setup */
         	    notificationApiAuth = new BasicAuthorizationInterceptor(notificationApiUsername, notificationApiPassword); 
        	    shopifyApAuth = new BasicAuthorizationInterceptor(shopifyApiKey, shopifyPassword);
 
-        	    /* 2. Retrieve unsent notifications from Notifications REST API */
+        	    /* 2. Retrieve unsent notifications from the Stock Notifications REST API */
        	    NotificationWrapper notificationResponse = getAllUnsentNotifications(restTemplate); 
 			Iterable<Notification> newNotifications = notificationResponse.getNotifications();
 			Date lastUpdate = notificationResponse.getCurrentDate();
-			Set<String> allNotifications = new HashSet<>(); // For ignoring duplicates when updating
+			Set<String> allNotifications = new HashSet<>(); // Used to detect duplicates when updating
 			for(Notification n : newNotifications) {
 			    allNotifications.add(n.getId());
 			}
 			
-			/* Setup for Program Loop */
-			
+			/* Program Loop Setup */
 			long sleepMs = interval * 1000;
-            // Maps a variant ID to a list of notifications for it
+            // The main data structure: variant-ID to notifications map
             Map<Integer,List<Notification>> variantNotificationMap = new HashMap<Integer,List<Notification>>();
-            // Used for log output
+            // Used to accumulate stats for log output
             int totalSent = 0;
             int totalFails = 0;
             
@@ -142,9 +141,9 @@ public class Application {
             while(true) {
 			    
         			/* 2. Detect notifications that have back-in-stock products */
-                int numNew = 0; // For log output
+                int numNew = 0; // For this iteration's log output
 			    
-			    /* 2a. Add new variants+notifications to variant-notification map */
+			    /* 2a. Add new notifications to the variant ID-notification map */
 			    for(Notification n : newNotifications) {
     			        List<Notification> l = variantNotificationMap.get(n.getVariantId());
     			        if(l == null) {
@@ -155,42 +154,42 @@ public class Application {
                     numNew++;
 			    }
 
-			    /* 2b. Check inventory levels for variants that are back in stock */
-                int totalOutOfStock = 0; // For log output
+			    /* 2b. Detect variants that are back in stock */
+                int numOutOfStock = 0; // For this iteration's log output
                 List<Variant> inStock = new LinkedList<>();
 			    for(Integer variantId : variantNotificationMap.keySet()) {
 			        Variant v = getVariant(variantId, restTemplate);
                     if(v.getInventory_quantity() > 0) {
                         inStock.add(v);
                     } else {
-                        totalOutOfStock += variantNotificationMap.get(variantId).size();
+                        numOutOfStock += variantNotificationMap.get(variantId).size();
                     }
 			    }
 
-        			/* 3. Populate product information for back in stock variants */ 
+        			/* 3. Download product data for back in stock variants */ 
 			    Map<Variant,Product> variantProductMap = new HashMap<>();
 			    for(Variant v : inStock) {
 			        variantProductMap.put(v, getProduct(v,restTemplate));
 			    }
 			    
-			    /* 4. Send the notifications */
+			    /* 4. Send notifications for all back in stock variants */
 	            Iterator<Variant> variantsToNotify = inStock.iterator();
         			while(variantsToNotify.hasNext()) {
         			    Variant v = variantsToNotify.next();
         			    Product p = variantProductMap.get(v);
         			    List<Notification> variantNotifications = variantNotificationMap.get(v.getId());
         			    Iterator<Notification> toNotify = variantNotifications.iterator();
-                    int numFailed = 0;
-                    int numSent = 0;
+                    int numFailed = 0, numSent = 0; // For verbose log output
         			    while(toNotify.hasNext()) {
         			        Notification n = toNotify.next();
-        			        // Email the notification
+        			        // Try to email the notification
         			        boolean sentSuccess = sendNotification(n,p,v);
-        			        // If success, remove the notification from the list
         			        if(sentSuccess) {
         			            toNotify.remove();
         			            numSent++;
         			            totalSent++;
+        			            // Update the Stock Notifications REST API that we have sent the notification
+        			            // TODO: Handle failure
         			        } else {
         			            numFailed++;
         			        }
@@ -200,8 +199,8 @@ public class Application {
         			    if(logVerbose) {
             			    String result = String.format("%s Notification(s) Sent, %s Failed for SKU %s (Variant ID %s)", numSent, numFailed, v.getSku(), v.getId()); 
             			    if(variantNotificationMap.get(v.getId()).size() == 0) {
-                            // If all notifications sent, remove the variant
             			        log.info(String.format("%s Success: %s",logTag,result));
+            			        // If all notifications sent, remove the variant for the variant-notification map
             			        variantNotificationMap.remove(v.getId());
             			    } else {
             			        log.info(String.format("%s Failure: %s",logTag,result));
@@ -217,8 +216,8 @@ public class Application {
         			        allNotifications.size(),
         			        totalSent,
         			        allNotifications.size()-totalSent,
-        			        allNotifications.size()-totalSent-totalOutOfStock,
-        			        totalOutOfStock,
+        			        allNotifications.size()-totalSent-numOutOfStock,
+        			        numOutOfStock,
         			        totalFails));
         			
 			    /* 6. Sleep */
