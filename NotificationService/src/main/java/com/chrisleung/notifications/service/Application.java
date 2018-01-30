@@ -139,11 +139,9 @@ public class Application {
             log.info(String.format("%s Starting...", logTag));
 
             while(true) {
-			    
-        			/* 2. Detect notifications that have back-in-stock products */
+
+                /* 3. Add new notifications to the variant ID-notification map */
                 int numNew = 0; // For this iteration's log output
-			    
-			    /* 2a. Add new notifications to the variant ID-notification map */
 			    for(Notification n : newNotifications) {
     			        List<Notification> l = variantNotificationMap.get(n.getVariantId());
     			        if(l == null) {
@@ -154,7 +152,7 @@ public class Application {
                     numNew++;
 			    }
 
-			    /* 2b. Detect variants that are back in stock */
+			    /* 4. Detect variants that are back in stock */
                 int numOutOfStock = 0; // For this iteration's log output
                 List<Variant> inStock = new LinkedList<>();
 			    for(Integer variantId : variantNotificationMap.keySet()) {
@@ -166,13 +164,13 @@ public class Application {
                     }
 			    }
 
-        			/* 3. Download product data for back in stock variants */ 
+        			/* 5. Download product data for back in stock variants */ 
 			    Map<Variant,Product> variantProductMap = new HashMap<>();
 			    for(Variant v : inStock) {
 			        variantProductMap.put(v, getProduct(v,restTemplate));
 			    }
 			    
-			    /* 4. Send notifications for all back in stock variants */
+			    /* 6. Send notifications for all back in stock variants */
 	            Iterator<Variant> variantsToNotify = inStock.iterator();
         			while(variantsToNotify.hasNext()) {
         			    Variant v = variantsToNotify.next();
@@ -182,13 +180,13 @@ public class Application {
                     int numFailed = 0, numSent = 0; // For verbose log output
         			    while(toNotify.hasNext()) {
         			        Notification n = toNotify.next();
-        			        // Try to email the notification
+        			        /* 6a. Try to email the notification */
         			        boolean sentSuccess = sendNotification(n,p,v);
         			        if(sentSuccess) {
         			            toNotify.remove();
         			            numSent++;
         			            totalSent++;
-        			            // Update the Stock Notifications REST API that we have sent the notification
+        			            /* 6b. Update the Stock Notifications REST API that we have sent the notification */
         			            // TODO: Handle failure
         			        } else {
         			            numFailed++;
@@ -209,7 +207,7 @@ public class Application {
         			    }
         			}
 	            
-        			/* 5. Log Output: Summary for this iteration */ 
+        			/* 7. Log Output: Summary for this iteration */ 
         			log.info(String.format("%s Status: %s New Notification(s), %s Total, %s Sent, %s Unsent (%s Failed/%s Out of Stock), %s Total Failed Attempts",
         			        logTag,
         			        numNew,
@@ -220,10 +218,10 @@ public class Application {
         			        numOutOfStock,
         			        totalFails));
         			
-			    /* 6. Sleep */
+			    /* 8. Sleep */
 			    Thread.sleep(sleepMs);
 			    
-        			/* 7. Fetch new notifications */
+        			/* 9. Fetch new notifications */
 			    notificationResponse = getNewNotificationsSince(lastUpdate,restTemplate);
                 newNotifications = notificationResponse.getNotifications();
                 // Remove any duplicates
