@@ -84,11 +84,11 @@ public class Application {
     @Value("${my.notifications.email.shop.domain}")
     private String emailShopDomain;
     
-    // Username+Password Authentication
+    // REST API Username+Password Authentication
     private BasicAuthorizationInterceptor notificationApiAuth;
     private BasicAuthorizationInterceptor shopifyApAuth;
     
-    // For sending emails
+    // For sending email
     Mailer emailer;
     String emailTemplate;
     
@@ -131,9 +131,7 @@ public class Application {
 			long sleepMs = interval * 1000;
             // The main data structure: variant-ID to notifications map
             Map<Integer,List<Notification>> variantNotificationMap = new HashMap<Integer,List<Notification>>();
-            // Used to accumulate stats for log output
-            int totalSent = 0;
-            int totalFails = 0;
+            int totalSent = 0, totalFails = 0; // For log output
             
             /* Program Loop */
             log.info(String.format("%s Starting...", logTag));
@@ -141,7 +139,7 @@ public class Application {
             while(true) {
 
                 /* 3. Add new notifications to the variant ID-notification map */
-                int numNew = 0; // For this iteration's log output
+                int numNew = 0; // For current iteration's log output
 			    for(Notification n : newNotifications) {
     			        List<Notification> l = variantNotificationMap.get(n.getVariantId());
     			        if(l == null) {
@@ -153,7 +151,7 @@ public class Application {
 			    }
 
 			    /* 4. Detect variants that are back in stock */
-                int numOutOfStock = 0; // For this iteration's log output
+                int numOutOfStock = 0; // For current iteration's log output
                 List<Variant> inStock = new LinkedList<>();
 			    for(Integer variantId : variantNotificationMap.keySet()) {
 			        Variant v = getVariant(variantId, restTemplate);
@@ -180,7 +178,7 @@ public class Application {
                     int numFailed = 0, numSent = 0; // For verbose log output
         			    while(toNotify.hasNext()) {
         			        Notification n = toNotify.next();
-        			        /* 6a. Try to email the notification */
+        			        /* 6a. Attempt to email the notification */
         			        boolean sentSuccess = sendNotification(n,p,v);
         			        if(sentSuccess) {
         			            toNotify.remove();
