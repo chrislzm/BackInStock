@@ -71,14 +71,18 @@ public class Application {
     private String emailUsername;
     @Value("${my.notifications.email.smtp.password}")
     private String emailPassword;
-    @Value("${my.notifications.email.template}")
+    @Value("${my.notifications.email.template.path}")
     private String emailTemplatePath;
     @Value("${my.notifications.email.sender.name}")
     private String emailSenderName;
     @Value("${my.notifications.email.sender.address}")
     private String emailSenderAddress;
-    @Value("${my.notifications.email.subject}")
-    private String emailSubject;
+    @Value("${my.notifications.email.subject.template}")
+    private String emailSubjectTemplate;
+    @Value("${my.notifications.email.shop.name}")
+    private String emailShopName;
+    @Value("${my.notifications.email.shop.domain}")
+    private String emailShopDomain;
 
     @Value("${my.notifications.email.test.address}")
     private String emailTestAddress;
@@ -277,11 +281,26 @@ public class Application {
 	}
 	
 	private boolean sendNotification(Notification n, Product p, Variant v) {
+	    
+	    String imageUrl = p.getImages()[0].getSrc();
+	    String emailImageUrl = imageUrl.substring(0, imageUrl.indexOf(".jpg")) + "_560x.jpg";
+	    String emailSubject = emailSubjectTemplate
+	                            .replace("{{shop.name}}", emailShopName)
+	                            .replace("{{product.title}}", p.getTitle());
+	    
+	    String emailBody = emailTemplate
+	                            .replace("{{shop.domain}}", emailShopDomain)
+	                            .replace("{{product.handle}}", p.getHandle())
+	                            .replace("{{product.title}}", p.getTitle())
+	                            .replace("{{variant.title}}", v.getTitle())
+	                            .replace("{{shop.name}}", emailShopName)
+	                            .replace("{{product.image}}", emailImageUrl);
+	                            
 	    Email email = EmailBuilder.startingBlank()
-	                    .to(emailTestName,emailTestAddress)
+	                    .to(n.getEmail())
 	                    .from(emailSenderName, emailSenderAddress)
 	                    .withSubject(emailSubject)
-	                    .withHTMLText(emailTemplate)
+	                    .withHTMLText(emailBody)
 	                    .buildEmail();
 	    
         boolean success = false;
