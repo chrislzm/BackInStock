@@ -193,21 +193,20 @@ public class Application {
         			        }
         			    }
         			    
-        			    // Log output: Summary for this variant
+        			    // 6c: Remove variants from variant-notification map if all of its notifications have been sent
+        			    String result; // For log output
+        			    if(variantNotificationMap.get(v.getId()).size() == 0) {
+        			        variantNotificationMap.remove(v.getId());
+        			        result = "Success"; // For log output
+        			    } else {
+        			        totalFails++; result = "Failure"; // For Log output
+        			    }
         			    if(logVerbose) {
-            			    String result = String.format("%s Notification(s) Sent, %s Failed for SKU %s (Variant ID %s)", numSent, numFailed, v.getSku(), v.getId()); 
-            			    if(variantNotificationMap.get(v.getId()).size() == 0) {
-            			        log.info(String.format("%s Success: %s",logTag,result));
-            			        // If all notifications sent, remove the variant for the variant-notification map
-            			        variantNotificationMap.remove(v.getId());
-            			    } else {
-            			        log.info(String.format("%s Failure: %s",logTag,result));
-            			        totalFails++;
-            			    }
+        			        log.info(String.format("%s %s: %s Notification(s) Sent, %s Failed for SKU %s (Variant ID %s)",logTag,result,numSent, numFailed, v.getSku(), v.getId()));
         			    }
         			}
 	            
-        			/* 7. Log Output: Summary for this iteration */ 
+        			/* 7. Standard Log Output: Summary for this iteration */ 
         			log.info(String.format("%s Status: %s New Notification(s), %s Total, %s Sent, %s Unsent (%s Failed/%s Out of Stock), %s Total Failed Attempts",
         			        logTag,
         			        numNew,
@@ -224,10 +223,10 @@ public class Application {
         			/* 9. Fetch new notifications */
 			    notificationResponse = getNewNotificationsSince(lastUpdate,restTemplate);
                 newNotifications = notificationResponse.getNotifications();
-                // Remove any duplicates
                 Iterator<Notification> newNotificationsIterator = newNotifications.iterator();
                 while(newNotificationsIterator.hasNext()) {
                     Notification n = newNotificationsIterator.next();
+                    // Handle duplicates
                     if(allNotifications.contains(n.toString()))
                         newNotificationsIterator.remove();
                     else 
