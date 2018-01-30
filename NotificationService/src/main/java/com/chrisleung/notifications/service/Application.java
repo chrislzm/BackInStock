@@ -83,12 +83,6 @@ public class Application {
     private String emailShopName;
     @Value("${my.notifications.email.shop.domain}")
     private String emailShopDomain;
-
-    @Value("${my.notifications.email.test.address}")
-    private String emailTestAddress;
-    @Value("${my.notifications.email.test.name}")
-    private String emailTestName;
-
     
     // Username+Password Authentication
     private BasicAuthorizationInterceptor notificationApiAuth;
