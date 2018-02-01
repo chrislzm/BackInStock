@@ -168,7 +168,7 @@ public class Application {
 			        variantProductMap.put(v, getProduct(v,restTemplate));
 			    }
 			    
-			    /* 6. Send notifications for all back in stock variants */
+			    /* 6. Send email notifications for all back in stock variants */
 	            Iterator<Variant> variantsToNotify = inStock.iterator();
         			while(variantsToNotify.hasNext()) {
         			    Variant v = variantsToNotify.next();
@@ -179,7 +179,7 @@ public class Application {
         			    while(toNotify.hasNext()) {
         			        Notification n = toNotify.next();
         			        /* 6a. Attempt to email the notification */
-        			        boolean sentSuccess = sendNotification(n,p,v);
+        			        boolean sentSuccess = sendEmailNotification(n,p,v);
         			        if(sentSuccess) {
         			            toNotify.remove();
         			            numSent++;
@@ -191,7 +191,7 @@ public class Application {
         			        }
         			    }
         			    
-        			    // 6c: Remove variants from variant-notification map if all of its notifications have been sent
+        			    /* 6c: Remove variants from variant-notification map if all of its notifications have been sent */
         			    String result; // For log output
         			    if(variantNotificationMap.get(v.getId()).size() == 0) {
         			        variantNotificationMap.remove(v.getId());
@@ -268,7 +268,7 @@ public class Application {
         return shopifyResponse.getBody().getProduct();
 	}
 	
-	private boolean sendNotification(Notification n, Product p, Variant v) {
+	private boolean sendEmailNotification(Notification n, Product p, Variant v) {
 	    
 	    String imageUrl = p.getImages()[0].getSrc();
 	    String emailImageUrl = imageUrl.substring(0, imageUrl.indexOf(".jpg")) + "_560x.jpg";
