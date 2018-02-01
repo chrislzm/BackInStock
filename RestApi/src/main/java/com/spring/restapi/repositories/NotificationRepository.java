@@ -21,7 +21,7 @@ public interface NotificationRepository extends CrudRepository<Notification, Str
     @Override
     void delete(Notification deleted);
     
-    List<Notification> findByEmailAndVariantId(String email, Integer variantId);
+    List<Notification> findByEmailAndVariantIdAndSentFalse(String email, Integer variantId);
     
     List<Notification> findBySentTrue();
     List<Notification> findBySentFalse();
