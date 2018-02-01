@@ -185,7 +185,9 @@ public class Application {
         			            numSent++;
         			            totalSent++;
         			            /* 6b. Update the Stock Notifications REST API that we have sent the notification */
-        			            // TODO: Handle failure
+        			            n.setIsSent(true);
+        			            n.setSentDate(new Date());
+        			            updateNotification(n,restTemplate);
         			        } else {
         			            numFailed++;
         			        }
@@ -250,6 +252,13 @@ public class Application {
         ResponseEntity<NotificationWrapper> response = restTemplate.exchange(url, HttpMethod.GET, null, NotificationWrapper.class);
         restTemplate.getInterceptors().remove(0);
         return response.getBody();
+	}
+	
+	private void updateNotification(Notification n, RestTemplate restTemplate) {
+        restTemplate.getInterceptors().add(notificationApiAuth);
+        String url = String.format("%s/%s",notificationApiUrl,n.getId());
+        restTemplate.put(url, n);
+        restTemplate.getInterceptors().remove(0);
 	}
 	
 	private Variant getVariant(int variantId, RestTemplate restTemplate) {
