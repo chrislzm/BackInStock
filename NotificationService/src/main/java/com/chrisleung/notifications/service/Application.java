@@ -99,17 +99,15 @@ public class Application {
 	@Bean
 	public CommandLineRunner run(RestTemplate restTemplate) throws Exception {
 		return args -> {
-		    
-		    /* 0. Email Setup */
-		    emailer = MailerBuilder
-		                .withSMTPServer(emailServer, emailPort, emailUsername, emailPassword)
-		                .withTransportStrategy(TransportStrategy.SMTPS)
-		                .buildMailer();
-		    emailTemplate = new String(Files.readAllBytes(Paths.get(emailTemplatePath)));
-		    
+		    		    
 		    /* 1. API Setup */
             NotificationsApi notificationsApi = new NotificationsApi(restTemplate, notificationsApiUsername, notificationsApiPassword, notificationsApiUrl, notificationsApiParamSent, notificationsApiParamCreatedDate); 
        	    ShopifyApi shopifyApi= new ShopifyApi(restTemplate, shopifyApiKey, shopifyPassword, shopifyVariantUrl, shopifyProductUrl, shopifyPostfix);
+            emailer = MailerBuilder
+                    .withSMTPServer(emailServer, emailPort, emailUsername, emailPassword)
+                    .withTransportStrategy(TransportStrategy.SMTPS)
+                    .buildMailer();
+            emailTemplate = new String(Files.readAllBytes(Paths.get(emailTemplatePath)));
 
         	    /* 2. Retrieve unsent notifications from the Stock Notifications REST API */
        	    NotificationWrapper notificationResponse = notificationsApi.getAllUnsentNotifications(); 
