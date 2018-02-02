@@ -20,6 +20,7 @@ public class NotificationsApi {
     
     NotificationsApi(RestTemplate rt, String username, String password, String url, String ps, String pcd) {
         restTemplate = rt;
+        auth = new BasicAuthorizationInterceptor(username, password); 
         baseUrl = url;
         paramSent = ps;
         paramCreatedDate = pcd;
