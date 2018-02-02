@@ -86,7 +86,6 @@ public class Application {
     
     // REST API Username+Password Authentication
     private BasicAuthorizationInterceptor notificationApiAuth;
-    private BasicAuthorizationInterceptor shopifyApAuth;
     
     // For sending email
     Mailer emailer;
@@ -114,9 +113,9 @@ public class Application {
 		                .buildMailer();
 		    emailTemplate = new String(Files.readAllBytes(Paths.get(emailTemplatePath)));
 		    
-		    /* 1. REST APIs Security Setup */
-        	    notificationApiAuth = new BasicAuthorizationInterceptor(notificationApiUsername, notificationApiPassword); 
-       	    shopifyApAuth = new BasicAuthorizationInterceptor(shopifyApiKey, shopifyPassword);
+		    /* 1. API Setup */
+            notificationApiAuth = new BasicAuthorizationInterceptor(notificationApiUsername, notificationApiPassword); 
+       	    ShopifyApi shopifyApi= new ShopifyApi(restTemplate, shopifyApiKey, shopifyPassword, shopifyVariantUrl, shopifyProductUrl, shopifyPostfix);
 
         	    /* 2. Retrieve unsent notifications from the Stock Notifications REST API */
        	    NotificationWrapper notificationResponse = getAllUnsentNotifications(restTemplate); 
@@ -154,7 +153,7 @@ public class Application {
                 int numOutOfStock = 0; // For current iteration's log output
                 List<Variant> inStock = new LinkedList<>();
 			    for(Integer variantId : variantNotificationMap.keySet()) {
-			        Variant v = getVariant(variantId, restTemplate);
+			        Variant v = shopifyApi.getVariant(variantId);
                     if(v.getInventory_quantity() > 0) {
                         inStock.add(v);
                     } else {
@@ -165,7 +164,7 @@ public class Application {
         			/* 5. Download product data for back in stock variants */ 
 			    Map<Variant,Product> variantProductMap = new HashMap<>();
 			    for(Variant v : inStock) {
-			        variantProductMap.put(v, getProduct(v,restTemplate));
+			        variantProductMap.put(v, shopifyApi.getProduct(v));
 			    }
 			    
 			    /* 6. Send email notifications for all back in stock variants */
@@ -260,22 +259,7 @@ public class Application {
         restTemplate.put(url, n);
         restTemplate.getInterceptors().remove(0);
 	}
-	
-	private Variant getVariant(int variantId, RestTemplate restTemplate) {
-        restTemplate.getInterceptors().add(shopifyApAuth);
-        String url = String.format("%s%s%s",shopifyVariantUrl,variantId,shopifyPostfix);
-        ResponseEntity<VariantWrapper> shopifyResponse = restTemplate.exchange(url, HttpMethod.GET, null, VariantWrapper.class);
-        restTemplate.getInterceptors().remove(0);
-        return shopifyResponse.getBody().getVariant();
-	}
-	
-	private Product getProduct(Variant v, RestTemplate restTemplate) {
-        restTemplate.getInterceptors().add(shopifyApAuth);
-        String url = String.format("%s%s%s",shopifyProductUrl,v.getProduct_id(),shopifyPostfix);
-        ResponseEntity<ProductWrapper> shopifyResponse = restTemplate.exchange(url, HttpMethod.GET, null, ProductWrapper.class);
-        restTemplate.getInterceptors().remove(0);
-        return shopifyResponse.getBody().getProduct();
-	}
+
 	
 	private boolean sendEmailNotification(Notification n, Product p, Variant v) {
 	    
