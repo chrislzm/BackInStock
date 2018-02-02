@@ -24,9 +24,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.client.support.BasicAuthorizationInterceptor;
 import org.springframework.web.client.RestTemplate;
 
 import com.chrisleung.notifications.objects.Notification;
@@ -37,15 +34,15 @@ import com.shopify.api.*;
 public class Application {
 
 	@Value("${my.notifications.restapi.username}")
-	private String notificationApiUsername;
+	private String notificationsApiUsername;
 	@Value("${my.notifications.restapi.password}")
-	private String notificationApiPassword;
+	private String notificationsApiPassword;
 	@Value("${my.notifications.restapi.url}")
-	private String notificationApiUrl;
+	private String notificationsApiUrl;
     @Value("${my.notifications.restapi.param.sent}")
-    private String notificationApiParamSent;
+    private String notificationsApiParamSent;
     @Value("${my.notifications.restapi.param.createdDate}")
-    private String notificationApiParamCreatedDate;
+    private String notificationsApiParamCreatedDate;
     @Value("${my.notifications.refresh}")
     private int interval;
     @Value("${my.notifications.shopifyapi.apikey}")
@@ -84,9 +81,6 @@ public class Application {
     @Value("${my.notifications.email.shop.domain}")
     private String emailShopDomain;
     
-    // REST API Username+Password Authentication
-    private BasicAuthorizationInterceptor notificationApiAuth;
-    
     // For sending email
     Mailer emailer;
     String emailTemplate;
@@ -114,11 +108,11 @@ public class Application {
 		    emailTemplate = new String(Files.readAllBytes(Paths.get(emailTemplatePath)));
 		    
 		    /* 1. API Setup */
-            notificationApiAuth = new BasicAuthorizationInterceptor(notificationApiUsername, notificationApiPassword); 
+            NotificationsApi notificationsApi = new NotificationsApi(restTemplate, notificationsApiUsername, notificationsApiPassword, notificationsApiUrl, notificationsApiParamSent, notificationsApiParamCreatedDate); 
        	    ShopifyApi shopifyApi= new ShopifyApi(restTemplate, shopifyApiKey, shopifyPassword, shopifyVariantUrl, shopifyProductUrl, shopifyPostfix);
 
         	    /* 2. Retrieve unsent notifications from the Stock Notifications REST API */
-       	    NotificationWrapper notificationResponse = getAllUnsentNotifications(restTemplate); 
+       	    NotificationWrapper notificationResponse = notificationsApi.getAllUnsentNotifications(); 
 			Iterable<Notification> newNotifications = notificationResponse.getNotifications();
 			Date lastUpdate = notificationResponse.getCurrentDate();
 			Set<String> allNotifications = new HashSet<>(); // Used to detect duplicates when updating
@@ -186,7 +180,7 @@ public class Application {
         			            /* 6b. Update the Stock Notifications REST API that we have sent the notification */
         			            n.setIsSent(true);
         			            n.setSentDate(new Date());
-        			            updateNotification(n,restTemplate);
+        			            notificationsApi.updateNotification(n);
         			        } else {
         			            numFailed++;
         			        }
@@ -220,7 +214,7 @@ public class Application {
 			    Thread.sleep(sleepMs);
 			    
         			/* 9. Fetch new notifications */
-			    notificationResponse = getNewNotificationsSince(lastUpdate,restTemplate);
+			    notificationResponse = notificationsApi.getNewNotificationsSince(lastUpdate);
                 newNotifications = notificationResponse.getNotifications();
                 Iterator<Notification> newNotificationsIterator = newNotifications.iterator();
                 while(newNotificationsIterator.hasNext()) {
@@ -235,31 +229,6 @@ public class Application {
 			}			
 		};
 	}
-	
-	private NotificationWrapper getAllUnsentNotifications(RestTemplate restTemplate) {
-        String url = String.format("%s?%s=%s",notificationApiUrl,notificationApiParamSent,false);
-        return getNotifications(url, restTemplate);
-	}
-	
-	private NotificationWrapper getNewNotificationsSince(Date lastUpdate, RestTemplate restTemplate) {
-        String url = String.format("%s?%s=%s",notificationApiUrl,notificationApiParamCreatedDate,lastUpdate.getTime());
-        return getNotifications(url, restTemplate);
-	}
-	
-	private NotificationWrapper getNotifications(String url, RestTemplate restTemplate) {
-	    restTemplate.getInterceptors().add(notificationApiAuth);
-        ResponseEntity<NotificationWrapper> response = restTemplate.exchange(url, HttpMethod.GET, null, NotificationWrapper.class);
-        restTemplate.getInterceptors().remove(0);
-        return response.getBody();
-	}
-	
-	private void updateNotification(Notification n, RestTemplate restTemplate) {
-        restTemplate.getInterceptors().add(notificationApiAuth);
-        String url = String.format("%s/%s",notificationApiUrl,n.getId());
-        restTemplate.put(url, n);
-        restTemplate.getInterceptors().remove(0);
-	}
-
 	
 	private boolean sendEmailNotification(Notification n, Product p, Variant v) {
 	    
