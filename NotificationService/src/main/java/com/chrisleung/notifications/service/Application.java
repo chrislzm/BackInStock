@@ -81,8 +81,7 @@ public class Application {
     @Value("${my.notifications.email.shop.domain}")
     private String emailShopDomain;
     
-    // For sending email
-    Mailer emailer;
+    Mailer emailApi;
     String emailTemplate;
     
     private static final Logger log = LoggerFactory.getLogger(Application.class);
@@ -103,7 +102,7 @@ public class Application {
 		    /* 1. API Setup */
             NotificationsApi notificationsApi = new NotificationsApi(restTemplate, notificationsApiUsername, notificationsApiPassword, notificationsApiUrl, notificationsApiParamSent, notificationsApiParamCreatedDate); 
        	    ShopifyApi shopifyApi= new ShopifyApi(restTemplate, shopifyApiKey, shopifyPassword, shopifyVariantUrl, shopifyProductUrl, shopifyPostfix);
-            emailer = MailerBuilder
+       	    emailApi = MailerBuilder
                     .withSMTPServer(emailServer, emailPort, emailUsername, emailPassword)
                     .withTransportStrategy(TransportStrategy.SMTPS)
                     .buildMailer();
@@ -252,9 +251,9 @@ public class Application {
 	                    .buildEmail();
 	    
         boolean success = false;
-	    if(!emailer.validate(email)) return false;
+	    if(!emailApi.validate(email)) return false;
 	    try {
-	        emailer.sendMail(email);
+	        emailApi.sendMail(email);
 	        success = true;
 	    } catch(Exception e) {
 	        if(logVerbose) e.printStackTrace();
