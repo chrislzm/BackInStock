@@ -26,6 +26,7 @@
   transform: translateY(-50%);
   position: relative;
   top: 50%;
+  margin-left: 10px;
 }
 
 #stock-notification-product-text h2 {
