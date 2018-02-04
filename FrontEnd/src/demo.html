@@ -9,18 +9,28 @@
 </head>
 <body>
   <!-- Product Page -->
-  <h1>Select a Product</h1>
+  <h1>Select an iPhone</h1>
+  <div>
+    <img src="img/iPhone.png">
+  </div>
   <select id="product-selector">
-    <option value="323277403">iPhone 6</option>
-    <option value="216959368">iPhone 7</option>
-    <option value="356826961">iPhone 8</option>
-    <option value="216959372" selected="selected">iPhone X</option>
+    <option value="323277403">8 / Silver / 64GB</option>
+    <option value="216959368">8 / Space Grey / 64GB</option>
+    <option value="356826961">8+ / White / 256GB</option>
+    <option value="216959372" selected="selected">X / Space Grey / 256GB</option>
   </select>
   <button onclick="openStockNotificationForm()">Notify Me When Available</button>
   <!-- Notification Modal -->
   <form id="stock-notification-form" class="modal" onsubmit="return onSubmit(this)">
     <h1>EMAIL WHEN AVAILABLE</h1>
     <div id="stock-notification-instructions">Enter your email address below to be notified when this product is available.</div>
+    <div id="stock-notification-product">
+      <img src="img/iPhone.png" width="100" height="100">
+      <div id="stock-notification-product-text">
+        <h2 id="stock-notification-product-title">iPhone</h2>
+        <div id="stock-notification-product-variant"></div>
+      </div>
+    </div>
     <div id="stock-notification-email">Email Address
       <input id="stock-notification-email-input" name="email">
       <button type="submit">Email me when available</button>
