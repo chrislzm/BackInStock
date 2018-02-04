@@ -22,7 +22,7 @@ function openStockNotificationForm() {
   $(NOTIFICATION_FORM_STATUS).hide();
   // Copy selected variant title
   $(NOTIFICATION_FORM_VARIANT_TITLE).text($(INPUT_VARIANT+" option:selected").text());
-  $(NOTIFICATION_FORM).modal();
+  $(NOTIFICATION_FORM).modal({ fadeDuration: 200 });
 }
 
 /**
