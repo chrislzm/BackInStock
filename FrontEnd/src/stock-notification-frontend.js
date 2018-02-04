@@ -49,7 +49,8 @@ function onSubmit(form){
       $(NOTIFICATION_FORM_STATUS).html(`Sorry, a problem occurred when submitting your request. Please contact our customer support.`);
     });
   } else {
-    $(NOTIFICATION_FORM_STATUS).text("The email address you entered is invalid");
+    $(NOTIFICATION_FORM_STATUS).show();
+    $(NOTIFICATION_FORM_STATUS).text("Please enter a valid email address.");
   }
   return false;
 }
