@@ -3,6 +3,7 @@ const NOTIFICATION_FORM_ID ="#stock-notification-form"
 const NOTIFICATION_FORM_VARIANT_ID = "#stock-notification-variant-id";
 const NOTIFICATION_FORM_EMAIL_ID = "#stock-notification-email";
 const NOTIFICATION_FORM_EMAIL_INPUT_ID = "#stock-notification-email-input";
+const NOTIFICATION_FORM_VARIANT_TITLE = "#stock-notification-product-variant";
 const INPUT_VARIANT_ID = "#product-selector";
 const PRODUCT_TYPE = "cell phone";
 
@@ -10,9 +11,12 @@ const PRODUCT_TYPE = "cell phone";
  * Sets up and displays the modal
  */
 function openStockNotificationForm() {
+  // Reset if we previously submitted
   $(NOTIFICATION_FORM_EMAIL_ID).show();
   $(NOTIFICATION_FORM_EMAIL_INPUT_ID).val("");
   $(STATUS_DIV_ID).empty();
+  // Copy selected variant title
+  $(NOTIFICATION_FORM_VARIANT_TITLE).text($(INPUT_VARIANT_ID+" option:selected").text());
   $(NOTIFICATION_FORM_ID).modal();
 }
 
