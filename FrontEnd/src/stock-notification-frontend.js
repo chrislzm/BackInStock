@@ -10,6 +10,19 @@ const NOTIFICATION_FORM_VARIANT_TITLE = "#stock-notification-product-variant";
 const NOTIFICATION_FORM_STATUS = "#stock-notification-status";
 const NOTIFICATION_FORM_SUBMIT = "#stock-notification-submit";
 
+function hideStatus() {
+  $(NOTIFICATION_FORM_STATUS).empty();
+  $(NOTIFICATION_FORM_STATUS).hide();
+}
+
+function showStatus(message) {
+  $(NOTIFICATION_FORM_STATUS).stop(true);
+  $(NOTIFICATION_FORM_STATUS).animate({opacity: 0},0);
+  $(NOTIFICATION_FORM_STATUS).show();
+  $(NOTIFICATION_FORM_STATUS).animate({opacity: 1});
+  $(NOTIFICATION_FORM_STATUS).html(message);
+}
+
 /**
  * Sets up and displays the modal
  */
@@ -18,8 +31,7 @@ function openStockNotificationForm() {
   $(NOTIFICATION_FORM_EMAIL).show();
   $(NOTIFICATION_FORM_EMAIL_INPUT).val("");
   $(NOTIFICATION_FORM_SUBMIT).show();
-  $(NOTIFICATION_FORM_STATUS).empty();
-  $(NOTIFICATION_FORM_STATUS).hide();
+  hideStatus()
   // Copy selected variant title
   $(NOTIFICATION_FORM_VARIANT_TITLE).text($(INPUT_VARIANT+" option:selected").text());
   $(NOTIFICATION_FORM).modal({ fadeDuration: 200 });
@@ -35,22 +47,20 @@ function onSubmit(form){
   $(NOTIFICATION_FORM_VARIANT).val($(INPUT_VARIANT).val());
   var json = getFormDataAsJSON(form);
   if(isValidEmail(json['email'])) {
-    $(NOTIFICATION_FORM_STATUS).show();
-    $(NOTIFICATION_FORM_STATUS).text("Submitting...");
+    showStatus("Submitting...");
     submitNotification(json).then(function(response) {
       if(response['saved']) {
         $(NOTIFICATION_FORM_EMAIL).hide();
         $(NOTIFICATION_FORM_SUBMIT).hide();
-        $(NOTIFICATION_FORM_STATUS).html("Your notification has been saved. <a href='#' rel='modal:close'>Close</a>");
+        showStatus("Your notification has been saved. <a href='#' rel='modal:close'>Close</a>");
       } else {
-        $(NOTIFICATION_FORM_STATUS).html(`You have already registered for a notification.`);
+        showStatus(`You have already registered for a notification.`);
       }
     }).catch(function(error) {
-      $(NOTIFICATION_FORM_STATUS).html(`Sorry, a problem occurred when submitting your request. Please contact our customer support.`);
+      showStatus(`Sorry, a problem occurred when submitting your request. Please contact our customer support.`);
     });
   } else {
-    $(NOTIFICATION_FORM_STATUS).show();
-    $(NOTIFICATION_FORM_STATUS).text("Please enter a valid email address.");
+    showStatus("The email address you entered is invalid");
   }
   return false;
 }
