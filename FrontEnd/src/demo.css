@@ -1,0 +1,74 @@
+#stock-notification-form {
+  font-family:Helvetica, Arial, sans-serif;
+  text-align: center;
+}
+
+#stock-notification-form h1 {
+  font-weight: normal;
+}
+
+#stock-notification-instructions {
+  padding-bottom:10px;
+}
+
+#stock-notification-product {
+  text-align: left;
+}
+#stock-notification-product img {
+  float:left;
+  margin:0 35px 0 15px;
+}
+
+#stock-notification-product-text h2 {
+  font-weight: normal;
+  padding: 10px 0 15px 0;
+  margin:0;
+}
+
+#stock-notification-email, #stock-notification-status {
+  clear:both;
+  padding:15px;
+}
+
+#stock-notification-status {
+  display:none;
+}
+
+#stock-notification-email input {
+  width: 50%;
+  font-size: 1em;
+  border-radius: 3px;
+  margin-left: 10px;
+}
+
+#stock-notification-form button {
+  font-size:1em;
+  background: #d72e2a;
+  background-image: -webkit-linear-gradient(top, #d72e2a, #bf3431);
+  background-image: -moz-linear-gradient(top, #d72e2a, #bf3431);
+  background-image: -ms-linear-gradient(top, #d72e2a, #bf3431);
+  background-image: -o-linear-gradient(top, #d72e2a, #bf3431);
+  background-image: linear-gradient(to bottom, #d72e2a, #bf3431);
+  -webkit-border-radius: 5;
+  -moz-border-radius: 5;
+  border-radius: 5px;
+  font-family: Arial;
+  color: #ffffff;
+  padding: 7px 10px;
+  margin: 7px;
+  text-decoration: none;
+}
+
+#stock-notification-form button:hover {
+  background: #c21c19;
+  background-image: -webkit-linear-gradient(top, #c21c19, #b5110e);
+  background-image: -moz-linear-gradient(top, #c21c19, #b5110e);
+  background-image: -ms-linear-gradient(top, #c21c19, #b5110e);
+  background-image: -o-linear-gradient(top, #c21c19, #b5110e);
+  background-image: linear-gradient(to bottom, #c21c19, #b5110e);
+  text-decoration: none;
+}
+
+#stock-notification-footer {
+  margin:15px 0 15px 0;
+}
