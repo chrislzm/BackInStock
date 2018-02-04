@@ -14,9 +14,18 @@
 #stock-notification-product {
   text-align: left;
 }
-#stock-notification-product img {
-  float:left;
+
+#stock-notification-image-container {
+  width: 100px;
+  height: 100px;
+  float: left;
   margin:0 35px 0 15px;
+}
+
+#stock-notification-product img {
+  transform: translateY(-50%);
+  position: relative;
+  top: 50%;
 }
 
 #stock-notification-product-text h2 {
