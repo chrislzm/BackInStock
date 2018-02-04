@@ -1,3 +1,7 @@
+/* Update with correct ID */
+const INPUT_VARIANT = "#product-selector";
+
+/* Defaults */
 const NOTIFICATION_FORM ="#stock-notification-form"
 const NOTIFICATION_FORM_VARIANT = "#stock-notification-variant-id";
 const NOTIFICATION_FORM_EMAIL = "#stock-notification-email";
@@ -5,7 +9,6 @@ const NOTIFICATION_FORM_EMAIL_INPUT = "#stock-notification-email-input";
 const NOTIFICATION_FORM_VARIANT_TITLE = "#stock-notification-product-variant";
 const NOTIFICATION_FORM_STATUS = "#stock-notification-status";
 const NOTIFICATION_FORM_SUBMIT = "#stock-notification-submit";
-const INPUT_VARIANT = "#product-selector";
 
 /**
  * Sets up and displays the modal
