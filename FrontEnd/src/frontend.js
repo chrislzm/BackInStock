@@ -1,23 +1,25 @@
-const STATUS_DIV_ID = "#stock-notification-status"
-const NOTIFICATION_FORM_ID ="#stock-notification-form"
-const NOTIFICATION_FORM_VARIANT_ID = "#stock-notification-variant-id";
-const NOTIFICATION_FORM_EMAIL_ID = "#stock-notification-email";
-const NOTIFICATION_FORM_EMAIL_INPUT_ID = "#stock-notification-email-input";
+const NOTIFICATION_FORM ="#stock-notification-form"
+const NOTIFICATION_FORM_VARIANT = "#stock-notification-variant-id";
+const NOTIFICATION_FORM_EMAIL = "#stock-notification-email";
+const NOTIFICATION_FORM_EMAIL_INPUT = "#stock-notification-email-input";
 const NOTIFICATION_FORM_VARIANT_TITLE = "#stock-notification-product-variant";
-const INPUT_VARIANT_ID = "#product-selector";
-const PRODUCT_TYPE = "cell phone";
+const NOTIFICATION_FORM_STATUS = "#stock-notification-status";
+const NOTIFICATION_FORM_SUBMIT = "#stock-notification-submit";
+const INPUT_VARIANT = "#product-selector";
 
 /**
  * Sets up and displays the modal
  */
 function openStockNotificationForm() {
   // Reset if we previously submitted
-  $(NOTIFICATION_FORM_EMAIL_ID).show();
-  $(NOTIFICATION_FORM_EMAIL_INPUT_ID).val("");
-  $(STATUS_DIV_ID).empty();
+  $(NOTIFICATION_FORM_EMAIL).show();
+  $(NOTIFICATION_FORM_EMAIL_INPUT).val("");
+  $(NOTIFICATION_FORM_SUBMIT).show();
+  $(NOTIFICATION_FORM_STATUS).empty();
+  $(NOTIFICATION_FORM_STATUS).hide();
   // Copy selected variant title
-  $(NOTIFICATION_FORM_VARIANT_TITLE).text($(INPUT_VARIANT_ID+" option:selected").text());
-  $(NOTIFICATION_FORM_ID).modal();
+  $(NOTIFICATION_FORM_VARIANT_TITLE).text($(INPUT_VARIANT+" option:selected").text());
+  $(NOTIFICATION_FORM).modal();
 }
 
 /**
@@ -27,22 +29,24 @@ function openStockNotificationForm() {
  */
 function onSubmit(form){
   // Copy selected variant ID from product page into hidden form field
-  $(NOTIFICATION_FORM_VARIANT_ID).val($(INPUT_VARIANT_ID).val());
+  $(NOTIFICATION_FORM_VARIANT).val($(INPUT_VARIANT).val());
   var json = getFormDataAsJSON(form);
   if(isValidEmail(json['email'])) {
-    $(STATUS_DIV_ID).text("Submitting...");
+    $(NOTIFICATION_FORM_STATUS).show();
+    $(NOTIFICATION_FORM_STATUS).text("Submitting...");
     submitNotification(json).then(function(response) {
       if(response['saved']) {
-        $(NOTIFICATION_FORM_EMAIL_ID).hide();
-        $(STATUS_DIV_ID).html("Your notification has been saved. <a href='#' rel='modal:close'>Close</a>");
+        $(NOTIFICATION_FORM_EMAIL).hide();
+        $(NOTIFICATION_FORM_SUBMIT).hide();
+        $(NOTIFICATION_FORM_STATUS).html("Your notification has been saved. <a href='#' rel='modal:close'>Close</a>");
       } else {
-        $(STATUS_DIV_ID).html(`You have already registered for a notification for this ${PRODUCT_TYPE}.`);
+        $(NOTIFICATION_FORM_STATUS).html(`You have already registered for a notification.`);
       }
     }).catch(function(error) {
-      $(STATUS_DIV_ID).html(`Sorry, a problem occurred when submitting your request. Please contact our customer support.`);
+      $(NOTIFICATION_FORM_STATUS).html(`Sorry, a problem occurred when submitting your request. Please contact our customer support.`);
     });
   } else {
-    $(STATUS_DIV_ID).text("The email address you entered is invalid");
+    $(NOTIFICATION_FORM_STATUS).text("The email address you entered is invalid");
   }
   return false;
 }
