@@ -1,4 +1,4 @@
-const SERVER_URL = 'http://localhost:8080'
+const SERVER_URL = 'http://service.artofsilk.com:8080'
 const HEADERS = {
   'Content-Type': 'application/json'
 }
