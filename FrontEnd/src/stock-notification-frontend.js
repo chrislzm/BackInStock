@@ -10,17 +10,26 @@ const NOTIFICATION_FORM_VARIANT_TITLE = "#stock-notification-product-variant";
 const NOTIFICATION_FORM_STATUS = "#stock-notification-status";
 const NOTIFICATION_FORM_SUBMIT = "#stock-notification-submit";
 
+/**
+ * Displays a status message div + message in the modal (animated)
+ * @param  {String} message
+ * @return {undefined}
+ */
+function showStatus(message) {
+  $(NOTIFICATION_FORM_STATUS).animate({opacity: 0},0);
+  $(NOTIFICATION_FORM_STATUS).html(message);
+  $(NOTIFICATION_FORM_STATUS).stop(true);
+  $(NOTIFICATION_FORM_STATUS).show();
+  $(NOTIFICATION_FORM_STATUS).animate({opacity: 1});
+}
+
+/**
+ * Hides the status message div in the modal (animated)
+ * @return {[type]} [description]
+ */
 function hideStatus() {
   $(NOTIFICATION_FORM_STATUS).empty();
   $(NOTIFICATION_FORM_STATUS).hide();
-}
-
-function showStatus(message) {
-  $(NOTIFICATION_FORM_STATUS).stop(true);
-  $(NOTIFICATION_FORM_STATUS).animate({opacity: 0},0);
-  $(NOTIFICATION_FORM_STATUS).show();
-  $(NOTIFICATION_FORM_STATUS).animate({opacity: 1});
-  $(NOTIFICATION_FORM_STATUS).html(message);
 }
 
 /**
