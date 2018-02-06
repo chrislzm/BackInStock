@@ -1,20 +1,12 @@
 # Installation Notes
 
-Be sure to update /src/main/resources/application.properties with the following information:
-* Notifications REST API
-    * Username
-    * Password
-    * URL
-* Shopify API - [Generate API Credentials](https://help.shopify.com/api/getting-started/api-credentials#generate-private-api-credentials) 
-    * API Key
-    * Password
-* Refresh interval (in seconds)
+* Rename application.properties.blank to application.properties and add/update values
 
 # Enabling HTTPS
 
-To enable HTTPS please ensure you:
+To enable HTTPS please ensure:
 1. The REST API URL in application.properties has "https" as the protocol identifier (not http)
-2. The certificate file has been added to your Java runtime's CA store. For information on how to do this, please see the [REST API server README file](../RestApi/README.md)
+2. If you have a self-signed certificate it will need to be added to your Java runtime's CA store. For information on how to do this, please see the [REST API server README file](../RestApi/README.md)
 
 # Usage
 
