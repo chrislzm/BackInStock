@@ -11,3 +11,7 @@ server.ssl.key-store: keystore.p12
 server.ssl.key-store-password: password
 server.ssl.keyStoreType: PKCS12
 server.ssl.keyAlias: tomcat
+# MongoDB Config
+spring.data.mongodb.database=test
+spring.data.mongodb.host=localhost
+spring.data.mongodb.port=27017
