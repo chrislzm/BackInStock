@@ -4,7 +4,7 @@ const HEADERS = {
 }
 
 function submitNotification(body) {
-  return fetch(SERVER_URL} + "/notifications", {
+  return fetch(SERVER_URL + "/notifications", {
     method: 'POST',
     headers: HEADERS,
     body:JSON.stringify(body)
