@@ -63,10 +63,10 @@ function onSubmit(form){
         $(NOTIFICATION_FORM_SUBMIT).hide();
         showStatus("Your notification has been saved. <a href='#' rel='modal:close'>Close</a>");
       } else {
-        showStatus(`You have already registered for a notification.`);
+        showStatus("You have already registered for a notification.");
       }
     }).catch(function(error) {
-      showStatus(`Sorry, a problem occurred when submitting your request. Please contact our customer support.`);
+      showStatus("Sorry, a problem occurred when submitting your request. Please contact our customer support.");
     });
   } else {
     showStatus("The email address you entered is invalid");
