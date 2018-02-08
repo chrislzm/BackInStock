@@ -1,10 +1,10 @@
-const SERVER_URL = 'http://localhost:8080'
+const API_URL = 'http://localhost:8080/notifications'
 const HEADERS = {
   'Content-Type': 'application/json'
 }
 
 function submitNotification(body) {
-  return fetch(SERVER_URL + "/notifications", {
+  return fetch(API_URL, {
     method: 'POST',
     headers: HEADERS,
     body:JSON.stringify(body)
