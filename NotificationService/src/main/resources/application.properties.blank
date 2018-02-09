@@ -1,10 +1,10 @@
-# Notifications API
+app)# Notifications API
 my.notifications.restapi.username=
 my.notifications.restapi.password=
 my.notifications.restapi.url=
 my.notifications.restapi.param.sent=
 my.notifications.restapi.param.createdDate=
-my.notifications.refresh=
+my.notifications.restapi.refresh=
 # Shopify API
 my.notifications.shopifyapi.apikey=
 my.notifications.shopifyapi.password=
