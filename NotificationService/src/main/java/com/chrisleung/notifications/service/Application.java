@@ -34,21 +34,6 @@ import com.shopify.api.*;
 @SpringBootApplication
 public class Application {
 
-    @Value("${my.notifications.shopifyapi.apiKey}")
-    private String shopifyApiKey;
-    @Value("${my.notifications.shopifyapi.password}")
-    private String shopifyPassword;
-    @Value("${my.notifications.shopifyapi.product.variant.url}")
-    private String shopifyVariantUrl;
-    @Value("${my.notifications.shopifyapi.product.url}")
-    private String shopifyProductUrl;
-    @Value("${my.notifications.shopifyapi.urlPostFix}")
-    private String shopifyPostfix;
-    @Value("${my.notifications.log.tag}")
-    private String logTag;
-    @Value("${my.notifications.log.verbose}")
-    private boolean logVerbose;
-
     @Value("${my.notifications.email.smtp.address}")
     private String emailServer;
     @Value("${my.notifications.email.smtp.port}")
@@ -72,10 +57,13 @@ public class Application {
     
     Mailer emailApi;
     String emailTemplate;
+    private String logTag;
+    private boolean logVerbose;
+
     private ApplicationProperties appProperties;
     
     private static final Logger log = LoggerFactory.getLogger(Application.class);
-
+    
 	public static void main(String args[]) {
 		SpringApplication.run(Application.class);
 	}
@@ -93,11 +81,13 @@ public class Application {
 	@Bean
 	public CommandLineRunner run(RestTemplate restTemplate) throws Exception {
 		return args -> {
-		    log.info(appProperties.toString());
-		    		   
+		    /* 0. Set Properties */
+		    logTag = appProperties.getLog().getTag();
+		    logVerbose = appProperties.getLog().getVerbose();
+		    
 		    /* 1. API Setup */
             NotificationsApi notificationsApi = new NotificationsApi(restTemplate, appProperties); 
-       	    ShopifyApi shopifyApi= new ShopifyApi(restTemplate, shopifyApiKey, shopifyPassword, shopifyVariantUrl, shopifyProductUrl, shopifyPostfix);
+       	    ShopifyApi shopifyApi= new ShopifyApi(restTemplate, appProperties);
        	    emailApi = MailerBuilder
                     .withSMTPServer(emailServer, emailPort, emailUsername, emailPassword)
                     .withTransportStrategy(TransportStrategy.SMTPS)
