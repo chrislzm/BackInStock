@@ -22,6 +22,10 @@ public class ApplicationProperties {
             public void setCreatedDate(String createdDate) {
                 this.createdDate = createdDate;
             }
+            @Override
+            public String toString() {
+                return "Param [sent=" + sent + ", createdDate=" + createdDate + "]";
+            }
         }
         private Param param;
         private String username;
@@ -58,6 +62,11 @@ public class ApplicationProperties {
         public void setRefresh(Integer refresh) {
             this.refresh = refresh;
         }
+        @Override
+        public String toString() {
+            return "RestApi [param=" + param + ", username=" + username + ", password=" + password + ", url=" + url
+                    + ", refresh=" + refresh + "]";
+        }
     }
     public static class ShopifyApi {
         public static class Product {
@@ -70,6 +79,11 @@ public class ApplicationProperties {
 
                 public void setUrl(String url) {
                     this.url = url;
+                }
+
+                @Override
+                public String toString() {
+                    return "Variant [url=" + url + "]";
                 }
             }
             private Variant variant;
@@ -86,6 +100,10 @@ public class ApplicationProperties {
             }
             public void setUrl(String url) {
                 this.url = url;
+            }
+            @Override
+            public String toString() {
+                return "Product [variant=" + variant + ", url=" + url + "]";
             }
         }
         private Product product;
@@ -117,6 +135,11 @@ public class ApplicationProperties {
         public void setUrlPostFix(String urlPostFix) {
             this.urlPostFix = urlPostFix;
         }
+        @Override
+        public String toString() {
+            return "ShopifyApi [product=" + product + ", apiKey=" + apiKey + ", password=" + password + ", urlPostFix="
+                    + urlPostFix + "]";
+        }
     }
     public static class Log {
         private String tag;
@@ -133,6 +156,10 @@ public class ApplicationProperties {
         public void setVerbose(Boolean verbose) {
             this.verbose = verbose;
         }
+        @Override
+        public String toString() {
+            return "Log [tag=" + tag + ", verbose=" + verbose + "]";
+        }
     }
     public static class Email {
         public static class Template {
@@ -144,6 +171,11 @@ public class ApplicationProperties {
 
             public void setPath(String path) {
                 this.path = path;
+            }
+
+            @Override
+            public String toString() {
+                return "Template [path=" + path + "]";
             }
         }
         public static class Sender {
@@ -161,6 +193,10 @@ public class ApplicationProperties {
             public void setAddress(String address) {
                 this.address = address;
             }
+            @Override
+            public String toString() {
+                return "Sender [name=" + name + ", address=" + address + "]";
+            }
         }
         public static class Subject {
             private String template;
@@ -171,6 +207,11 @@ public class ApplicationProperties {
 
             public void setTemplate(String template) {
                 this.template = template;
+            }
+
+            @Override
+            public String toString() {
+                return "Subject [template=" + template + "]";
             }
         }
         public static class Smtp {
@@ -201,6 +242,11 @@ public class ApplicationProperties {
             }
             public void setPassword(String password) {
                 this.password = password;
+            }
+            @Override
+            public String toString() {
+                return "Smtp [address=" + address + ", port=" + port + ", username=" + username + ", password="
+                        + password + "]";
             }            
         }
         public static class Shop {
@@ -217,6 +263,10 @@ public class ApplicationProperties {
             }
             public void setDomain(String domain) {
                 this.domain = domain;
+            }
+            @Override
+            public String toString() {
+                return "Shop [name=" + name + ", domain=" + domain + "]";
             }
         }
         private Template template;
@@ -254,6 +304,11 @@ public class ApplicationProperties {
         public void setShop(Shop shop) {
             this.shop = shop;
         }
+        @Override
+        public String toString() {
+            return "Email [template=" + template + ", sender=" + sender + ", subject=" + subject + ", smtp=" + smtp
+                    + ", shop=" + shop + "]";
+        }
     }
     
     private RestApi restapi;
@@ -283,6 +338,11 @@ public class ApplicationProperties {
     }
     public void setEmail(Email email) {
         this.email = email;
+    }
+    @Override
+    public String toString() {
+        return "ApplicationProperties [restapi=" + restapi + ", shopifyapi=" + shopifyapi + ", log=" + log + ", email="
+                + email + "]";
     }
     
 }
