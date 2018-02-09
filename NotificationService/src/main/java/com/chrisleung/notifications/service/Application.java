@@ -84,7 +84,7 @@ public class Application {
     
     Mailer emailApi;
     String emailTemplate;
-    private ApplicationProperties application;
+    private ApplicationProperties appProperties;
     
     private static final Logger log = LoggerFactory.getLogger(Application.class);
 
@@ -93,8 +93,8 @@ public class Application {
 	}
 
 	@Autowired
-	public void setApp(ApplicationProperties app) {
-	    this.application = app;
+	public void setApp(ApplicationProperties ap) {
+	    this.appProperties = ap;
 	}
 	
 	@Bean
@@ -106,7 +106,6 @@ public class Application {
 	public CommandLineRunner run(RestTemplate restTemplate) throws Exception {
 		return args -> {
 		    		   
-		    log.info("Testing app properties: " + application.getEmail().getSender().getAddress());
 		    /* 1. API Setup */
             NotificationsApi notificationsApi = new NotificationsApi(restTemplate, notificationsApiUsername, notificationsApiPassword, notificationsApiUrl, notificationsApiParamSent, notificationsApiParamCreatedDate); 
        	    ShopifyApi shopifyApi= new ShopifyApi(restTemplate, shopifyApiKey, shopifyPassword, shopifyVariantUrl, shopifyProductUrl, shopifyPostfix);
