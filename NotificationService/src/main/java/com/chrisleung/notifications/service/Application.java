@@ -18,6 +18,7 @@ import org.simplejavamail.mailer.MailerBuilder;
 import org.simplejavamail.mailer.config.TransportStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -43,7 +44,7 @@ public class Application {
     private String notificationsApiParamSent;
     @Value("${my.notifications.restapi.param.createdDate}")
     private String notificationsApiParamCreatedDate;
-    @Value("${my.notifications.refresh}")
+    @Value("${my.notifications.restapi.refresh}")
     private int interval;
     @Value("${my.notifications.shopifyapi.apikey}")
     private String shopifyApiKey;
@@ -83,6 +84,7 @@ public class Application {
     
     Mailer emailApi;
     String emailTemplate;
+    private ApplicationProperties application;
     
     private static final Logger log = LoggerFactory.getLogger(Application.class);
 
@@ -90,6 +92,11 @@ public class Application {
 		SpringApplication.run(Application.class);
 	}
 
+	@Autowired
+	public void setApp(ApplicationProperties app) {
+	    this.application = app;
+	}
+	
 	@Bean
 	public RestTemplate restTemplate(RestTemplateBuilder builder) {
 		return builder.build();
@@ -98,7 +105,8 @@ public class Application {
 	@Bean
 	public CommandLineRunner run(RestTemplate restTemplate) throws Exception {
 		return args -> {
-		    		    
+		    		   
+		    log.info("Testing app properties: " + application.getEmail().getSender().getAddress());
 		    /* 1. API Setup */
             NotificationsApi notificationsApi = new NotificationsApi(restTemplate, notificationsApiUsername, notificationsApiPassword, notificationsApiUrl, notificationsApiParamSent, notificationsApiParamCreatedDate); 
        	    ShopifyApi shopifyApi= new ShopifyApi(restTemplate, shopifyApiKey, shopifyPassword, shopifyVariantUrl, shopifyProductUrl, shopifyPostfix);
