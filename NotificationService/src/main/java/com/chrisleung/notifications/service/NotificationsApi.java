@@ -18,12 +18,12 @@ public class NotificationsApi {
     private String paramSent;
     private String paramCreatedDate;
     
-    NotificationsApi(RestTemplate rt, String username, String password, String url, String ps, String pcd) {
+    NotificationsApi(RestTemplate rt, ApplicationProperties ap) {
         restTemplate = rt;
-        auth = new BasicAuthorizationInterceptor(username, password); 
-        baseUrl = url;
-        paramSent = ps;
-        paramCreatedDate = pcd;
+        auth = new BasicAuthorizationInterceptor(ap.getRestapi().getUsername(), ap.getRestapi().getPassword()); 
+        baseUrl = ap.getRestapi().getUrl();
+        paramSent = ap.getRestapi().getParam().getSent();
+        paramCreatedDate = ap.getRestapi().getParam().getCreatedDate();
     }
     
     public NotificationWrapper getAllUnsentNotifications() {

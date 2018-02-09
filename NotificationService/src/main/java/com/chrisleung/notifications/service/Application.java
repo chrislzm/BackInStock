@@ -34,19 +34,7 @@ import com.shopify.api.*;
 @SpringBootApplication
 public class Application {
 
-	@Value("${my.notifications.restapi.username}")
-	private String notificationsApiUsername;
-	@Value("${my.notifications.restapi.password}")
-	private String notificationsApiPassword;
-	@Value("${my.notifications.restapi.url}")
-	private String notificationsApiUrl;
-    @Value("${my.notifications.restapi.param.sent}")
-    private String notificationsApiParamSent;
-    @Value("${my.notifications.restapi.param.createdDate}")
-    private String notificationsApiParamCreatedDate;
-    @Value("${my.notifications.restapi.refresh}")
-    private int interval;
-    @Value("${my.notifications.shopifyapi.apikey}")
+    @Value("${my.notifications.shopifyapi.apiKey}")
     private String shopifyApiKey;
     @Value("${my.notifications.shopifyapi.password}")
     private String shopifyPassword;
@@ -54,7 +42,7 @@ public class Application {
     private String shopifyVariantUrl;
     @Value("${my.notifications.shopifyapi.product.url}")
     private String shopifyProductUrl;
-    @Value("${my.notifications.shopifyapi.postfix}")
+    @Value("${my.notifications.shopifyapi.urlPostFix}")
     private String shopifyPostfix;
     @Value("${my.notifications.log.tag}")
     private String logTag;
@@ -105,9 +93,10 @@ public class Application {
 	@Bean
 	public CommandLineRunner run(RestTemplate restTemplate) throws Exception {
 		return args -> {
+		    log.info(appProperties.toString());
 		    		   
 		    /* 1. API Setup */
-            NotificationsApi notificationsApi = new NotificationsApi(restTemplate, notificationsApiUsername, notificationsApiPassword, notificationsApiUrl, notificationsApiParamSent, notificationsApiParamCreatedDate); 
+            NotificationsApi notificationsApi = new NotificationsApi(restTemplate, appProperties); 
        	    ShopifyApi shopifyApi= new ShopifyApi(restTemplate, shopifyApiKey, shopifyPassword, shopifyVariantUrl, shopifyProductUrl, shopifyPostfix);
        	    emailApi = MailerBuilder
                     .withSMTPServer(emailServer, emailPort, emailUsername, emailPassword)
@@ -125,7 +114,7 @@ public class Application {
 			}
 			
 			/* Program Loop Setup */
-			long sleepMs = interval * 1000;
+			long sleepMs = appProperties.getRestapi().getRefresh() * 1000;
             // The main data structure: variant-ID to notifications map
             Map<Integer,List<Notification>> variantNotificationMap = new HashMap<Integer,List<Notification>>();
             int totalSent = 0, totalFails = 0; // For log output
