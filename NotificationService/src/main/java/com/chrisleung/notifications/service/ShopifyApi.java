@@ -18,12 +18,12 @@ public class ShopifyApi {
     private BasicAuthorizationInterceptor auth; // For Username+Password auth
     private RestTemplate restTemplate;
 
-    ShopifyApi(RestTemplate rt, ApplicationProperties ap) {
+    ShopifyApi(RestTemplate rt, ApplicationProperties.ShopifyApi shopifyProps) {
         restTemplate = rt;
-        auth = new BasicAuthorizationInterceptor(ap.getShopifyapi().getApiKey(), ap.getShopifyapi().getPassword()); 
-        variantUrl = ap.getShopifyapi().getProduct().getVariant().getUrl();
-        productUrl = ap.getShopifyapi().getProduct().getUrl();
-        urlPostfix = ap.getShopifyapi().getUrlPostFix();
+        auth = new BasicAuthorizationInterceptor(shopifyProps.getApiKey(), shopifyProps.getPassword()); 
+        variantUrl = shopifyProps.getProduct().getVariant().getUrl();
+        productUrl = shopifyProps.getProduct().getUrl();
+        urlPostfix = shopifyProps.getUrlPostFix();
     }
     
     public Variant getVariant(int variantId) {

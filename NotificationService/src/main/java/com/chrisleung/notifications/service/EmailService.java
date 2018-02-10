@@ -25,22 +25,22 @@ public class EmailService extends Thread {
     private String senderAddress;
     private boolean logVerbose;
     
-    EmailService(ApplicationProperties ap) throws IOException {
+    EmailService(ApplicationProperties.Email emailProps, boolean lv) throws IOException {
         api = MailerBuilder
                 .withSMTPServer(
-                        ap.getEmail().getSmtp().getAddress(),
-                        ap.getEmail().getSmtp().getPort(),
-                        ap.getEmail().getSmtp().getUsername(),
-                        ap.getEmail().getSmtp().getPassword())
+                        emailProps.getSmtp().getAddress(),
+                        emailProps.getSmtp().getPort(),
+                        emailProps.getSmtp().getUsername(),
+                        emailProps.getSmtp().getPassword())
                 .withTransportStrategy(TransportStrategy.SMTPS)
                 .buildMailer();
-        bodyTemplate = new String(Files.readAllBytes(Paths.get(ap.getEmail().getTemplate().getPath())));
-        subjectTemplate = ap.getEmail().getSubject().getTemplate();
-        shopName = ap.getEmail().getShop().getName();
-        shopDomain = ap.getEmail().getShop().getDomain();
-        senderName = ap.getEmail().getSender().getName();
-        senderAddress = ap.getEmail().getSender().getAddress();
-        logVerbose = ap.getLog().getVerbose();
+        bodyTemplate = new String(Files.readAllBytes(Paths.get(emailProps.getTemplate().getPath())));
+        subjectTemplate = emailProps.getSubject().getTemplate();
+        shopName = emailProps.getShop().getName();
+        shopDomain = emailProps.getShop().getDomain();
+        senderName = emailProps.getSender().getName();
+        senderAddress = emailProps.getSender().getAddress();
+        logVerbose = lv;
     }
     
     private boolean sendEmailNotification(Notification n, Product p, Variant v) {
