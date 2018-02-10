@@ -3,12 +3,16 @@ package com.chrisleung.notifications.service;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Date;
+import java.util.concurrent.BlockingQueue;
 
 import org.simplejavamail.email.Email;
 import org.simplejavamail.email.EmailBuilder;
 import org.simplejavamail.mailer.Mailer;
 import org.simplejavamail.mailer.MailerBuilder;
 import org.simplejavamail.mailer.config.TransportStrategy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.chrisleung.notifications.objects.Notification;
 import com.shopify.api.Product;
@@ -24,8 +28,13 @@ public class EmailService extends Thread {
     private String senderName;
     private String senderAddress;
     private boolean logVerbose;
+    private String logTag;
+    private BlockingQueue<EmailNotification> queue;
+    private NotificationsApi notificationsApi;
     
-    EmailService(ApplicationProperties.Email props, boolean lv) throws IOException {
+    private static final Logger log = LoggerFactory.getLogger(Application.class);
+    
+    EmailService(ApplicationProperties.Email props, BlockingQueue<EmailNotification> q, NotificationsApi nApi, ApplicationProperties.Log logProps) throws IOException {
         api = MailerBuilder
                 .withSMTPServer(
                         props.getSmtp().getAddress(),
@@ -40,7 +49,49 @@ public class EmailService extends Thread {
         shopDomain = props.getShop().getDomain();
         senderName = props.getSender().getName();
         senderAddress = props.getSender().getAddress();
-        logVerbose = lv;
+        queue = q;
+        notificationsApi = nApi;
+        logVerbose = logProps.getVerbose();
+        logTag = logProps.getTag();
+    }
+    
+    @Override
+    public void run() {
+        log.info(String.format("%s Starting Email Service...", logTag));
+        while(true) {
+            int sent = 0;
+            while(queue.isEmpty()) {
+                synchronized(queue) {
+                    try {
+                        queue.wait();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            while(!queue.isEmpty()) { 
+                EmailNotification en = queue.peek();
+                Notification n = en.getNotification();
+                boolean sentSuccess = sendEmailNotification(n,en.getProduct(),en.getVariant());
+                if(sentSuccess) {
+                    sent++;
+                    queue.remove();
+                    // Update the Stock Notifications REST API that we have sent the notification
+                    n.setIsSent(true);
+                    n.setSentDate(new Date());
+                    notificationsApi.updateNotification(n);
+                } else {
+                    if(logVerbose) {
+                        log.info(String.format("%s EmailService: Failed to send notification for Variant %s to %s. Requeuing.", logTag, n.getVariantId(), n.getEmail()));
+                    }
+                    // Put again the end of the queue
+                    synchronized(queue) {
+                        queue.add(queue.remove());
+                    }
+                }
+            }
+            log.info(String.format("%s EmailService: Sent %s email notification(s).", logTag, sent));
+        }
     }
     
     private boolean sendEmailNotification(Notification n, Product p, Variant v) {

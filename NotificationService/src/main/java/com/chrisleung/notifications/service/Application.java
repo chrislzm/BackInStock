@@ -10,6 +10,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import org.simplejavamail.email.Email;
 import org.simplejavamail.email.EmailBuilder;
@@ -36,6 +38,7 @@ public class Application {
 
     private String logTag;
     private boolean logVerbose;
+    private BlockingQueue<EmailNotification> emailQueue;
 
     private ApplicationProperties appProperties;
     
@@ -58,14 +61,16 @@ public class Application {
 	@Bean
 	public CommandLineRunner run(RestTemplate restTemplate) throws Exception {
 		return args -> {
-		    /* 0. Setup Logging */
+		    /* 0. General Setup  */
 		    logTag = appProperties.getLog().getTag();
 		    logVerbose = appProperties.getLog().getVerbose();
+		    emailQueue = new LinkedBlockingQueue<>(appProperties.getEmail().getQueueSize());
 		    
 		    /* 1. API Setup */
             NotificationsApi notificationsApi = new NotificationsApi(restTemplate, appProperties.getRestapi()); 
        	    ShopifyApi shopifyApi= new ShopifyApi(restTemplate, appProperties.getShopifyapi());
-       	    EmailService emailService = new EmailService(appProperties.getEmail(),logVerbose);
+       	    EmailService emailService = new EmailService(appProperties.getEmail(),emailQueue,notificationsApi,appProperties.getLog());
+       	    emailService.start();
 
         	    /* 2. Retrieve unsent notifications from the Stock Notifications REST API */
        	    NotificationWrapper notificationResponse = notificationsApi.getAllUnsentNotifications(); 
@@ -80,10 +85,10 @@ public class Application {
 			long sleepMs = appProperties.getRestapi().getRefresh() * 1000;
             // The main data structure: variant-ID to notifications map
             Map<Integer,List<Notification>> variantNotificationMap = new HashMap<Integer,List<Notification>>();
-            int totalSent = 0, totalFails = 0; // For log output
+            int totalQueued = 0; // For log output
             
             /* Program Loop */
-            log.info(String.format("%s Starting...", logTag));
+            log.info(String.format("%s Starting Notification Service...", logTag));
 
             while(true) {
 
@@ -102,74 +107,47 @@ public class Application {
 			    /* 4. Detect variants that are back in stock */
                 int numOutOfStock = 0; // For current iteration's log output
                 List<Variant> inStock = new LinkedList<>();
+                Map<Variant,Product> variantProductMap = new HashMap<>(); // Variant product data
 			    for(Integer variantId : variantNotificationMap.keySet()) {
 			        Variant v = shopifyApi.getVariant(variantId);
                     if(v.getInventory_quantity() > 0) {
                         inStock.add(v);
+                        variantProductMap.put(v, shopifyApi.getProduct(v));
                     } else {
                         numOutOfStock += variantNotificationMap.get(variantId).size();
                     }
 			    }
-
-        			/* 5. Download product data for back in stock variants */ 
-			    Map<Variant,Product> variantProductMap = new HashMap<>();
-			    for(Variant v : inStock) {
-			        variantProductMap.put(v, shopifyApi.getProduct(v));
-			    }
 			    
-			    /* 6. Send email notifications for all back in stock variants */
+			    /* 5. Enqueue email notifications for all back in stock variants */
 	            Iterator<Variant> variantsToNotify = inStock.iterator();
         			while(variantsToNotify.hasNext()) {
         			    Variant v = variantsToNotify.next();
         			    Product p = variantProductMap.get(v);
-        			    List<Notification> variantNotifications = variantNotificationMap.get(v.getId());
-        			    Iterator<Notification> toNotify = variantNotifications.iterator();
-                    int numFailed = 0, numSent = 0; // For verbose log output
-        			    while(toNotify.hasNext()) {
-        			        Notification n = toNotify.next();
-        			        /* 6a. Attempt to email the notification */
-        			        boolean sentSuccess = sendEmailNotification(n,p,v);
-        			        if(sentSuccess) {
-        			            toNotify.remove();
-        			            numSent++;
-        			            totalSent++;
-        			            /* 6b. Update the Stock Notifications REST API that we have sent the notification */
-        			            n.setIsSent(true);
-        			            n.setSentDate(new Date());
-        			            notificationsApi.updateNotification(n);
-        			        } else {
-        			            numFailed++;
-        			        }
-        			    }
-        			    
-        			    /* 6c: Remove variants from variant-notification map if all of its notifications have been sent */
-        			    String result; // For log output
-        			    if(variantNotificationMap.get(v.getId()).size() == 0) {
-        			        variantNotificationMap.remove(v.getId());
-        			        result = "Success"; // For log output
-        			    } else {
-        			        totalFails++; result = "Failure"; // For Log output
-        			    }
-        			    if(logVerbose) {
-        			        log.info(String.format("%s %s: %s Notification(s) Sent, %s Failed for SKU %s (Variant ID %s)",logTag,result,numSent, numFailed, v.getSku(), v.getId()));
+        			    // Get all unsent notifications for this variant
+        			    List<Notification> variantNotifications = variantNotificationMap.remove(v.getId());
+        			    for (Notification n: variantNotifications) {
+        			        emailQueue.put(new EmailNotification(p,v,n));
+        			        totalQueued++;
         			    }
         			}
+        			synchronized(emailQueue) {
+        			    emailQueue.notify();
+        			}
 	            
-        			/* 7. Standard Log Output: Summary for this iteration */ 
-        			log.info(String.format("%s Status: %s New Notification(s), %s Total, %s Sent, %s Unsent (%s Failed/%s Out of Stock), %s Total Failed Attempts",
+        			/* 6. Standard Log Output: Summary for this iteration */ 
+        			log.info(String.format("%s Status: %s New Notification(s), %s Total, %s Sent, %s Unsent (%s Queued/%s Out of Stock)",
         			        logTag,
         			        numNew,
         			        allNotifications.size(),
-        			        totalSent,
-        			        allNotifications.size()-totalSent,
-        			        allNotifications.size()-totalSent-numOutOfStock,
-        			        numOutOfStock,
-        			        totalFails));
+        			        totalQueued-emailQueue.size(),
+        			        emailQueue.size()+numOutOfStock,
+        			        emailQueue.size(),
+        			        numOutOfStock));
         			
-			    /* 8. Sleep */
+			    /* 7. Sleep */
 			    Thread.sleep(sleepMs);
 			    
-        			/* 9. Fetch new notifications */
+        			/* 8. Fetch new notifications */
 			    notificationResponse = notificationsApi.getNewNotificationsSince(lastUpdate);
                 newNotifications = notificationResponse.getNotifications();
                 Iterator<Notification> newNotificationsIterator = newNotifications.iterator();
