@@ -57,9 +57,9 @@ public class Application {
        	    emailService.start();
 
         	    /* 2. Retrieve unsent notifications from the Stock Notifications REST API */
-       	    NotificationWrapper notificationResponse = notificationsApi.getAllUnsentNotifications(); 
-			Iterable<Notification> newNotifications = notificationResponse.getNotifications();
-			Date lastUpdate = notificationResponse.getCurrentDate();
+       	    NotificationWrapper response = notificationsApi.getAllUnsentNotifications(); 
+			Iterable<Notification> newNotifications = response.getNotifications();
+			Date lastUpdate = response.getCurrentDate();
 			Set<String> allNotifications = new HashSet<>(); // Used to detect duplicates when updating
 			for(Notification n : newNotifications) {
 			    allNotifications.add(n.getId());
@@ -129,18 +129,18 @@ public class Application {
 			    Thread.sleep(sleepMs);
 			    
         			/* 8. Fetch new notifications since last update */
-			    notificationResponse = notificationsApi.getNewNotificationsSince(lastUpdate);
-                newNotifications = notificationResponse.getNotifications();
+			    response = notificationsApi.getNewNotificationsSince(lastUpdate);
+                newNotifications = response.getNotifications();
                 Iterator<Notification> newNotificationsIterator = newNotifications.iterator();
                 // Filter any duplicates
                 while(newNotificationsIterator.hasNext()) {
                     Notification n = newNotificationsIterator.next();
-                    if(allNotifications.contains(n.toString()))
+                    if(allNotifications.contains(n.getId()))
                         newNotificationsIterator.remove();
                     else 
-                        allNotifications.add(n.toString());
+                        allNotifications.add(n.getId());
                 }
-                lastUpdate = notificationResponse.getCurrentDate();
+                lastUpdate = response.getCurrentDate();
 			}			
 		};
 	}
