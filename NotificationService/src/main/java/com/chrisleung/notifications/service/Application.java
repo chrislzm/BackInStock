@@ -135,10 +135,11 @@ public class Application {
                 // Filter any duplicates
                 while(newNotificationsIterator.hasNext()) {
                     Notification n = newNotificationsIterator.next();
-                    if(allNotifications.contains(n.getId()))
+                    if(allNotifications.contains(n.getId())) {
                         newNotificationsIterator.remove();
-                    else 
+                    } else { 
                         allNotifications.add(n.getId());
+                    }
                 }
                 lastUpdate = response.getCurrentDate();
 			}			
