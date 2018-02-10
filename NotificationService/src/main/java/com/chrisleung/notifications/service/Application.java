@@ -109,17 +109,19 @@ public class Application {
 			    }
 			    
 			    /* 5. Enqueue email notifications for all back in stock variants */
-        			for(Variant v : inStock) {
-        			    Product p = variantProductMap.get(v);
-        			    // Get all unsent notifications for this variant
-        			    List<Notification> variantNotifications = variantNotificationMap.remove(v.getId());
-        			    for (Notification n: variantNotifications) {
-        			        emailQueue.put(new EmailNotification(p,v,n));
-        			        totalQueued++;
-        			    }
-        			}
-        			synchronized(emailQueue) {
-        			    emailQueue.notify();
+			    if(!inStock.isEmpty()) {
+			        for(Variant v : inStock) {
+            			    Product p = variantProductMap.get(v);
+            			    // Get all unsent notifications for this variant
+            			    List<Notification> variantNotifications = variantNotificationMap.remove(v.getId());
+            			    for (Notification n: variantNotifications) {
+            			        emailQueue.put(new EmailNotification(p,v,n));
+            			        totalQueued++;
+            			    }
+			        }
+            			synchronized(emailQueue) {
+            			    emailQueue.notify(); // Notify once more in case of race condition
+            			}
         			}
 	            
         			/* 6. Standard Log Output: Summary for this iteration */ 
