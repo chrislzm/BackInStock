@@ -162,6 +162,26 @@ public class ApplicationProperties {
         }
     }
     public static class Email {
+        public static class Limits {
+            private Integer emailsPerHour;
+            private Integer queueSize;
+            public Integer getEmailsPerHour() {
+                return emailsPerHour;
+            }
+            public void setEmailsPerHour(Integer emailsPerHour) {
+                this.emailsPerHour = emailsPerHour;
+            }
+            public Integer getQueueSize() {
+                return queueSize;
+            }
+            public void setQueueSize(Integer queueSize) {
+                this.queueSize = queueSize;
+            }
+            @Override
+            public String toString() {
+                return "Limits [emailsPerHour=" + emailsPerHour + ", queueSize=" + queueSize + "]";
+            }
+        }
         public static class Template {
             private String path;
 
@@ -269,19 +289,13 @@ public class ApplicationProperties {
                 return "Shop [name=" + name + ", domain=" + domain + "]";
             }
         }
-        private Integer maxQueueSize;
+        private Limits limits;
         private Template template;
         private Sender sender;
         private Subject subject;
         private Smtp smtp;
         private Shop shop;
-        
-        public Integer getMaxQueueSize() {
-            return maxQueueSize;
-        }
-        public void setMaxQueueSize(Integer queueSize) {
-            this.maxQueueSize = queueSize;
-        }
+
         public Template getTemplate() {
             return template;
         }
@@ -314,9 +328,10 @@ public class ApplicationProperties {
         }
         @Override
         public String toString() {
-            return "Email [maxQueueSize=" + maxQueueSize + ", template=" + template + ", sender=" + sender + ", subject="
-                    + subject + ", smtp=" + smtp + ", shop=" + shop + "]";
+            return "Email [limits=" + limits + ", template=" + template + ", sender=" + sender + ", subject=" + subject
+                    + ", smtp=" + smtp + ", shop=" + shop + "]";
         }
+        
     }
     
     private RestApi restapi;

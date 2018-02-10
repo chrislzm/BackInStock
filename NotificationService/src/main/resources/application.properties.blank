@@ -15,7 +15,8 @@ my.notifications.shopifyapi.postfix=
 my.notifications.log.tag=
 my.notifications.log.verbose=
 # Email Settings
-my.notifications.email.maxQueueSize=
+my.notifications.email.limits.emailsPerHour=
+my.notifications.email.limits.queueSize=
 my.notifications.email.template.path=
 my.notifications.email.sender.name=
 my.notifications.email.sender.address=
