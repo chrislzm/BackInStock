@@ -54,7 +54,7 @@ public class Application {
 		return args -> {
 		    /* 0. General Setup  */
 		    logTag = appProperties.getLog().getTag();
-		    emailQueue = new LinkedBlockingQueue<>(appProperties.getEmail().getMaxQueueSize());
+		    emailQueue = new LinkedBlockingQueue<>(appProperties.getEmail().getLimits().getQueueSize());
 		    
 		    /* 1. API Setup */
             NotificationsApi notificationsApi = new NotificationsApi(restTemplate, appProperties.getRestapi()); 
