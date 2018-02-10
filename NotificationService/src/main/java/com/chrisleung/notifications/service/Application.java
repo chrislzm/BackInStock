@@ -1,7 +1,5 @@
 package com.chrisleung.notifications.service;
 
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -13,15 +11,9 @@ import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import org.simplejavamail.email.Email;
-import org.simplejavamail.email.EmailBuilder;
-import org.simplejavamail.mailer.Mailer;
-import org.simplejavamail.mailer.MailerBuilder;
-import org.simplejavamail.mailer.config.TransportStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -37,7 +29,6 @@ import com.shopify.api.*;
 public class Application {
 
     private String logTag;
-    private boolean logVerbose;
     private BlockingQueue<EmailNotification> emailQueue;
 
     private ApplicationProperties appProperties;
@@ -63,7 +54,6 @@ public class Application {
 		return args -> {
 		    /* 0. General Setup  */
 		    logTag = appProperties.getLog().getTag();
-		    logVerbose = appProperties.getLog().getVerbose();
 		    emailQueue = new LinkedBlockingQueue<>(appProperties.getEmail().getQueueSize());
 		    
 		    /* 1. API Setup */
