@@ -11,8 +11,6 @@ import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -28,12 +26,9 @@ import com.shopify.api.*;
 @SpringBootApplication
 public class Application {
 
-    private String logTag;
-    private BlockingQueue<EmailNotification> emailQueue;
-
     private ApplicationProperties appProperties;
-    
-    private static final Logger log = LoggerFactory.getLogger(Application.class);
+    private BlockingQueue<EmailNotification> emailQueue;    
+    private Log logger;
     
 	public static void main(String args[]) {
 		SpringApplication.run(Application.class);
@@ -53,13 +48,13 @@ public class Application {
 	public CommandLineRunner run(RestTemplate restTemplate) throws Exception {
 		return args -> {
 		    /* 0. General Setup  */
-		    logTag = appProperties.getLog().getTag();
+		    logger = new Log(appProperties.getLog());
 		    emailQueue = new LinkedBlockingQueue<>(appProperties.getEmail().getLimits().getQueueSize());
 		    
 		    /* 1. API Setup */
             NotificationsApi notificationsApi = new NotificationsApi(restTemplate, appProperties.getRestapi()); 
        	    ShopifyApi shopifyApi= new ShopifyApi(restTemplate, appProperties.getShopifyapi());
-       	    EmailService emailService = new EmailService(appProperties.getEmail(),emailQueue,notificationsApi,appProperties.getLog());
+       	    EmailService emailService = new EmailService(appProperties.getEmail(),emailQueue,notificationsApi,logger);
        	    emailService.start();
 
         	    /* 2. Retrieve unsent notifications from the Stock Notifications REST API */
@@ -78,7 +73,7 @@ public class Application {
             int totalQueued = 0; // For log output
             
             /* Program Loop */
-            log.info(String.format("%s Starting Notification Service...", logTag));
+            logger.message("Starting Notification Service...");
 
             while(true) {
 
@@ -125,8 +120,7 @@ public class Application {
         			}
 	            
         			/* 6. Standard Log Output: Summary for this iteration */ 
-        			log.info(String.format("%s Status: %s New Notification(s), %s Total, %s Sent, %s Unsent (%s Queued/%s Out of Stock)",
-        			        logTag,
+        			logger.message(String.format("Status: %s New Notification(s), %s Total, %s Sent, %s Unsent (%s Queued/%s Out of Stock)",
         			        numNew,
         			        allNotifications.size(),
         			        totalQueued-emailQueue.size(),
