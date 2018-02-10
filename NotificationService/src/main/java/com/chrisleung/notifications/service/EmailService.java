@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Date;
+import java.util.Deque;
+import java.util.LinkedList;
 import java.util.concurrent.BlockingQueue;
 
 import org.simplejavamail.email.Email;
@@ -11,8 +13,6 @@ import org.simplejavamail.email.EmailBuilder;
 import org.simplejavamail.mailer.Mailer;
 import org.simplejavamail.mailer.MailerBuilder;
 import org.simplejavamail.mailer.config.TransportStrategy;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.chrisleung.notifications.objects.Notification;
 import com.shopify.api.Product;
@@ -27,14 +27,13 @@ public class EmailService extends Thread {
     private String shopDomain;
     private String senderName;
     private String senderAddress;
-    private boolean logVerbose;
-    private String logTag;
     private BlockingQueue<EmailNotification> queue;
     private NotificationsApi notificationsApi;
+    private Deque<Date> sentLastHour;
+    private int hourlySendLimit;
+    private Log logger;
     
-    private static final Logger log = LoggerFactory.getLogger(Application.class);
-    
-    EmailService(ApplicationProperties.Email props, BlockingQueue<EmailNotification> q, NotificationsApi nApi, ApplicationProperties.Log logProps) throws IOException {
+    EmailService(ApplicationProperties.Email props, BlockingQueue<EmailNotification> q, NotificationsApi nApi, Log l) throws IOException {
         api = MailerBuilder
                 .withSMTPServer(
                         props.getSmtp().getAddress(),
@@ -51,13 +50,14 @@ public class EmailService extends Thread {
         senderAddress = props.getSender().getAddress();
         queue = q;
         notificationsApi = nApi;
-        logVerbose = logProps.getVerbose();
-        logTag = logProps.getTag();
+        hourlySendLimit = props.getLimits().getEmailsPerHour();
+        sentLastHour = new LinkedList<>();
+        logger = l;
     }
     
     @Override
     public void run() {
-        log.info(String.format("%s Starting Email Service...", logTag));
+        logger.message("Starting Email Service...");
         while(true) {
             int sent = 0;
             while(queue.isEmpty()) {
@@ -72,7 +72,20 @@ public class EmailService extends Thread {
             while(!queue.isEmpty()) { 
                 EmailNotification en = queue.peek();
                 Notification n = en.getNotification();
+                if(sentLastHour.size() == hourlySendLimit) {
+                    Date oldest = sentLastHour.remove();
+                    long difference = 3600000 - (new Date().getTime() - oldest.getTime());
+                    if(difference > 0) {
+                        logger.verbose(String.format("Email Service: Over send limit, waiting for %s minutes.", round(difference/60000.0,1)));
+                        try {
+                            sleep(difference);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
                 boolean sentSuccess = sendEmailNotification(n,en.getProduct(),en.getVariant());
+                sentLastHour.add(new Date());
                 if(sentSuccess) {
                     sent++;
                     queue.remove();
@@ -81,16 +94,14 @@ public class EmailService extends Thread {
                     n.setSentDate(new Date());
                     notificationsApi.updateNotification(n);
                 } else {
-                    if(logVerbose) {
-                        log.info(String.format("%s EmailService: Failed to send notification for Variant %s to %s. Requeuing.", logTag, n.getVariantId(), n.getEmail()));
-                    }
+                    logger.verbose(String.format("EmailService: Failed to send notification for Variant %s to %s. Requeuing.", n.getVariantId(), n.getEmail()));
                     // Put again the end of the queue
                     synchronized(queue) {
                         queue.add(queue.remove());
                     }
                 }
             }
-            log.info(String.format("%s EmailService: Sent %s email notification(s).", logTag, sent));
+            logger.verbose(String.format("EmailService: Sent %s email notification(s).", sent));
         }
     }
     
@@ -123,8 +134,13 @@ public class EmailService extends Thread {
             api.sendMail(email);
             success = true;
         } catch(Exception e) {
-            if(logVerbose) e.printStackTrace();
+            e.printStackTrace();
         }
         return success;
+    }
+    
+    private static double round (double value, int precision) {
+        int scale = (int) Math.pow(10, precision);
+        return (double) Math.round(value * scale) / scale;
     }
 }
