@@ -19,8 +19,7 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.client.RestTemplate;
 
-import com.chrisleung.notifications.objects.Notification;
-import com.chrisleung.notifications.objects.NotificationWrapper;
+import com.chrisleung.notifications.objects.*;
 import com.shopify.api.*;
 
 @SpringBootApplication
@@ -66,33 +65,32 @@ public class Application {
 			    allNotifications.add(n.getId());
 			}
 			
-			/* Program Loop Setup */
+			/* 3. Program Loop Setup */
 			long sleepMs = appProperties.getRestapi().getRefresh() * 1000;
             // The main data structure: variant-ID to notifications map
             Map<Integer,List<Notification>> variantNotificationMap = new HashMap<Integer,List<Notification>>();
             int totalQueued = 0; // For log output
             
-            /* Program Loop */
             logger.message("Starting Notification Service...");
-
+            
             while(true) {
 
-                /* 3. Add new notifications to the variant ID-notification map */
-                int numNew = 0; // For current iteration's log output
+                /* 4. Add new notifications to the variant-notification map */
+                int numNew = 0; // For log output
 			    for(Notification n : newNotifications) {
-    			        List<Notification> l = variantNotificationMap.get(n.getVariantId());
-    			        if(l == null) {
-    			            l = new ArrayList<>();
-    			            variantNotificationMap.put(n.getVariantId(), l);
+    			        List<Notification> variantNotifications = variantNotificationMap.get(n.getVariantId());
+    			        if(variantNotifications == null) {
+    			            variantNotifications = new ArrayList<>();
+    			            variantNotificationMap.put(n.getVariantId(), variantNotifications);
     			        }
-    			        l.add(n);
+    			        variantNotifications.add(n);
                     numNew++;
 			    }
 
-			    /* 4. Detect variants that are back in stock */
-                int numOutOfStock = 0; // For current iteration's log output
+			    /* 5. Detect variants that are back in stock */
+                int numOutOfStock = 0; // For log output
                 List<Variant> inStock = new ArrayList<>();
-                Map<Variant,Product> variantProductMap = new HashMap<>(); // Variant product data
+                Map<Variant,Product> variantProductMap = new HashMap<>(); // Variant-product data map
 			    for(Integer variantId : variantNotificationMap.keySet()) {
 			        Variant v = shopifyApi.getVariant(variantId);
                     if(v.getInventory_quantity() > 0) {
@@ -106,8 +104,7 @@ public class Application {
 			    /* 5. Enqueue email notifications for all back in stock variants */
 			    if(!inStock.isEmpty()) {
 			        for(Variant v : inStock) {
-            			    Product p = variantProductMap.get(v);
-            			    // Get all unsent notifications for this variant
+            			    Product p = variantProductMap.get(v); // Product that contains this variant
             			    List<Notification> variantNotifications = variantNotificationMap.remove(v.getId());
             			    for (Notification n: variantNotifications) {
             			        emailQueue.put(new EmailNotification(p,v,n));
@@ -131,13 +128,13 @@ public class Application {
 			    /* 7. Sleep */
 			    Thread.sleep(sleepMs);
 			    
-        			/* 8. Fetch new notifications */
+        			/* 8. Fetch new notifications since last update */
 			    notificationResponse = notificationsApi.getNewNotificationsSince(lastUpdate);
                 newNotifications = notificationResponse.getNotifications();
                 Iterator<Notification> newNotificationsIterator = newNotifications.iterator();
+                // Filter any duplicates
                 while(newNotificationsIterator.hasNext()) {
                     Notification n = newNotificationsIterator.next();
-                    // Handle duplicates
                     if(allNotifications.contains(n.toString()))
                         newNotificationsIterator.remove();
                     else 
