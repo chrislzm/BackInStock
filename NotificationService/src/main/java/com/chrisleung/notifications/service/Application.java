@@ -58,7 +58,7 @@ public class Application {
 	@Bean
 	public CommandLineRunner run(RestTemplate restTemplate) throws Exception {
 		return args -> {
-		    /* 0. Set Properties */
+		    /* 0. Setup Logging */
 		    logTag = appProperties.getLog().getTag();
 		    logVerbose = appProperties.getLog().getVerbose();
 		    
