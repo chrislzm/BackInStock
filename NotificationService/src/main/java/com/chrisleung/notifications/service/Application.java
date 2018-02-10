@@ -1,10 +1,10 @@
 package com.chrisleung.notifications.service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -87,7 +87,7 @@ public class Application {
 			    for(Notification n : newNotifications) {
     			        List<Notification> l = variantNotificationMap.get(n.getVariantId());
     			        if(l == null) {
-    			            l = new LinkedList<>();
+    			            l = new ArrayList<>();
     			            variantNotificationMap.put(n.getVariantId(), l);
     			        }
     			        l.add(n);
@@ -96,7 +96,7 @@ public class Application {
 
 			    /* 4. Detect variants that are back in stock */
                 int numOutOfStock = 0; // For current iteration's log output
-                List<Variant> inStock = new LinkedList<>();
+                List<Variant> inStock = new ArrayList<>();
                 Map<Variant,Product> variantProductMap = new HashMap<>(); // Variant product data
 			    for(Integer variantId : variantNotificationMap.keySet()) {
 			        Variant v = shopifyApi.getVariant(variantId);
@@ -109,9 +109,7 @@ public class Application {
 			    }
 			    
 			    /* 5. Enqueue email notifications for all back in stock variants */
-	            Iterator<Variant> variantsToNotify = inStock.iterator();
-        			while(variantsToNotify.hasNext()) {
-        			    Variant v = variantsToNotify.next();
+        			for(Variant v : inStock) {
         			    Product p = variantProductMap.get(v);
         			    // Get all unsent notifications for this variant
         			    List<Notification> variantNotifications = variantNotificationMap.remove(v.getId());
