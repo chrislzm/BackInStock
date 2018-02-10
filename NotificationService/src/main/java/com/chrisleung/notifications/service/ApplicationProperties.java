@@ -296,6 +296,12 @@ public class ApplicationProperties {
         private Smtp smtp;
         private Shop shop;
 
+        public Limits getLimits() {
+            return limits;
+        }
+        public void setLimits(Limits limits) {
+            this.limits = limits;
+        }
         public Template getTemplate() {
             return template;
         }
