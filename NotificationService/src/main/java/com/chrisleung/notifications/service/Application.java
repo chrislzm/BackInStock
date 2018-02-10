@@ -63,7 +63,7 @@ public class Application {
 		    logVerbose = appProperties.getLog().getVerbose();
 		    
 		    /* 1. API Setup */
-            NotificationsApi notificationsApi = new NotificationsApi(restTemplate, appProperties); 
+            NotificationsApi notificationsApi = new NotificationsApi(restTemplate, appProperties.getRestapi()); 
        	    ShopifyApi shopifyApi= new ShopifyApi(restTemplate, appProperties.getShopifyapi());
        	    EmailService emailService = new EmailService(appProperties.getEmail(),logVerbose);
 

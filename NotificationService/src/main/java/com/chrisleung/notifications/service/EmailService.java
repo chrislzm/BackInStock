@@ -25,21 +25,21 @@ public class EmailService extends Thread {
     private String senderAddress;
     private boolean logVerbose;
     
-    EmailService(ApplicationProperties.Email emailProps, boolean lv) throws IOException {
+    EmailService(ApplicationProperties.Email props, boolean lv) throws IOException {
         api = MailerBuilder
                 .withSMTPServer(
-                        emailProps.getSmtp().getAddress(),
-                        emailProps.getSmtp().getPort(),
-                        emailProps.getSmtp().getUsername(),
-                        emailProps.getSmtp().getPassword())
+                        props.getSmtp().getAddress(),
+                        props.getSmtp().getPort(),
+                        props.getSmtp().getUsername(),
+                        props.getSmtp().getPassword())
                 .withTransportStrategy(TransportStrategy.SMTPS)
                 .buildMailer();
-        bodyTemplate = new String(Files.readAllBytes(Paths.get(emailProps.getTemplate().getPath())));
-        subjectTemplate = emailProps.getSubject().getTemplate();
-        shopName = emailProps.getShop().getName();
-        shopDomain = emailProps.getShop().getDomain();
-        senderName = emailProps.getSender().getName();
-        senderAddress = emailProps.getSender().getAddress();
+        bodyTemplate = new String(Files.readAllBytes(Paths.get(props.getTemplate().getPath())));
+        subjectTemplate = props.getSubject().getTemplate();
+        shopName = props.getShop().getName();
+        shopDomain = props.getShop().getDomain();
+        senderName = props.getSender().getName();
+        senderAddress = props.getSender().getAddress();
         logVerbose = lv;
     }
     

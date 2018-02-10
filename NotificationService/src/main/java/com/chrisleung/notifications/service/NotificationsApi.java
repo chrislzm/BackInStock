@@ -18,12 +18,12 @@ public class NotificationsApi {
     private String paramSent;
     private String paramCreatedDate;
     
-    NotificationsApi(RestTemplate rt, ApplicationProperties ap) {
+    NotificationsApi(RestTemplate rt, ApplicationProperties.RestApi props) {
         restTemplate = rt;
-        auth = new BasicAuthorizationInterceptor(ap.getRestapi().getUsername(), ap.getRestapi().getPassword()); 
-        baseUrl = ap.getRestapi().getUrl();
-        paramSent = ap.getRestapi().getParam().getSent();
-        paramCreatedDate = ap.getRestapi().getParam().getCreatedDate();
+        auth = new BasicAuthorizationInterceptor(props.getUsername(), props.getPassword()); 
+        baseUrl = props.getUrl();
+        paramSent = props.getParam().getSent();
+        paramCreatedDate = props.getParam().getCreatedDate();
     }
     
     public NotificationWrapper getAllUnsentNotifications() {
