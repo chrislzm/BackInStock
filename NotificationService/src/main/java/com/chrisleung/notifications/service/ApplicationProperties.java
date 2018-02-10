@@ -269,18 +269,18 @@ public class ApplicationProperties {
                 return "Shop [name=" + name + ", domain=" + domain + "]";
             }
         }
-        private Integer queueSize;
+        private Integer maxQueueSize;
         private Template template;
         private Sender sender;
         private Subject subject;
         private Smtp smtp;
         private Shop shop;
         
-        public Integer getQueueSize() {
-            return queueSize;
+        public Integer getMaxQueueSize() {
+            return maxQueueSize;
         }
-        public void setQueueSize(Integer queueSize) {
-            this.queueSize = queueSize;
+        public void setMaxQueueSize(Integer queueSize) {
+            this.maxQueueSize = queueSize;
         }
         public Template getTemplate() {
             return template;
@@ -314,7 +314,7 @@ public class ApplicationProperties {
         }
         @Override
         public String toString() {
-            return "Email [queueSize=" + queueSize + ", template=" + template + ", sender=" + sender + ", subject="
+            return "Email [maxQueueSize=" + maxQueueSize + ", template=" + template + ", sender=" + sender + ", subject="
                     + subject + ", smtp=" + smtp + ", shop=" + shop + "]";
         }
     }
