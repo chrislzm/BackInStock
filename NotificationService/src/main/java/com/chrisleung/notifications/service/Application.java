@@ -23,10 +23,10 @@ import com.shopify.api.*;
 
 /**
  * This class implements the Notifications Service application. It periodically
- * polls the database (via REST API) for new notifications, retrieves inventory
- * and product data from the Shopify API, and queues email notifications when
- * it detects back in stock product variants. (The email service handles
- * sending the notifications and runs on a separate thread.)
+ * polls the database for new notifications, retrieves corresponding inventory
+ * and product data from the Shopify API, and queues email notifications
+ * whenever back in stock product variants are detected. The email service
+ * handles sending the notifications on a separate thread.
  * 
  * @author Chris Leung
  */
