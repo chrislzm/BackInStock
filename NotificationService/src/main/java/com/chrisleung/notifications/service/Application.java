@@ -39,13 +39,13 @@ public class Application {
 		SpringApplication.run(Application.class);
 	}
 	
+    @Bean
+    public RestTemplate restTemplate(RestTemplateBuilder builder) {
+        return builder.build();
+    }
+    
 	@Bean
-	public RestTemplate restTemplate(RestTemplateBuilder builder) {
-		return builder.build();
-	}
-
-	@Bean
-	public CommandLineRunner run(RestTemplate restTemplate) throws Exception {
+	public CommandLineRunner run() throws Exception {
 		return args -> {
 		    /* 1. Email Service Setup */
             emailQueue = emailService.getQueue();
