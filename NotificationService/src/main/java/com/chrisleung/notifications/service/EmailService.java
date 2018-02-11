@@ -44,34 +44,34 @@ public class EmailService extends Thread {
     private String senderAddress;
     
     @Autowired
-    EmailService(EmailServiceConfig props) {
-        if(props.getQueue().getEnableLimit()) {
-            queue = new LinkedBlockingQueue<>(props.getQueue().getSize());
+    EmailService(EmailServiceConfig config) {
+        if(config.getQueue().getEnableLimit()) {
+            queue = new LinkedBlockingQueue<>(config.getQueue().getSize());
         } else {
             queue = new LinkedBlockingQueue<>();
         }
         
         api = MailerBuilder
                 .withSMTPServer(
-                        props.getSmtp().getAddress(),
-                        props.getSmtp().getPort(),
-                        props.getSmtp().getUsername(),
-                        props.getSmtp().getPassword())
+                        config.getSmtp().getAddress(),
+                        config.getSmtp().getPort(),
+                        config.getSmtp().getUsername(),
+                        config.getSmtp().getPassword())
                 .withTransportStrategy(TransportStrategy.SMTPS)
                 .buildMailer();
         try {
-            bodyTemplate = new String(Files.readAllBytes(Paths.get(props.getTemplate().getPath())));
+            bodyTemplate = new String(Files.readAllBytes(Paths.get(config.getTemplate().getPath())));
         } catch (IOException e1) {
-            logger.error("Email Service: Could not read email template file: " + props.getTemplate().getPath());
+            logger.error("Email Service: Could not read email template file: " + config.getTemplate().getPath());
             e1.printStackTrace();
         }
-        enableRateLimit = props.getRate().getEnableLimit();
-        emailsPerHour = props.getRate().getPerHour();
-        subjectTemplate = props.getSubject().getTemplate();
-        shopName = props.getShop().getName();
-        shopDomain = props.getShop().getDomain();
-        senderName = props.getSender().getName();
-        senderAddress = props.getSender().getAddress();
+        enableRateLimit = config.getRate().getEnableLimit();
+        emailsPerHour = config.getRate().getPerHour();
+        subjectTemplate = config.getSubject().getTemplate();
+        shopName = config.getShop().getName();
+        shopDomain = config.getShop().getDomain();
+        senderName = config.getSender().getName();
+        senderAddress = config.getSender().getAddress();
     }
     
     @Override
