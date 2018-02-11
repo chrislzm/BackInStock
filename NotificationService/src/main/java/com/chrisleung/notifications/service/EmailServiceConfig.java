@@ -153,6 +153,26 @@ public class EmailServiceConfig {
             return "Shop [name=" + name + ", domain=" + domain + "]";
         }
     }
+    public static class ProductImage {
+        private String fileExtension;
+        private String sizePostfix;
+        public String getFileExtension() {
+            return fileExtension;
+        }
+        public void setFileExtension(String fileExtension) {
+            this.fileExtension = fileExtension;
+        }
+        public String getSizePostfix() {
+            return sizePostfix;
+        }
+        public void setSizePostfix(String sizePostfix) {
+            this.sizePostfix = sizePostfix;
+        }
+        @Override
+        public String toString() {
+            return "ProductImage [fileExtension=" + fileExtension + ", sizePostfix=" + sizePostfix + "]";
+        }
+    }
     private Rate rate;
     private Queue queue;
     private Template template;
@@ -160,6 +180,7 @@ public class EmailServiceConfig {
     private Subject subject;
     private Smtp smtp;
     private Shop shop;
+    private ProductImage productImage;
 
     public Rate getRate() {
         return rate;
@@ -203,9 +224,16 @@ public class EmailServiceConfig {
     public void setShop(Shop shop) {
         this.shop = shop;
     }
+    public ProductImage getProductImage() {
+        return productImage;
+    }
+    public void setProductImage(ProductImage productImage) {
+        this.productImage = productImage;
+    }
     @Override
     public String toString() {
-        return "EmailServiceProperties [rate=" + rate + ", queue=" + queue + ", template=" + template + ", sender="
-                + sender + ", subject=" + subject + ", smtp=" + smtp + ", shop=" + shop + "]";
+        return "EmailServiceConfig [rate=" + rate + ", queue=" + queue + ", template=" + template + ", sender=" + sender
+                + ", subject=" + subject + ", smtp=" + smtp + ", shop=" + shop + ", productImage=" + productImage + "]";
     }
+    
 }

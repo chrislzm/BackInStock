@@ -29,3 +29,5 @@ my.notifications.email.smtp.username=
 my.notifications.email.smtp.password=
 my.notifications.email.shop.name=
 my.notifications.email.shop.domain=
+my.notifications.email.productImage.fileExtension=
+my.notifications.email.productImage.sizePostfix=
