@@ -79,26 +79,6 @@ public class ApplicationProperties {
                     + urlPostFix + "]";
         }
     }
-    public static class Log {
-        private String tag;
-        private Boolean verbose;
-        public String getTag() {
-            return tag;
-        }
-        public void setTag(String tag) {
-            this.tag = tag;
-        }
-        public Boolean getVerbose() {
-            return verbose;
-        }
-        public void setVerbose(Boolean verbose) {
-            this.verbose = verbose;
-        }
-        @Override
-        public String toString() {
-            return "Log [tag=" + tag + ", verbose=" + verbose + "]";
-        }
-    }
     
     private ShopifyApi shopifyapi;
     private Log log;
@@ -109,15 +89,10 @@ public class ApplicationProperties {
     public void setShopifyapi(ShopifyApi shopifyapi) {
         this.shopifyapi = shopifyapi;
     }
-    public Log getLog() {
-        return log;
-    }
-    public void setLog(Log log) {
-        this.log = log;
-    }
+
     @Override
     public String toString() {
-        return "ApplicationProperties [shopifyapi=" + shopifyapi + ", log=" + log + "]";
+        return "ApplicationProperties [shopifyapi=" + shopifyapi + "]";
     }
     
 }
