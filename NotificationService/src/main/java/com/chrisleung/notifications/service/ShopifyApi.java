@@ -13,6 +13,12 @@ import com.shopify.api.ProductWrapper;
 import com.shopify.api.Variant;
 import com.shopify.api.VariantWrapper;
 
+
+/**
+ * Implements an interface to a Shopify store via its REST API. 
+ * 
+ * @author Chris Leung
+ */
 @Component
 @Scope("singleton")
 public class ShopifyApi {
