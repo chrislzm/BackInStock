@@ -21,6 +21,15 @@ import org.springframework.web.client.RestTemplate;
 import com.chrisleung.notifications.objects.*;
 import com.shopify.api.*;
 
+/**
+ * This class implements the Notifications Service application. It periodically
+ * polls the database (via REST API) for new notifications, retrieves inventory
+ * and product data from the Shopify API, and queues email notifications when
+ * it detects back in stock product variants. (The email service handles
+ * sending the notifications and runs on a separate thread.)
+ * 
+ * @author Chris Leung
+ */
 @SpringBootApplication
 public class Application {
 
@@ -29,7 +38,7 @@ public class Application {
     @Autowired
     private Log logger;
     @Autowired
-    private NotificationsApi notificationsApi;
+    private DatabaseRestApi notificationsApi;
     @Autowired
     private ShopifyApi shopifyApi;
     
@@ -51,7 +60,7 @@ public class Application {
             emailQueue = emailService.getQueue();
        	    emailService.start();
 
-        	    /* 2. Retrieve unsent notifications from the Stock Notifications REST API */
+        	    /* 2. Retrieve all unsent notifications from the Stock Notifications REST API */
        	    NotificationWrapper response = notificationsApi.getAllUnsentNotifications(); 
 			Iterable<Notification> newNotifications = response.getNotifications();
 			Date lastUpdate = response.getCurrentDate();

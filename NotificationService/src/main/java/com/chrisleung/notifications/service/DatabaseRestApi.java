@@ -15,7 +15,7 @@ import com.chrisleung.notifications.objects.NotificationWrapper;
 
 @Component
 @Scope("singleton")
-public class NotificationsApi {
+public class DatabaseRestApi {
     
     private BasicAuthorizationInterceptor auth; // For username+password auth
     private RestTemplate restTemplate;
@@ -25,7 +25,7 @@ public class NotificationsApi {
     private int sleepTime;
 
     @Autowired
-    NotificationsApi(NotificationsApiConfig config, RestTemplate restTemplate) {
+    DatabaseRestApi(DatabaseRestApiConfig config, RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
         auth = new BasicAuthorizationInterceptor(config.getUsername(), config.getPassword()); 
         baseUrl = config.getUrl();

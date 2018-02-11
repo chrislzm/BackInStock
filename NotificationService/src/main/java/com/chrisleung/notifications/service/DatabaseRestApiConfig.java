@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ConfigurationProperties(prefix = "my.notifications.database.restapi")
-public class NotificationsApiConfig {
+public class DatabaseRestApiConfig {
     public static class Param {
         private String sent;
         private String createdDate;

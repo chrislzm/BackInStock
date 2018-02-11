@@ -27,7 +27,7 @@ public class EmailService extends Thread {
     @Autowired
     private Log logger;
     @Autowired
-    private NotificationsApi notificationsApi;
+    private DatabaseRestApi notificationsApi;
 
     private Mailer api;
     private String bodyTemplate;
