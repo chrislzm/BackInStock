@@ -1,33 +1,33 @@
-app)# Notifications API
-my.notifications.database.restapi.username=
-my.notifications.database.restapi.password=
-my.notifications.database.restapi.url=
-my.notifications.database.restapi.param.sent=
-my.notifications.database.restapi.param.createdDate=
-my.notifications.database.restapi.refresh=
+# Notifications Database Rest API
+my.notifications.database.restapi.username=user
+my.notifications.database.restapi.password=password
+my.notifications.database.restapi.url=http://localhost:8080/notifications # Full URL for the database REST API endpoint.
+my.notifications.database.restapi.refresh=3600 # How often to check for new notifications (in seconds).
+my.notifications.database.restapi.param.sent=sent # URL parameter. Do not change unless you also modify this in the REST API.
+my.notifications.database.restapi.param.createdDate=createdDate # URL parameter. Do not change unless you also modify this in the REST API.
 # Shopify API
-my.notifications.shopifyapi.apikey=
-my.notifications.shopifyapi.password=
-my.notifications.shopifyapi.product.url=
-my.notifications.shopifyapi.product.variant.url=
-my.notifications.shopifyapi.postfix=
+my.notifications.shopifyapi.apiKey= # Generate in your Shopify admin panel under private apps.
+my.notifications.shopifyapi.password= # Generate in your Shopify admin panel under private apps.
+my.notifications.shopifyapi.product.url=https://yourstore.myshopify.com/admin/products/ # Your Shopify store product data endpoint.
+my.notifications.shopifyapi.product.variant.url=https://yourstore.myshopify.com/admin/variants/ # Your Shopify store product data endpoint.
+my.notifications.shopifyapi.urlPostFix=.json # Do not change unless a Shopify API update requires it.
 # Log Settings
-my.notifications.log.tag=
-my.notifications.log.verbose=
+my.notifications.log.tag=[BIS] # This tag is prepended to log messages.
+my.notifications.log.verbose=true # true for verbose log output, false otherwise.
 # Email Settings
-my.notifications.email.rate.enableLimit=
-my.notifications.email.rate.perHour=
-my.notifications.email.queue.enableLimit=
-my.notifications.email.queue.size=
-my.notifications.email.template.path=
-my.notifications.email.sender.name=
-my.notifications.email.sender.address=
-my.notifications.email.subject.template=
-my.notifications.email.smtp.address=
-my.notifications.email.smtp.port=
-my.notifications.email.smtp.username=
-my.notifications.email.smtp.password=
-my.notifications.email.shop.name=
-my.notifications.email.shop.domain=
-my.notifications.email.productImage.fileExtension=
-my.notifications.email.productImage.sizePostfix=
+my.notifications.email.rate.enableLimit=true # true to enable email rate limiting, false otherwise.
+my.notifications.email.rate.perHour=100 # Maximum number of emails that can be sent per hour (only used when ...email.rate.enableLimit=true).
+my.notifications.email.queue.enableLimit=false # true to enable queue limit, false otherwise. Use this to prevent out-of-memory errors when a very large number of emails are being queued. This will cause the main thread to block until there is more space in the queue.
+my.notifications.email.queue.size= # Maximum number of emails that can be queued at once (only used when ...email.queue.enableLimit=true)
+my.notifications.email.template.path=src/main/resources/notification_email.html # Path to the HTML email template.
+my.notifications.email.sender.name= # The sender name used in the notification email.
+my.notifications.email.sender.address= # The sender address used in the notification email.
+my.notifications.email.subject.template={{product.title}} is now available to order from {{shop.name}} # The subject template used in the notification email. {{product.title}} and {{shop.name}} placeholders are optional. When used, they will be replaced with their respective values.
+my.notifications.email.shop.name=My Store # Store name used in the notification email.
+my.notifications.email.shop.domain=www.mystore.com # Store web address used in the notification email.
+my.notifications.email.productImage.fileExtension=.jpg # Product image file extension for your product images.
+my.notifications.email.productImage.sizePostfix=_560x # Tells Shopify to render this resolution product image. Examples: For a 640x480 resolution, use _640x480. For 560 pixel width, use _560
+my.notifications.email.smtp.address= # SMTP server address used to send notification email.
+my.notifications.email.smtp.port= # SMTP server port used to send notification email.
+my.notifications.email.smtp.username= # SMTP server username used to send notification email.
+my.notifications.email.smtp.password= # SMTP server password used to send notification email.
