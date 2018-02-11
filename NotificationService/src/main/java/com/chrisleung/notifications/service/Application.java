@@ -26,15 +26,14 @@ public class Application {
 
     @Autowired
     private ApplicationProperties appProperties;
-    
     @Autowired
     private EmailService emailService;
-    
+    @Autowired
+    private Log logger;
     @Autowired
     private NotificationsApi notificationsApi;
     
     private BlockingQueue<EmailNotification> emailQueue;    
-    private Log logger;
     
 	public static void main(String args[]) {
 		SpringApplication.run(Application.class);
@@ -48,13 +47,9 @@ public class Application {
 	@Bean
 	public CommandLineRunner run(RestTemplate restTemplate) throws Exception {
 		return args -> {
-		    /* 0. General Setup  */
-		    logger = new Log(appProperties.getLog());
 		    
 		    /* 1. API Setup */
        	    ShopifyApi shopifyApi= new ShopifyApi(restTemplate, appProperties.getShopifyapi());
-       	    emailService.setLogger(logger);
-       	    emailService.setNotificationsApi(notificationsApi);
             emailQueue = emailService.getQueue();
        	    emailService.start();
 

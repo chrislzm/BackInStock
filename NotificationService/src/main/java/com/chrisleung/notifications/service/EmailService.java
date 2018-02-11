@@ -24,12 +24,15 @@ import com.shopify.api.Variant;
 @Component
 public class EmailService extends Thread {
     
-    private BlockingQueue<EmailNotification> queue;
-    private NotificationsApi notificationsApi;
+    @Autowired
     private Log logger;
+    @Autowired
+    private NotificationsApi notificationsApi;
 
     private Mailer api;
     private String bodyTemplate;
+
+    private BlockingQueue<EmailNotification> queue;
 
     private boolean enableRateLimit;
     private Integer emailsPerHour;
