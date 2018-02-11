@@ -6,6 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+/**
+ * Implements a wrapper over the org.slf4j.Logger that adds support for
+ * a "log tag" and toggling verbose log output.
+ * 
+ * @author Chris Leung
+ */
 @Component
 @Scope("singleton")
 class Log {
@@ -23,9 +29,11 @@ class Log {
     private String withTag(String msg) {
         return tag + ' ' + msg;
     }
+    
     void error(String msg) {
         log.error(withTag(msg));
     }
+    
     void message(String msg) {
         log.info(withTag(msg));
     }
