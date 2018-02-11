@@ -4,6 +4,14 @@ import com.chrisleung.notifications.objects.Notification;
 import com.shopify.api.Product;
 import com.shopify.api.Variant;
 
+
+/**
+ * An "email notification" object which is simply a container for a Notification
+ * object from the database and its corresponding product and variant data from
+ * Shopify.
+ * 
+ * @author Chris Leung
+ */
 class EmailNotification {
     private Product product;
     private Variant variant;
