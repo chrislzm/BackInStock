@@ -25,13 +25,13 @@ import com.shopify.api.*;
 public class Application {
 
     @Autowired
-    private ApplicationProperties appProperties;
-    @Autowired
     private EmailService emailService;
     @Autowired
     private Log logger;
     @Autowired
     private NotificationsApi notificationsApi;
+    @Autowired
+    private ShopifyApi shopifyApi;
     
     private BlockingQueue<EmailNotification> emailQueue;    
     
@@ -47,9 +47,7 @@ public class Application {
 	@Bean
 	public CommandLineRunner run(RestTemplate restTemplate) throws Exception {
 		return args -> {
-		    
-		    /* 1. API Setup */
-       	    ShopifyApi shopifyApi= new ShopifyApi(restTemplate, appProperties.getShopifyapi());
+		    /* 1. Email Service Setup */
             emailQueue = emailService.getQueue();
        	    emailService.start();
 

@@ -1,8 +1,11 @@
 package com.chrisleung.notifications.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.support.BasicAuthorizationInterceptor;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import com.shopify.api.Product;
@@ -10,6 +13,8 @@ import com.shopify.api.ProductWrapper;
 import com.shopify.api.Variant;
 import com.shopify.api.VariantWrapper;
 
+@Component
+@Scope("singleton")
 public class ShopifyApi {
 
     private String variantUrl;
@@ -18,12 +23,13 @@ public class ShopifyApi {
     private BasicAuthorizationInterceptor auth; // For Username+Password auth
     private RestTemplate restTemplate;
 
-    ShopifyApi(RestTemplate rt, ApplicationProperties.ShopifyApi props) {
-        restTemplate = rt;
-        auth = new BasicAuthorizationInterceptor(props.getApiKey(), props.getPassword()); 
-        variantUrl = props.getProduct().getVariant().getUrl();
-        productUrl = props.getProduct().getUrl();
-        urlPostfix = props.getUrlPostFix();
+    @Autowired
+    ShopifyApi(ShopifyApiConfig config, RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+        this.auth = new BasicAuthorizationInterceptor(config.getApiKey(), config.getPassword()); 
+        this.variantUrl = config.getProduct().getVariant().getUrl();
+        this.productUrl = config.getProduct().getUrl();
+        this.urlPostfix = config.getUrlPostFix();
     }
     
     public Variant getVariant(int variantId) {
