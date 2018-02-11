@@ -96,7 +96,7 @@ public class EmailService extends Thread {
                     Date oldest = sentLastHour.remove();
                     long difference = 3600000 - (new Date().getTime() - oldest.getTime());
                     if(difference > 0) {
-                        logger.verbose(String.format("Email Service: Over send limit, waiting for %s minutes.", round(difference/60000.0,1)));
+                        logger.verbose(String.format("Email Service: Reached send limit (%s/hour), waiting for %s minute(s).", emailsPerHour, round(difference/60000.0,1)));
                         try {
                             sleep(difference);
                         } catch (InterruptedException e) {
@@ -121,7 +121,7 @@ public class EmailService extends Thread {
                     }
                 }
             }
-            logger.verbose(String.format("EmailService: Sent %s email notification(s).", sent));
+            logger.verbose(String.format("EmailService: Queue empty. Sent %s email notification(s).", sent));
         }
     }
 
