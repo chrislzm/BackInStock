@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ConfigurationProperties(prefix = "my.notifications.email")
-public class EmailServiceProperties {
+public class EmailServiceConfig {
     public static class Rate {
         private Boolean enableLimit;
         private Integer perHour;
