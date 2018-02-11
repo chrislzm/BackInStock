@@ -3,6 +3,7 @@ package com.chrisleung.notifications.service;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.support.BasicAuthorizationInterceptor;
@@ -13,6 +14,7 @@ import com.chrisleung.notifications.objects.Notification;
 import com.chrisleung.notifications.objects.NotificationWrapper;
 
 @Component
+@Scope("singleton")
 public class NotificationsApi {
     
     private BasicAuthorizationInterceptor auth; // For username+password auth
