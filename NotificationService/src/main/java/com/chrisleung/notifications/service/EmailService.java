@@ -21,6 +21,16 @@ import com.chrisleung.notifications.objects.Notification;
 import com.shopify.api.Product;
 import com.shopify.api.Variant;
 
+/**
+ * Implements a service that emails notifications and updates the Notifications
+ * database (by setting the respective notification's "sent" field to "true")
+ * whenever a notification has been successfully emailed. Here, success is
+ * defined as having been successfully transmitted to the SMTP server. It does
+ * not indicate that the user has/will receive it (e.g. that the email address
+ * is valid, that the recipient's inbox is not full, etc.).
+ * 
+ * @author Chris Leung
+ */
 @Component
 public class EmailService extends Thread {
     
