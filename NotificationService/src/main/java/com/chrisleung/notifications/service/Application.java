@@ -25,17 +25,17 @@ import com.shopify.api.*;
 @SpringBootApplication
 public class Application {
 
+    @Autowired
     private ApplicationProperties appProperties;
+    
+    @Autowired
+    private EmailService emailService;
+    
     private BlockingQueue<EmailNotification> emailQueue;    
     private Log logger;
     
 	public static void main(String args[]) {
 		SpringApplication.run(Application.class);
-	}
-
-	@Autowired
-	public void setApp(ApplicationProperties ap) {
-	    this.appProperties = ap;
 	}
 	
 	@Bean
@@ -48,12 +48,14 @@ public class Application {
 		return args -> {
 		    /* 0. General Setup  */
 		    logger = new Log(appProperties.getLog());
-		    emailQueue = new LinkedBlockingQueue<>(appProperties.getEmail().getLimits().getQueueSize());
 		    
 		    /* 1. API Setup */
             NotificationsApi notificationsApi = new NotificationsApi(restTemplate, appProperties.getRestapi()); 
        	    ShopifyApi shopifyApi= new ShopifyApi(restTemplate, appProperties.getShopifyapi());
-       	    EmailService emailService = new EmailService(appProperties.getEmail(),emailQueue,notificationsApi,logger);
+            emailService.init();
+       	    emailService.setLogger(logger);
+       	    emailService.setNotificationsApi(notificationsApi);
+            emailQueue = emailService.getQueue();
        	    emailService.start();
 
         	    /* 2. Retrieve unsent notifications from the Stock Notifications REST API */

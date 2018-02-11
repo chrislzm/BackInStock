@@ -161,189 +161,10 @@ public class ApplicationProperties {
             return "Log [tag=" + tag + ", verbose=" + verbose + "]";
         }
     }
-    public static class Email {
-        public static class Limits {
-            private Integer emailsPerHour;
-            private Integer queueSize;
-            public Integer getEmailsPerHour() {
-                return emailsPerHour;
-            }
-            public void setEmailsPerHour(Integer emailsPerHour) {
-                this.emailsPerHour = emailsPerHour;
-            }
-            public Integer getQueueSize() {
-                return queueSize;
-            }
-            public void setQueueSize(Integer queueSize) {
-                this.queueSize = queueSize;
-            }
-            @Override
-            public String toString() {
-                return "Limits [emailsPerHour=" + emailsPerHour + ", queueSize=" + queueSize + "]";
-            }
-        }
-        public static class Template {
-            private String path;
-
-            public String getPath() {
-                return path;
-            }
-
-            public void setPath(String path) {
-                this.path = path;
-            }
-
-            @Override
-            public String toString() {
-                return "Template [path=" + path + "]";
-            }
-        }
-        public static class Sender {
-            private String name;
-            private String address;
-            public String getName() {
-                return name;
-            }
-            public void setName(String name) {
-                this.name = name;
-            }
-            public String getAddress() {
-                return address;
-            }
-            public void setAddress(String address) {
-                this.address = address;
-            }
-            @Override
-            public String toString() {
-                return "Sender [name=" + name + ", address=" + address + "]";
-            }
-        }
-        public static class Subject {
-            private String template;
-
-            public String getTemplate() {
-                return template;
-            }
-
-            public void setTemplate(String template) {
-                this.template = template;
-            }
-
-            @Override
-            public String toString() {
-                return "Subject [template=" + template + "]";
-            }
-        }
-        public static class Smtp {
-            private String address;
-            private Integer port;
-            private String username;
-            private String password;
-            public String getAddress() {
-                return address;
-            }
-            public void setAddress(String address) {
-                this.address = address;
-            }
-            public Integer getPort() {
-                return port;
-            }
-            public void setPort(Integer port) {
-                this.port = port;
-            }
-            public String getUsername() {
-                return username;
-            }
-            public void setUsername(String username) {
-                this.username = username;
-            }
-            public String getPassword() {
-                return password;
-            }
-            public void setPassword(String password) {
-                this.password = password;
-            }
-            @Override
-            public String toString() {
-                return "Smtp [address=" + address + ", port=" + port + ", username=" + username + ", password="
-                        + password + "]";
-            }            
-        }
-        public static class Shop {
-            private String name;
-            private String domain;
-            public String getName() {
-                return name;
-            }
-            public void setName(String name) {
-                this.name = name;
-            }
-            public String getDomain() {
-                return domain;
-            }
-            public void setDomain(String domain) {
-                this.domain = domain;
-            }
-            @Override
-            public String toString() {
-                return "Shop [name=" + name + ", domain=" + domain + "]";
-            }
-        }
-        private Limits limits;
-        private Template template;
-        private Sender sender;
-        private Subject subject;
-        private Smtp smtp;
-        private Shop shop;
-
-        public Limits getLimits() {
-            return limits;
-        }
-        public void setLimits(Limits limits) {
-            this.limits = limits;
-        }
-        public Template getTemplate() {
-            return template;
-        }
-        public void setTemplate(Template template) {
-            this.template = template;
-        }
-        public Sender getSender() {
-            return sender;
-        }
-        public void setSender(Sender sender) {
-            this.sender = sender;
-        }
-        public Subject getSubject() {
-            return subject;
-        }
-        public void setSubject(Subject subject) {
-            this.subject = subject;
-        }
-        public Smtp getSmtp() {
-            return smtp;
-        }
-        public void setSmtp(Smtp smtp) {
-            this.smtp = smtp;
-        }
-        public Shop getShop() {
-            return shop;
-        }
-        public void setShop(Shop shop) {
-            this.shop = shop;
-        }
-        @Override
-        public String toString() {
-            return "Email [limits=" + limits + ", template=" + template + ", sender=" + sender + ", subject=" + subject
-                    + ", smtp=" + smtp + ", shop=" + shop + "]";
-        }
-        
-    }
     
     private RestApi restapi;
     private ShopifyApi shopifyapi;
     private Log log;
-    private Email email;
     public RestApi getRestapi() {
         return restapi;
     }
@@ -362,16 +183,9 @@ public class ApplicationProperties {
     public void setLog(Log log) {
         this.log = log;
     }
-    public Email getEmail() {
-        return email;
-    }
-    public void setEmail(Email email) {
-        this.email = email;
-    }
     @Override
     public String toString() {
-        return "ApplicationProperties [restapi=" + restapi + ", shopifyapi=" + shopifyapi + ", log=" + log + ", email="
-                + email + "]";
+        return "ApplicationProperties [restapi=" + restapi + ", shopifyapi=" + shopifyapi + ", log=" + log + "]";
     }
     
 }
