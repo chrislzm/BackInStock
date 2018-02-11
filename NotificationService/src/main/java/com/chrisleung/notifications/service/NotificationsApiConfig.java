@@ -4,7 +4,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ConfigurationProperties(prefix = "my.notifications.restapi")
+@ConfigurationProperties(prefix = "my.notifications.database.restapi")
 public class NotificationsApiConfig {
     public static class Param {
         private String sent;
