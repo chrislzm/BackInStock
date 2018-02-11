@@ -42,7 +42,6 @@ public class EmailService extends Thread {
     
     @Autowired
     EmailService(EmailServiceConfig props) {
-        System.out.println(props.toString());
         if(props.getQueue().getEnableLimit()) {
             queue = new LinkedBlockingQueue<>(props.getQueue().getSize());
         } else {
