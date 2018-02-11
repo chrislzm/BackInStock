@@ -8,6 +8,7 @@ import java.util.Deque;
 import java.util.LinkedList;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 import org.simplejavamail.email.Email;
 import org.simplejavamail.email.EmailBuilder;
@@ -86,7 +87,7 @@ public class EmailService extends Thread {
     
     @Override
     public void run() {
-        Deque<Date> sentLastHour = new LinkedList<>();
+        Deque<Date> sentLastHour = new LinkedList<>(); // Used when rate limit is enabled
         logger.message("Starting Email Service...");
         while(true) {
             int sent = 0;
@@ -101,15 +102,17 @@ public class EmailService extends Thread {
             }
             while(!queue.isEmpty()) { 
                 logger.verbose(String.format("Email Service: Queue contains emails. Attempting to send them all.", sent));
-                EmailNotification en = queue.peek();
+                EmailNotification en = queue.peek(); // Don't remove, in case we need to add it back into the queue
                 Notification n = en.getNotification();
-                if(enableRateLimit && sentLastHour.size() == emailsPerHour) {
+                if(enableRateLimit && sentLastHour.size() == emailsPerHour) { // If we have hit the rate limit
                     Date oldest = sentLastHour.remove();
-                    long difference = 3600000 - (new Date().getTime() - oldest.getTime());
-                    if(difference > 0) {
-                        logger.verbose(String.format("Email Service: Reached send limit (%s/hour), waiting for %s minute(s).", emailsPerHour, round(difference/60000.0,1)));
+                    long timeLeft = TimeUnit.HOURS.toMillis(1) - (new Date().getTime() - oldest.getTime());
+                    if(timeLeft > 0) {
+                        logger.verbose(String.format("Email Service: Reached send limit (%s/hour), waiting for %s minute(s).",
+                                emailsPerHour,
+                                round(timeLeft/TimeUnit.MINUTES.toMillis(1),1)));
                         try {
-                            sleep(difference);
+                            sleep(timeLeft);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -120,12 +123,14 @@ public class EmailService extends Thread {
                 if(sentSuccess) {
                     sent++;
                     queue.remove();
-                    // Update the Stock Notifications REST API that we have sent the notification
+                    // Update the database that the notification is sent
                     n.setIsSent(true);
                     n.setSentDate(new Date());
                     notificationsApi.updateNotification(n);
                 } else {
-                    logger.verbose(String.format("EmailService: Failed to send notification for Variant %s to %s. Requeuing.", n.getVariantId(), n.getEmail()));
+                    logger.verbose(String.format("EmailService: Failed to send notification for Variant %s to %s. Requeuing.",
+                            n.getVariantId(),
+                            n.getEmail()));
                     // Put again the end of the queue
                     synchronized(queue) {
                         queue.add(queue.remove());
@@ -170,11 +175,22 @@ public class EmailService extends Thread {
         return success;
     }
     
-    private static double round (double value, int precision) {
+    /**
+     * Rounds a floating point number to a specified number of decimal points
+     * @param value the value to round
+     * @param precision the number of decimal points of precision
+     * @return the rounded number
+     */
+    private double round (double value, int precision) {
         int scale = (int) Math.pow(10, precision);
         return (double) Math.round(value * scale) / scale;
     }
 
+    /**
+     * Used by the main application to queue email notifications for this class
+     * to send.
+     * @return the email notification queue
+     */
     public BlockingQueue<EmailNotification> getQueue() {
         return queue;
     }
