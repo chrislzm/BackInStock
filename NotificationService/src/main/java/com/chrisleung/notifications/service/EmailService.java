@@ -116,7 +116,7 @@ public class EmailService extends Thread {
                     }
                 }
                 boolean sentSuccess = sendEmailNotification(n,en.getProduct(),en.getVariant());
-                sentLastHour.add(new Date());
+                if(enableRateLimit) sentLastHour.add(new Date());
                 if(sentSuccess) {
                     sent++;
                     queue.remove();
