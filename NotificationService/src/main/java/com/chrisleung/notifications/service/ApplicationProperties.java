@@ -6,68 +6,6 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ConfigurationProperties(prefix = "my.notifications")
 public class ApplicationProperties {
-    public static class RestApi {
-        public static class Param {
-            private String sent;
-            private String createdDate;
-            public String getSent() {
-                return sent;
-            }
-            public void setSent(String sent) {
-                this.sent = sent;
-            }
-            public String getCreatedDate() {
-                return createdDate;
-            }
-            public void setCreatedDate(String createdDate) {
-                this.createdDate = createdDate;
-            }
-            @Override
-            public String toString() {
-                return "Param [sent=" + sent + ", createdDate=" + createdDate + "]";
-            }
-        }
-        private Param param;
-        private String username;
-        private String password;
-        private String url;
-        private Integer refresh;
-        public Param getParam() {
-            return param;
-        }
-        public void setParam(Param param) {
-            this.param = param;
-        }
-        public String getUsername() {
-            return username;
-        }
-        public void setUsername(String username) {
-            this.username = username;
-        }
-        public String getPassword() {
-            return password;
-        }
-        public void setPassword(String password) {
-            this.password = password;
-        }
-        public String getUrl() {
-            return url;
-        }
-        public void setUrl(String url) {
-            this.url = url;
-        }
-        public Integer getRefresh() {
-            return refresh;
-        }
-        public void setRefresh(Integer refresh) {
-            this.refresh = refresh;
-        }
-        @Override
-        public String toString() {
-            return "RestApi [param=" + param + ", username=" + username + ", password=" + password + ", url=" + url
-                    + ", refresh=" + refresh + "]";
-        }
-    }
     public static class ShopifyApi {
         public static class Product {
             public static class Variant {
@@ -162,15 +100,9 @@ public class ApplicationProperties {
         }
     }
     
-    private RestApi restapi;
     private ShopifyApi shopifyapi;
     private Log log;
-    public RestApi getRestapi() {
-        return restapi;
-    }
-    public void setRestapi(RestApi restapi) {
-        this.restapi = restapi;
-    }
+
     public ShopifyApi getShopifyapi() {
         return shopifyapi;
     }
@@ -185,7 +117,7 @@ public class ApplicationProperties {
     }
     @Override
     public String toString() {
-        return "ApplicationProperties [restapi=" + restapi + ", shopifyapi=" + shopifyapi + ", log=" + log + "]";
+        return "ApplicationProperties [shopifyapi=" + shopifyapi + ", log=" + log + "]";
     }
     
 }

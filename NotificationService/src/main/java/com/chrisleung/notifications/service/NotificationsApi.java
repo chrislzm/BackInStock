@@ -2,14 +2,17 @@ package com.chrisleung.notifications.service;
 
 import java.util.Date;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.support.BasicAuthorizationInterceptor;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import com.chrisleung.notifications.objects.Notification;
 import com.chrisleung.notifications.objects.NotificationWrapper;
 
+@Component
 public class NotificationsApi {
     
     private BasicAuthorizationInterceptor auth; // For username+password auth
@@ -17,13 +20,16 @@ public class NotificationsApi {
     private String baseUrl;
     private String paramSent;
     private String paramCreatedDate;
-    
-    NotificationsApi(RestTemplate rt, ApplicationProperties.RestApi props) {
-        restTemplate = rt;
-        auth = new BasicAuthorizationInterceptor(props.getUsername(), props.getPassword()); 
-        baseUrl = props.getUrl();
-        paramSent = props.getParam().getSent();
-        paramCreatedDate = props.getParam().getCreatedDate();
+    private int sleepTime;
+
+    @Autowired
+    NotificationsApi(NotificationsApiConfig config, RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+        auth = new BasicAuthorizationInterceptor(config.getUsername(), config.getPassword()); 
+        baseUrl = config.getUrl();
+        paramSent = config.getParam().getSent();
+        paramCreatedDate = config.getParam().getCreatedDate();
+        sleepTime = config.getRefresh() * 1000;
     }
     
     public NotificationWrapper getAllUnsentNotifications() {
@@ -48,5 +54,9 @@ public class NotificationsApi {
         String url = String.format("%s/%s",baseUrl,n.getId());
         restTemplate.put(url, n);
         restTemplate.getInterceptors().remove(0);
+    }
+
+    public void sleep() throws InterruptedException {
+        Thread.sleep(sleepTime);
     }
 }

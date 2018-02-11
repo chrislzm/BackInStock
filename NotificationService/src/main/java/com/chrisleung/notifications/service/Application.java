@@ -30,6 +30,9 @@ public class Application {
     @Autowired
     private EmailService emailService;
     
+    @Autowired
+    private NotificationsApi notificationsApi;
+    
     private BlockingQueue<EmailNotification> emailQueue;    
     private Log logger;
     
@@ -49,7 +52,6 @@ public class Application {
 		    logger = new Log(appProperties.getLog());
 		    
 		    /* 1. API Setup */
-            NotificationsApi notificationsApi = new NotificationsApi(restTemplate, appProperties.getRestapi()); 
        	    ShopifyApi shopifyApi= new ShopifyApi(restTemplate, appProperties.getShopifyapi());
        	    emailService.setLogger(logger);
        	    emailService.setNotificationsApi(notificationsApi);
@@ -66,7 +68,6 @@ public class Application {
 			}
 			
 			/* 3. Program Loop Setup */
-			long sleepMs = appProperties.getRestapi().getRefresh() * 1000;
             // The main data structure: variant-ID to notifications map
             Map<Integer,List<Notification>> variantNotificationMap = new HashMap<Integer,List<Notification>>();
             int totalQueued = 0; // For log output
@@ -126,7 +127,7 @@ public class Application {
         			        numOutOfStock));
         			
 			    /* 7. Sleep */
-			    Thread.sleep(sleepMs);
+        			notificationsApi.sleep();
 			    
         			/* 8. Fetch new notifications since last update */
 			    response = notificationsApi.getNewNotificationsSince(lastUpdate);
