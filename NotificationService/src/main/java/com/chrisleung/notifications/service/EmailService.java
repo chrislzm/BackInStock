@@ -90,6 +90,7 @@ public class EmailService extends Thread {
                 }
             }
             while(!queue.isEmpty()) { 
+                logger.verbose(String.format("EmailService: Detected emails. Attempting to send all emails in queue.", sent));
                 EmailNotification en = queue.peek();
                 Notification n = en.getNotification();
                 if(enableRateLimit && sentLastHour.size() == emailsPerHour) {
@@ -121,7 +122,7 @@ public class EmailService extends Thread {
                     }
                 }
             }
-            logger.verbose(String.format("EmailService: Queue empty. Sent %s email notification(s).", sent));
+            logger.verbose(String.format("EmailService: Queue now empty. Sent %s email notification(s).", sent));
         }
     }
 
