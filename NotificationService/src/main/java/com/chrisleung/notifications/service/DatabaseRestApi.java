@@ -13,6 +13,11 @@ import org.springframework.web.client.RestTemplate;
 import com.chrisleung.notifications.objects.Notification;
 import com.chrisleung.notifications.objects.NotificationWrapper;
 
+/**
+ * Implements an interface to the Notifications database via its REST API. 
+ * 
+ * @author Chris Leung
+ */
 @Component
 @Scope("singleton")
 public class DatabaseRestApi {
@@ -39,11 +44,20 @@ public class DatabaseRestApi {
         return getNotifications(url);
     }
     
+    /** 
+     * @param lastUpdate the database system time (retrieved from a previous 
+     *                   NotificationWrapper) from which to query for new
+     *                   notifications.
+     */
     public NotificationWrapper getNewNotificationsSince(Date lastUpdate) {
         String url = String.format("%s?%s=%s",baseUrl,paramCreatedDate,lastUpdate.getTime());
         return getNotifications(url);
     }
     
+    /**
+     * Generic method to retrieve a notification given a pre-configured URL
+     * and username/password auth.
+     */
     public NotificationWrapper getNotifications(String url) {
         restTemplate.getInterceptors().add(auth);
         ResponseEntity<NotificationWrapper> response = restTemplate.exchange(url, HttpMethod.GET, null, NotificationWrapper.class);
@@ -51,6 +65,9 @@ public class DatabaseRestApi {
         return response.getBody();
     }
     
+    /**
+     * Updates the database with any changes made to the notification.
+     */
     public void updateNotification(Notification n) {
         restTemplate.getInterceptors().add(auth);
         String url = String.format("%s/%s",baseUrl,n.getId());
@@ -58,6 +75,10 @@ public class DatabaseRestApi {
         restTemplate.getInterceptors().remove(0);
     }
 
+    /**
+     * Causes the calling thread to sleep for the amount of time specified in
+     * the configuration. Use this between polls on the database.
+     */
     public void sleep() throws InterruptedException {
         Thread.sleep(sleepTime);
     }
