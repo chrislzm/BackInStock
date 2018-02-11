@@ -90,7 +90,7 @@ public class EmailService extends Thread {
                 }
             }
             while(!queue.isEmpty()) { 
-                logger.verbose(String.format("EmailService: Detected emails. Attempting to send all emails in queue.", sent));
+                logger.verbose(String.format("Email Service: Detected emails. Attempting to send all emails in queue.", sent));
                 EmailNotification en = queue.peek();
                 Notification n = en.getNotification();
                 if(enableRateLimit && sentLastHour.size() == emailsPerHour) {
@@ -167,25 +167,5 @@ public class EmailService extends Thread {
 
     public BlockingQueue<EmailNotification> getQueue() {
         return queue;
-    }
-
-    public void setQueue(BlockingQueue<EmailNotification> queue) {
-        this.queue = queue;
-    }
-
-    public NotificationsApi getNotificationsApi() {
-        return notificationsApi;
-    }
-
-    public void setNotificationsApi(NotificationsApi notificationsApi) {
-        this.notificationsApi = notificationsApi;
-    }
-
-    public Log getLogger() {
-        return logger;
-    }
-
-    public void setLogger(Log logger) {
-        this.logger = logger;
     }
 }
