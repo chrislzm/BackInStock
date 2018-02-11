@@ -54,6 +54,9 @@ public class EmailService extends Thread {
     private String senderName;
     private String senderAddress;
     
+    private String imgFileExtension;
+    private String imgSizePostfix;
+    
     @Autowired
     EmailService(EmailServiceConfig config) {
         if(config.getQueue().getEnableLimit()) {
@@ -83,6 +86,8 @@ public class EmailService extends Thread {
         shopDomain = config.getShop().getDomain();
         senderName = config.getSender().getName();
         senderAddress = config.getSender().getAddress();
+        imgFileExtension = config.getProductImage().getFileExtension();
+        imgSizePostfix = config.getProductImage().getSizePostfix();
     }
     
     @Override
@@ -110,7 +115,7 @@ public class EmailService extends Thread {
                     if(timeLeft > 0) {
                         logger.verbose(String.format("Email Service: Reached send limit (%s/hour), waiting for %s minute(s).",
                                 emailsPerHour,
-                                round(timeLeft/TimeUnit.MINUTES.toMillis(1),1)));
+                                round(timeLeft/(double)TimeUnit.MINUTES.toMillis(1),1)));
                         try {
                             sleep(timeLeft);
                         } catch (InterruptedException e) {
@@ -144,7 +149,7 @@ public class EmailService extends Thread {
     private boolean sendEmailNotification(Notification n, Product p, Variant v) {
         
         String imageUrl = p.getImages()[0].getSrc();
-        String emailImageUrl = imageUrl.substring(0, imageUrl.indexOf(".jpg")) + "_560x.jpg"; // TODO: Size should be property
+        String emailImageUrl = imageUrl.substring(0, imageUrl.indexOf(imgFileExtension)) + imgSizePostfix + imgFileExtension;
         String emailSubject = subjectTemplate
                                 .replace("{{shop.name}}", shopName)
                                 .replace("{{product.title}}", p.getTitle());
