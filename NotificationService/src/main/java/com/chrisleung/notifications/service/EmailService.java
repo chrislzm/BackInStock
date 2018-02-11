@@ -90,7 +90,7 @@ public class EmailService extends Thread {
                 }
             }
             while(!queue.isEmpty()) { 
-                logger.verbose(String.format("Email Service: Detected emails. Attempting to send all emails in queue.", sent));
+                logger.verbose(String.format("Email Service: Queue contains emails. Attempting to send them all.", sent));
                 EmailNotification en = queue.peek();
                 Notification n = en.getNotification();
                 if(enableRateLimit && sentLastHour.size() == emailsPerHour) {
