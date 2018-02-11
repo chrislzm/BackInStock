@@ -72,9 +72,6 @@ public class EmailService extends Thread {
         senderAddress = props.getSender().getAddress();
     }
     
-    public void init() {
-    }
-    
     @Override
     public void run() {
         Deque<Date> sentLastHour = new LinkedList<>();
