@@ -1,6 +1,7 @@
 package com.chrisleung.notifications.service;
 
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -27,7 +28,7 @@ public class DatabaseRestApi {
     private String baseUrl;
     private String paramSent;
     private String paramCreatedDate;
-    private int sleepTime;
+    private long sleepTime;
 
     @Autowired
     DatabaseRestApi(DatabaseRestApiConfig config, RestTemplate restTemplate) {
@@ -36,7 +37,7 @@ public class DatabaseRestApi {
         baseUrl = config.getUrl();
         paramSent = config.getParam().getSent();
         paramCreatedDate = config.getParam().getCreatedDate();
-        sleepTime = config.getRefresh() * 1000;
+        sleepTime = TimeUnit.SECONDS.toMillis(config.getRefresh());
     }
     
     public NotificationWrapper getAllUnsentNotifications() {
