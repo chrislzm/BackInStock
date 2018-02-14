@@ -1,3 +1,11 @@
+# Description
+
+This Java application implements a service that automatically emails customers when items they have requested notifications for are back in stock. It does this by periodically (1) retrieving new notifications from a database, (2) checking inventory levels of an online store, (3) emailing customers for items that are back in stock, and (4) updating the database that the notification has been sent.
+
+# Requirements
+
+Currently the application immediately supports Shopify. It also requires a database server with web access, along with an SMTP sever to send emails.
+
 # Installation Notes
 
 * Rename application.properties.blank to application.properties and add/update values
