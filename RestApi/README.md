@@ -1,7 +1,6 @@
-Important: Be sure to update the following properties in src/main/resources/application.properties before running this application:
-1. security.user.name
-2. security.user.password
-3. server.ssl.key-store-password
+# Introduction
+
+This application implements a REST API for a MongoDB database that stores all stock notifications. This database is the primary data store and source of truth for the state of each notification.
 
 # Installation Notes
 
