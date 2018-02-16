@@ -1,6 +1,15 @@
 # Introduction
 
-This application implements a REST API for a MongoDB database that stores all stock notifications. This database is the primary data store and source of truth for the state of each notification.
+This application implements a REST API for a MongoDB database that contains all stock notification information. This database is the primary data store and source of truth for the state of each notification.
+
+The database contains a single collection, and each object in the collection contains seven key/value mappings:
+* _id: The unique ID for the object
+* _class: The fully qualified Java class name
+* email: Email address of the customer that requested the notification
+* variantId: The product variant ID that is out stock/this notification is for
+* createdDate: The date this notification was created
+* sent (boolean): Whether an email notification has been sent to the customer
+* sentDate: The date the notification was emailed to the customer
 
 # Installation Notes
 
