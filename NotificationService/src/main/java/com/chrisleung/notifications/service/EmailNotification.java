@@ -2,7 +2,6 @@ package com.chrisleung.notifications.service;
 
 import com.chrisleung.notifications.objects.*;
 
-
 /**
  * An "email notification" object which is simply a container for a Notification
  * object from the database and its corresponding product and variant data from
