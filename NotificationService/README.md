@@ -1,9 +1,9 @@
-# Description
+# Stock Notifications Service
 
-This Java application implements a service that automatically emails customers when items they have requested notifications for are back in stock. It does this by periodically:
+This Java application implements a service that automatically emails customers when product variants they have requested notifications for are back in stock. It does this by periodically:
 1. Retrieving new notifications from a database
-2. Checking inventory levels of an online store
-3. Emailing customers for any items that are back in stock
+2. Checking inventory levels for the respective product variants in an online store
+3. Emailing customers for any product variants that are back in stock
 4. Updating the database that the notification has been sent
 
 # Requirements
