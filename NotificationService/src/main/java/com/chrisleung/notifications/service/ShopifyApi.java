@@ -8,9 +8,7 @@ import org.springframework.http.client.support.BasicAuthorizationInterceptor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import com.shopify.api.Product;
 import com.shopify.api.ProductWrapper;
-import com.shopify.api.Variant;
 import com.shopify.api.VariantWrapper;
 
 
@@ -21,7 +19,7 @@ import com.shopify.api.VariantWrapper;
  */
 @Component
 @Scope("singleton")
-public class ShopifyApi {
+public class ShopifyApi implements StoreApi {
 
     private String variantUrl;
     private String productUrl;
@@ -38,19 +36,21 @@ public class ShopifyApi {
         this.urlPostfix = config.getUrlPostFix();
     }
     
-    public Variant getVariant(int variantId) {
+    @Override
+    public com.chrisleung.notifications.objects.Variant getVariant(int variantId) {
         restTemplate.getInterceptors().add(auth);
         String url = String.format("%s%s%s",variantUrl,variantId,urlPostfix);
         ResponseEntity<VariantWrapper> shopifyResponse = restTemplate.exchange(url, HttpMethod.GET, null, VariantWrapper.class);
         restTemplate.getInterceptors().remove(0);
-        return shopifyResponse.getBody().getVariant();
+        return new ShopifyVariant(shopifyResponse.getBody().getVariant());
     }
-    
-    public Product getProduct(Variant v) {
+
+    @Override
+    public com.chrisleung.notifications.objects.Product getProduct(int productId) {
         restTemplate.getInterceptors().add(auth);
-        String url = String.format("%s%s%s",productUrl,v.getProduct_id(),urlPostfix);
+        String url = String.format("%s%s%s",productUrl,productId,urlPostfix);
         ResponseEntity<ProductWrapper> shopifyResponse = restTemplate.exchange(url, HttpMethod.GET, null, ProductWrapper.class);
         restTemplate.getInterceptors().remove(0);
-        return shopifyResponse.getBody().getProduct();
+        return new ShopifyProduct(shopifyResponse.getBody().getProduct());
     }
 }

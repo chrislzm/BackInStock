@@ -19,7 +19,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.web.client.RestTemplate;
 
 import com.chrisleung.notifications.objects.*;
-import com.shopify.api.*;
 
 /**
  * This class implements the Notifications Service application. It periodically
@@ -40,14 +39,16 @@ public class Application {
     @Autowired
     private DatabaseRestApi notificationsApi;
     @Autowired
-    private ShopifyApi shopifyApi;
+    ShopifyApi shopifyApi;
+    
+    private StoreApi storeApi;
     
     private BlockingQueue<EmailNotification> emailQueue;    
     
 	public static void main(String args[]) {
 		SpringApplication.run(Application.class);
 	}
-	
+		
     @Bean
     public RestTemplate restTemplate(RestTemplateBuilder builder) {
         return builder.build();
@@ -56,6 +57,9 @@ public class Application {
 	@Bean
 	public CommandLineRunner run() throws Exception {
 		return args -> {
+		    /* 0. Set the online store API to use */
+		    storeApi = shopifyApi;
+		    
 		    /* 1. Email Service Setup */
             emailQueue = emailService.getQueue();
        	    emailService.start();
@@ -95,10 +99,10 @@ public class Application {
                 List<Variant> inStock = new ArrayList<>();
                 Map<Variant,Product> variantProductMap = new HashMap<>(); // Variant-product data map
 			    for(Integer variantId : variantNotificationMap.keySet()) {
-			        Variant v = shopifyApi.getVariant(variantId);
-                    if(v.getInventory_quantity() > 0) {
+			        Variant v = storeApi.getVariant(variantId);
+                    if(v.getInventoryQuantity() > 0) {
                         inStock.add(v);
-                        variantProductMap.put(v, shopifyApi.getProduct(v));
+                        variantProductMap.put(v, storeApi.getProduct(v.getProductId()));
                     } else {
                         numOutOfStock += variantNotificationMap.get(variantId).size();
                     }

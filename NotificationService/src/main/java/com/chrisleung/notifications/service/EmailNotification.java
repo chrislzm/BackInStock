@@ -1,8 +1,6 @@
 package com.chrisleung.notifications.service;
 
-import com.chrisleung.notifications.objects.Notification;
-import com.shopify.api.Product;
-import com.shopify.api.Variant;
+import com.chrisleung.notifications.objects.*;
 
 
 /**

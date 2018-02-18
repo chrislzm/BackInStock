@@ -18,9 +18,7 @@ import org.simplejavamail.mailer.config.TransportStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.chrisleung.notifications.objects.Notification;
-import com.shopify.api.Product;
-import com.shopify.api.Variant;
+import com.chrisleung.notifications.objects.*;
 
 /**
  * Implements a service that emails notifications and updates the Notifications
@@ -148,7 +146,7 @@ public class EmailService extends Thread {
 
     private boolean sendEmailNotification(Notification n, Product p, Variant v) {
         
-        String imageUrl = p.getImages()[0].getSrc();
+        String imageUrl = p.getImageUrl();
         String emailImageUrl = imageUrl.substring(0, imageUrl.indexOf(imgFileExtension)) + imgSizePostfix + imgFileExtension;
         String emailSubject = subjectTemplate
                                 .replace("{{shop.name}}", shopName)
