@@ -1,8 +1,8 @@
-# Stock Notification Frontend
+# Frontend - Stock Notification Modal Form
 
 This frontend application is an example stock notification widget that allows customers to register for stock notifications. It can be modified and integrated with your existing online storefront.
 
-The example registration form in our [demo.html](src/demo.html) file:
+Example form from [demo.html](src/demo.html):
 
 ![Demo Notification Form](doc/sample.png "Demo Notification Form")
 
