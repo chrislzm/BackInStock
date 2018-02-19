@@ -2,7 +2,16 @@
 
 Make it easy for customers to sign up for and receive back in stock email alerts!
 
-This application contains the following components:
+Frontend sample screenshot:
+
+![Example Notification Form](FrontEnd/doc/sample2.png "Example Notification Form")
+
+Email alert sample screenshot:
+
+![Example Email Notification](NotificationService/doc/sample.png "Example Email Notification")
+
+## Components
+
 1. [Frontend](FrontEnd) - Widget that allows a customer to request a back in stock notification on your website.
 2. [Notification Service](NotificationService) - Emails notifications to customers when products are back in stock.
 3. [Database REST API](RestApi) - CRUD API that stores all notification data.
@@ -12,14 +21,6 @@ This application contains the following components:
 
 Please refer to each component's README file for more detailed information.
 
-Frontend sample screenshot:
-
-![Example Notification Form](FrontEnd/doc/sample2.png "Example Notification Form")
-
-Email alert sample screenshot:
-
-![Example Email Notification](NotificationService/doc/sample.png "Example Email Notification")
-
 ## Prerequisites
 
 1. Ecommerce website (for the Frontend)
@@ -28,14 +29,14 @@ Email alert sample screenshot:
 
 ## Installing & Deploying
 
-Refer to each component's README file:
+Refer to each component's README file for instructions:
 * [Frontend `README.md`](FrontEnd/README.md)
 * [Notification Service `README.md`](NotificationService/README.md)
 * [Database REST API `README.md`](RestApi/README.md)
 
-## Important: The Difference Between "Products" and "Variants"
+## Definition of "Product" and "Variant"
 
-A "product" is defined to have one or more "variants". For example a red ball (product) may be sold in different sizes (variants). The words "variant" and "product variant" may be used interchangeably throughout the code and documentation. In the case of the [ProductVariant interface](Objects/src/main/java/com/chrisleung/notifications/objects/ProductVariant.java), it refers to the combination of variant data with its respective product data into a single object. "Product" alone refers generally to a product and all of its variants.
+A "product" is defined to have one or more "variants", e.g. a ball (product) may be sold in different colors and sizes (variants). The words "variant" and "product variant" may be used interchangeably throughout the code and documentation. In the case of the [ProductVariant interface](Objects/src/main/java/com/chrisleung/notifications/objects/ProductVariant.java), the words refer to the combination of a variant's data with its respective product data into a single object. "Product" alone refers generally to a product and all of its variants.
 
 ## Author
 
