@@ -6,7 +6,7 @@ This Java application implements an automated notification service that emails c
 3. Emailing customers for any product variants that are back in stock
 4. Updating the database that the notification has been sent
 
-Sample email screenshot:
+Example notification email (email template is included and fully customizable):
 
 ![Example Email Notification](doc/sample.png "Sample Email Notification")
 
@@ -25,7 +25,7 @@ Sample email screenshot:
 3. Download this repository
 4. Update files in `src/main/resources`
 * Rename `application.properties.blank` to `application.properties` and update values
-* Update `notification_email.html` as desired -- this is the template for the email your customer will receive. 
+* Update `notification_email.html` template as desired -- this is the template for the email your customer will receive. 
 5. If you are not using Shopify, you will need to implement the StoreApi and ProductVariant interfaces.
 
 # Online Store Setup
