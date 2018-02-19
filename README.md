@@ -14,9 +14,9 @@ Please see each component's README file for more information.
 
 Screenshots:
 
-![Example Notification Form](doc/sample2.png "Example Notification Form")
+![Example Notification Form](FrontEnd/doc/sample2.png "Example Notification Form")
 
-![Example Email Notification](doc/sample.png "Example Email Notification")
+![Example Email Notification](NotificationService/doc/sample.png "Example Email Notification")
 
 ## Prerequisites
 
