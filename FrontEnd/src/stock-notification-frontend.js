@@ -1,5 +1,5 @@
-/* Update with correct ID */
-const INPUT_VARIANT = "#product-selector";
+/* Update with correct ID of the variant selector from your product page */
+const INPUT_VARIANT_SELECTOR = "#product-selector";
 
 /* Defaults */
 const NOTIFICATION_FORM ="#stock-notification-form"
@@ -41,8 +41,8 @@ function openStockNotificationForm() {
   $(NOTIFICATION_FORM_EMAIL_INPUT).val("");
   $(NOTIFICATION_FORM_SUBMIT).show();
   hideStatus()
-  // Copy selected variant title
-  $(NOTIFICATION_FORM_VARIANT_TITLE).text($(INPUT_VARIANT+" option:selected").text());
+  // Copy selected variant title into the form modal
+  $(NOTIFICATION_FORM_VARIANT_TITLE).text($(INPUT_VARIANT_SELECTOR+" option:selected").text());
   $(NOTIFICATION_FORM).modal({ fadeDuration: 200 });
 }
 
@@ -53,7 +53,7 @@ function openStockNotificationForm() {
  */
 function onSubmit(form){
   // Copy selected variant ID from product page into hidden form field
-  $(NOTIFICATION_FORM_VARIANT).val($(INPUT_VARIANT).val());
+  $(NOTIFICATION_FORM_VARIANT).val($(INPUT_VARIANT_SELECTOR).val());
   var json = getFormDataAsJSON(form);
   if(isValidEmail(json['email'])) {
     showStatus("Submitting...");
