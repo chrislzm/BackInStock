@@ -1,5 +1,7 @@
 # Back in Stock
 
+Make it easy for customers to sign up for and receive back in stock email alerts!
+
 ![Example Notification Form](FrontEnd/doc/sample2.jpg "Example Notification Form")
 
 ![Example Email Notification](NotificationService/doc/sample.jpg "Example Email Notification")
