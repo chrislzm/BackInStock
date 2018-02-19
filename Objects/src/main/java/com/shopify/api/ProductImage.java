@@ -12,7 +12,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class ProductImage {
     
     private String src;
-
+    private Integer id;
+    
     public String getSrc() {
         return src;
     }
@@ -21,6 +22,14 @@ public class ProductImage {
         this.src = src;
     }
     
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
     @Override
     public String toString() {
         return src;
