@@ -4,19 +4,19 @@ This Java application implements a REST API for a MongoDB server that contains a
 
 ### API Endpoints
 
-| Method | EndPoint            | Parameters              | Auth | Description                       |
-|--------|---------------------|-------------------------|------|-----------------------------------|
-| POST   | /notifications      | none                    | No   | Submit new notification           |
-| GET    | /notifications      | none                    | Yes  | Get all notifications             |
-|        |                     | sent=[boolean]          |      | Query: notification sent status   |
-|        |                     | createdDate=[unix date] |      | Query: notification created after |
-| GET    | /notifications/{id} | none                    | Yes  | Get a single notification         |
-| PUT    | /notifications/{id} | none                    | Yes  | Update a notification             |
-| DELETE | /notifications/{id} | none                    | Yes  | Delete a notification             |
+| Method | EndPoint            | Parameters              | Auth | Description                         |
+|--------|---------------------|-------------------------|------|-------------------------------------|
+| POST   | /notifications      | none                    | No   | Submit new notification             |
+| GET    | /notifications      | none                    | Yes  | Get all notifications               |
+|        |                     | sent=[boolean]          |      | Query on sent status == [boolean]   |
+|        |                     | createdDate=[unix date] |      | Query on createdDate >= [unix date] |
+| GET    | /notifications/{id} | none                    | Yes  | Get a single notification           |
+| PUT    | /notifications/{id} | none                    | Yes  | Update a notification               |
+| DELETE | /notifications/{id} | none                    | Yes  | Delete a notification               |
 
 **Auth = Yes** means that HTTP basic authentication is required to access these endpoints.
 
-For the `POST` and `PUT` methods: The HTTP body content most contain a the Notification object in JSON.
+For the `POST` and `PUT` methods: The HTTP body content most contain a Notification object in JSON.
 
 ### Notification Object
 
@@ -37,7 +37,7 @@ The Notification JSON, Java, and MongoDB collection object all have the same str
     * Static IP/domain name
 2. Gradle (required to compile this application, but not required to run it)
 3. SSL certificate (optional, but highly recommended)
-    * See **Enabling SSL** below for more information 
+    * See **Enabling HTTPS** below for more information 
 
 ## Installing
 
