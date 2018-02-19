@@ -121,7 +121,7 @@ public class EmailService extends Thread {
                         }
                     }
                 }
-                boolean sentSuccess = sendEmailNotification(n,en.getProduct(),en.getVariant());
+                boolean sentSuccess = sendEmailNotification(n,en.getProductVariant());
                 if(enableRateLimit) sentLastHour.add(new Date());
                 if(sentSuccess) {
                     sent++;
@@ -144,19 +144,19 @@ public class EmailService extends Thread {
         }
     }
 
-    private boolean sendEmailNotification(Notification n, Product p, Variant v) {
+    private boolean sendEmailNotification(Notification n, ProductVariant pv) {
         
-        String imageUrl = p.getImageUrl();
+        String imageUrl = pv.getImageUrl();
         String emailImageUrl = imageUrl.substring(0, imageUrl.indexOf(imgFileExtension)) + imgSizePostfix + imgFileExtension;
         String emailSubject = subjectTemplate
                                 .replace("{{shop.name}}", shopName)
-                                .replace("{{product.title}}", p.getTitle());
+                                .replace("{{product.title}}", pv.getProductTitle());
         
         String emailBody = bodyTemplate
                                 .replace("{{shop.domain}}", shopDomain)
-                                .replace("{{product.handle}}", p.getHandle())
-                                .replace("{{product.title}}", p.getTitle())
-                                .replace("{{variant.title}}", v.getTitle())
+                                .replace("{{product.handle}}", pv.getHandle())
+                                .replace("{{product.title}}", pv.getProductTitle())
+                                .replace("{{variant.title}}", pv.getVariantTitle())
                                 .replace("{{shop.name}}", shopName)
                                 .replace("{{product.image}}", emailImageUrl);
                                 
