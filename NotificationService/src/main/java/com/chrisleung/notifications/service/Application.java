@@ -96,13 +96,11 @@ public class Application {
 
 			    /* 5. Detect variants that are back in stock */
                 int numOutOfStock = 0; // For log output
-                List<Variant> inStock = new ArrayList<>();
-                Map<Variant,Product> variantProductMap = new HashMap<>(); // Variant-product data map
+                List<ProductVariant> inStock = new ArrayList<>();
 			    for(Integer variantId : variantNotificationMap.keySet()) {
-			        Variant v = storeApi.getVariant(variantId);
-                    if(v.getInventoryQuantity() > 0) {
-                        inStock.add(v);
-                        variantProductMap.put(v, storeApi.getProduct(v.getProductId()));
+			        ProductVariant pv = storeApi.getProductVariant(variantId);
+                    if(pv.getInventoryQuantity() > 0) {
+                        inStock.add(pv);
                     } else {
                         numOutOfStock += variantNotificationMap.get(variantId).size();
                     }
@@ -110,11 +108,10 @@ public class Application {
 			    
 			    /* 5. Enqueue email notifications for all back in stock variants */
 			    if(!inStock.isEmpty()) {
-			        for(Variant v : inStock) {
-            			    Product p = variantProductMap.get(v); // Product that contains this variant
-            			    List<Notification> variantNotifications = variantNotificationMap.remove(v.getId());
+			        for(ProductVariant pv : inStock) {
+            			    List<Notification> variantNotifications = variantNotificationMap.remove(pv.getVariantId());
             			    for (Notification n: variantNotifications) {
-            			        emailQueue.put(new EmailNotification(p,v,n));
+            			        emailQueue.put(new EmailNotification(pv,n));
             			        totalQueued++;
             			    }
 			        }
