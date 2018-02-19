@@ -1,9 +1,5 @@
-package com.chrisleung.notifications.service;
-
-import com.chrisleung.notifications.objects.Product;
-import com.chrisleung.notifications.objects.Variant;
+package com.chrisleung.notifications.objects;
 
 public interface StoreApi {
-    public Variant getVariant(int variantId);
-    public Product getProduct(int productId);
+    public ProductVariant getProductVariant(int variantId);
 }
