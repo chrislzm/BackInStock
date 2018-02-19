@@ -21,7 +21,7 @@ Requires the [Stock Notifications Database REST API](../RestApi) to be running.
 
 Now just open `demo.html` in your browser and give it a run!
 
-## Integration with Your Online Store
+## Deployment
 
 1. Upload the jQuery and jQuery Modal dependencies to your website and update the code on your product page to include the dependencies
 3. Copy the entire `#stock-notification-form` code from `demo.html` into your product Page and update:
