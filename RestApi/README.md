@@ -2,6 +2,8 @@
 
 This Java application implements a REST API for a MongoDB server that contains all stock notification information. This database is the primary data store and source of truth for the state of all notifications.
 
+## Database Structure
+
 The database contains a single collection containing all Notification objects. Each Notification object the following key/value mappings:
 * `id` (String): The unique ID for the object
 * `email` (String): Email address of the customer that requested the notification
@@ -9,6 +11,18 @@ The database contains a single collection containing all Notification objects. E
 * `createdDate` (Unix time): The date this notification was created
 * `sent` (boolean): Whether an email notification has been sent to the customer
 * `sentDate` (Unix time): The date the notification was sent to the customer
+
+## REST API Endpoints
+
+| Method | EndPoint                | Parameters              | Auth   | Description                  |
+|--------|-------------------------|-------------------------|--------|------------------------------|
+| POST   | /notifications          | none                    | No     |  Submit new notification     |
+| GET    | /notifications          | none                    | Yes    |  All notifications           |
+| GET    | /notifications/id       | none                    | Yes    |  Single notifications        |
+| GET    | /notifications          | sent (boolean)          | Yes    |  Sent/unsent notifications   |
+| GET    | /notifications          | createdDate (unix date) | Yes    |  Notifications created after |
+| PUT    | /notifications/id       | none                    | Yes    |  Update notification         |
+| DELETE | /notifications/id       | none                    | Yes    |  Delete notification         |
 
 ## Prerequisites
 
