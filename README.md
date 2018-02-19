@@ -12,9 +12,9 @@ Sample email alert:
 
 This application is composed of three components:
 
-1. [Frontend](FrontEnd) - Allows a customer to request a back in stock notification on your website.
-2. [Notification Service](NotificationService) - Emails notifications to customers when products are back in stock.
-3. [Database REST API](RestApi) - CRUD API that stores all notification data:
+1. [Frontend](FrontEnd) - Allows a customer to request a back in stock notification on your website
+2. [Notification Service](NotificationService) - Emails notifications to customers when products are back in stock
+3. [Database REST API](RestApi) - Stores all notification data
     * **Frontend** creates new notifications in this database
     * **Notification Service** reads from and updates this database
 
@@ -36,9 +36,16 @@ Refer to each component's README file for instructions:
 
 A "product" is defined to have one or more "variants", e.g. a ball (product) may be sold in different colors and sizes (variants). The words "variant" and "product variant" may be used interchangeably throughout the code and documentation. In the case of the [ProductVariant interface](Objects/src/main/java/com/chrisleung/notifications/objects/ProductVariant.java), the words refer to the combination of a variant's data with its respective product data into a single object. "Product" alone refers generally to a product and all of its variants.
 
-## Development Notes
+## Built with
 
-
+* [Spring](https://spring.io/) - Java framework used for the backend
+* [Simple Java Mail](http://www.simplejavamail.org/)
+* [Simple Logging Facade for Java](https://www.slf4j.org/)
+* [Gradle](https://gradle.org/) - Java dependency management
+* [MongoDB](https://www.mongodb.com/) - Database
+* [npm](https://www.npmjs.com/) - JavaScript dependency management
+* [jQuery](https://jquery.com/) - Frontend JavaScript library
+* [jQuery Modal](jquerymodal.com)
 
 ## Author
 

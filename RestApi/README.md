@@ -1,6 +1,6 @@
 # Back in Stock - Database Server REST API
 
-This Java application implements a REST API for a MongoDB server that contains all stock notification information. This database is the primary data store and source of truth for the state of all notifications.
+This Java application implements a CRUD REST API for a MongoDB server that contains all stock notification information. This database is the primary data store and source of truth for the state of all notifications.
 
 ### API Endpoints
 

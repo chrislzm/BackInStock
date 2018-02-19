@@ -42,7 +42,6 @@ This application can be run as a service or launched on-demand. If the JAR file 
 2. Give this application API access by going to the "Apps" section in your Shopify store's admin panel. Click on "Manage Private Apps", then "Create a new private app". Follow the instructions to generate the key and password.
 3. Update the Shopify configuration in the `application.properties` file. For the product and variant url settings, it should be `https://yourstorename.myshopify.com/admin/products/` and `https://yourstorename.myshopify.com/admin/variants/` respectively.
 
-
 ## Enabling HTTPS
 
 For security, it's highly recommended (though not required) that you enable HTTPs when connecting to the database server. To do this:
