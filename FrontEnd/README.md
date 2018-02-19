@@ -6,11 +6,11 @@ Example form ([src/demo.html](src/demo.html)):
 
 ![Demo Notification Form](doc/sample.png "Demo Notification Form")
 
-# Requirements
+## Prerequisites
 
 The frontend requires the [Stock Notifications Database REST API](../RestApi) to be running.
 
-# Installation Notes
+## Installing
 
 1. Download this repository
 2. Download the [jQuery](https://jquery.com/) and [jQuery Modal](https://jquerymodal.com) dependencies. Either:
@@ -21,7 +21,7 @@ The frontend requires the [Stock Notifications Database REST API](../RestApi) to
 
 Now just open `demo.html` in your browser and give it a run!
 
-# Integration with Your Online Store
+## Integration with Your Online Store
 
 In order to integrate this form with your online store, you will need to:
 
@@ -32,8 +32,6 @@ In order to integrate this form with your online store, you will need to:
 4. In `stock-notification-frontend.js`, update `INPUT_VARIANT_SELECTOR` with the ID of the select element that contains the title text of the variant and the variant ID. If your product page isn't set up this way, you will need to modify this logic.
 5. Implement logic on your product page to show a "Notify Me When Available" button (that opens the modal, e.g. using an `onclick="openStockNotificationForm()"` event attribute) whenever a product variant is out of stock.
 
-# Author
+## Authors
 
-Chris Leung
-* [Github](https://github.com/chrislzm)
-* [Twitter](https://twitter.com/chris_leung)
+* Chris Leung - [chrislzm](https://github.com/chrislzm)
