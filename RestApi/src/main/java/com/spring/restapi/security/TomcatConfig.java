@@ -8,6 +8,12 @@ import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletCon
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * Additional configuration that allows us to run HTTP alongside HTTPS.
+ * Source Code: https://stackoverflow.com/a/36853652/7602403
+ * 
+ * @author Chris Leung
+ */
 @Configuration
 public class TomcatConfig {
     

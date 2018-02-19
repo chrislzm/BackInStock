@@ -7,6 +7,13 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
+/**
+ * Security configuration for our REST API server. Requires HTTP user auth for
+ * the GET, PUT, and DELETE methods. Permits all connections for the POST
+ * method.
+ * 
+ * @author Chris Leung
+ */
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
