@@ -1,33 +1,60 @@
 package com.chrisleung.notifications.service;
 
-import com.chrisleung.notifications.objects.Variant;
+import com.chrisleung.notifications.objects.ProductVariant;
+import com.shopify.api.*;
 
-public class ShopifyVariant implements Variant {
+public class ShopifyProductVariant implements ProductVariant {
 
-    com.shopify.api.Variant shopifyVariant;
+    Product product;
+    Variant variant;
     
-    ShopifyVariant(com.shopify.api.Variant v) {
-        shopifyVariant = v;
+    ShopifyProductVariant(Product shopifyProduct, Variant shopifyVariant) {
+        product = shopifyProduct;
+        variant = shopifyVariant;
     }
     
     @Override
-    public int getId() {
-        return shopifyVariant.getId();
+    public int getProductId() {
+        return product.getId();
+    }
+    
+    @Override
+    public int getVariantId() {
+        return product.getId();
     }
 
     @Override
     public int getInventoryQuantity() {
-        return shopifyVariant.getInventory_quantity();
+        return variant.getInventory_quantity();
     }
 
     @Override
-    public int getProductId() {
-        return shopifyVariant.getProduct_id();
+    public String getVariantTitle() {
+        return variant.getTitle();
     }
 
     @Override
-    public String getTitle() {
-        return shopifyVariant.getTitle();
+    public String getFullTitle() {
+        return getProductTitle() + " - " + getVariantTitle();
     }
 
+    @Override
+    public String getHandle() {
+        return product.getHandle();
+    }
+
+    @Override
+    public String getImageUrl() {
+        for(ProductImage image : product.getImages()) {
+            if(variant.getImage_id().equals(image.getId())) {
+                return image.getSrc();
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public String getProductTitle() {
+        return product.getTitle();
+    }
 }
