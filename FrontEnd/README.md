@@ -1,6 +1,6 @@
 # Back In Stock - Frontend
 
-This is an example stock notification widget that allows customers to register for stock notifications. It can be modified and integrated with your existing online storefront.
+This is an example widget that allows customers to register for stock notifications. It can be modified and integrated with your existing online storefront.
 
 Example form ([src/demo.html](src/demo.html)):
 
@@ -9,6 +9,8 @@ Example form ([src/demo.html](src/demo.html)):
 ## Prerequisites
 
 Requires the [Stock Notifications Database REST API](../RestApi) to be running.
+
+To send email notifications for back in stock products, the [Notification Service](../NotificationService) needs to be running.
 
 ## Installing
 
