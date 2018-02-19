@@ -22,15 +22,18 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * RESTful controller for accessing Notification data
  * 
- * | Method | EndPoint                |  Parameters             | Auth   | Description                  |
- * |--------|-------------------------|-------------------------|--------|------------------------------|
- * | POST   | /notifications          | none                    | No     |  Submit new notification     |
- * | GET    | /notifications          | none                    | Yes    |  All notifications           |
- * | GET    | /notifications/id       | none                    | Yes    |  Single notifications        |
- * | GET    | /notifications          | sent (boolean)          | Yes    |  Sent/unsent notifications   |
- * | GET    | /notifications          | createdDate (unix date) | Yes    |  Notifications created after |
- * | PUT    | /notifications/id       | none                    | Yes    |  Update notification         |
- * | DELETE | /notifications/id       | none                    | Yes    |  Delete notification         |
+ * | Method | EndPoint            | Parameters              | Auth | Description                         |
+ * |--------|---------------------|-------------------------|------|-------------------------------------|
+ * | POST   | /notifications      | none                    | No   | Submit new notification             |
+ * | GET    | /notifications      | none                    | Yes  | Get all notifications               |
+ * |        |                     | sent=[boolean]          |      | Query on sent status == [boolean]   |
+ * |        |                     | createdDate=[unix date] |      | Query on createdDate >= [unix date] |
+ * | GET    | /notifications/{id} | none                    | Yes  | Get a single notification           |
+ * | PUT    | /notifications/{id} | none                    | Yes  | Update a notification               |
+ * | DELETE | /notifications/{id} | none                    | Yes  | Delete a notification               |
+ * 
+ * "Auth = Yes" means that HTTP basic authentication is required to access these endpoints.
+ * For the POST and PUT methods: The HTTP body content most contain a Notification object in JSON.
  * 
  * @author Chris Leung
  *

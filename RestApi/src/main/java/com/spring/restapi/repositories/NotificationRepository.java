@@ -10,7 +10,7 @@ import org.springframework.format.annotation.DateTimeFormat.ISO;
 import com.chrisleung.notifications.objects.Notification;
 
 /**
- * Interface that connects Notification model and controller. (We only add these two methods as CrudRepository handles the rest.)
+ * Interface to our CRUD (MongoDB) Repository.
  * @author Chris Leung
  *
  */
