@@ -12,14 +12,13 @@ Email alert sample screenshot:
 
 ## Components
 
+This application consists of 3 main components:
+
 1. [Frontend](FrontEnd) - Widget that allows a customer to request a back in stock notification on your website.
 2. [Notification Service](NotificationService) - Emails notifications to customers when products are back in stock.
 3. [Database REST API](RestApi) - CRUD API that stores all notification data.
   * FrontEnd - Creates new notifications in this database
   * Notification Service - Reads and updates this database's notifications
-4. [Objects](Objects) - Java objects shared between components.
-
-Please refer to each component's README file for more detailed information.
 
 ## Prerequisites
 
