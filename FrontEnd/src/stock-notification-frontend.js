@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Stock Notifications Frontend - Form Modal Functions and Constants
+ * @author Chris Leung
+*/
+
 /* Update with correct ID of the variant selector from your product page */
 const INPUT_VARIANT_SELECTOR = "#product-selector";
 

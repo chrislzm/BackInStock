@@ -1,4 +1,9 @@
 /**
+ * @fileoverview Stock Notifications Frontend - Helper Functions
+ * @author Chris Leung
+*/
+
+/**
  * Converts form data to a JSON object
  * @param  {Object} form HTML DOM Form Object
  * @return {Object}      JSON object

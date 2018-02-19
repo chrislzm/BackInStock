@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Stock Notifications Database REST API settings and helper functions
+ * @author Chris Leung
+*/
+
 const API_URL = 'http://localhost:8080/notifications'
 const HEADERS = {
   'Content-Type': 'application/json'
