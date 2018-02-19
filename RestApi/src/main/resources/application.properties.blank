@@ -1,17 +1,15 @@
 # Security
-security.user.name=user
-security.user.password=password
+security.user.name=user # Client username required for HTTP basic authentication
+security.user.password=password # Client password required for HTTP basic authentication
 # Tomcat Config
-# HTTP Port
-server.http.port: 8080
-# HTTPS Port
-server.port: 8090
+server.http.port: 8080 # Port for HTTP connections
+server.port: 8090 # Port for HTTPS connections
 # SSL Certificate
-server.ssl.key-store: keystore.p12
-server.ssl.key-store-password: password
-server.ssl.keyStoreType: PKCS12
-server.ssl.keyAlias: tomcat
+server.ssl.key-store: keystore.p12 # Certificate filename
+server.ssl.key-store-password: password # Certificate password
+server.ssl.keyStoreType: PKCS12 # Certificate type
+server.ssl.keyAlias: tomcat # Certificate alias (only required if one was defined)
 # MongoDB Config
-spring.data.mongodb.database=test
-spring.data.mongodb.host=localhost
-spring.data.mongodb.port=27017
+spring.data.mongodb.database=test # Database collection name
+spring.data.mongodb.host=localhost # Database hostname
+spring.data.mongodb.port=27017 # Database port
