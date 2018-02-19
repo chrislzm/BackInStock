@@ -1,4 +1,9 @@
-Front-end demonstration implementation for use with the back-end Stack Notification "Rest API".
+# Stock Notification Frontend
+
+This frontend application is an example stock notification widget that allows customers to register for stock notifications. It can be modified and integrated with your existing online storefront.
+
+The example registration form in our [demo.html](src/demo.html) file.
+![Demo Notification Form](doc/sample.png "Demo Notification Form")
 
 # Usage Notes
 
