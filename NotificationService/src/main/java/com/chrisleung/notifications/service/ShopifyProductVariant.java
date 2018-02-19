@@ -3,6 +3,11 @@ package com.chrisleung.notifications.service;
 import com.chrisleung.notifications.objects.ProductVariant;
 import com.shopify.api.*;
 
+/**
+ * Implements the ProductVariant interface for Shopify products. 
+ * 
+ * @author Chris Leung
+ */
 public class ShopifyProductVariant implements ProductVariant {
 
     Product product;

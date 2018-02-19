@@ -1,5 +1,8 @@
-/*
+/**
  * Refer to https://help.shopify.com/api/reference/product_variant
+ * 
+ * 
+ * @author Chris Leung
  */
 
 package com.shopify.api;

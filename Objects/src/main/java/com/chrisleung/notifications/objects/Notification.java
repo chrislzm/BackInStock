@@ -9,9 +9,9 @@ import org.springframework.format.annotation.DateTimeFormat.ISO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
- * Notification model - Maps to notifications collections in MongoDB 
+ * Notification model - Maps to notifications collection objects in MongoDB.  
+ * 
  * @author Chris Leung
- *
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Document(collection = "notifications")

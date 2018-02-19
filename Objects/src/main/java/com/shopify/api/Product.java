@@ -1,7 +1,9 @@
-/*
+/**
  * Refer to https://help.shopify.com/api/reference/product
  * 
- * Note: We are ignoring most of the fields
+ * Note: We are ignoring most of the fields here
+ * 
+ * @author Chris Leung
  */
 
 package com.shopify.api;

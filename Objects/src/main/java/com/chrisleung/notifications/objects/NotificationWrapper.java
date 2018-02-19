@@ -7,6 +7,11 @@ import org.springframework.format.annotation.DateTimeFormat.ISO;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+/**
+ * Wrapper for notification objects retrieved from the Database REST API
+ * 
+ * @author Chris Leung
+ */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class NotificationWrapper {
  
