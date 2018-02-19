@@ -1,10 +1,8 @@
 # Back in Stock
 
-![Example Notification Form](FrontEnd/doc/sample2.png "Example Notification Form")
+![Example Notification Form](FrontEnd/doc/sample2.jpg "Example Notification Form")
 
-Sample email alert:
-
-![Example Email Notification](NotificationService/doc/sample.png "Example Email Notification")
+![Example Email Notification](NotificationService/doc/sample.jpg "Example Email Notification")
 
 This application is composed of three components:
 

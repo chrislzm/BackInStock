@@ -9,7 +9,7 @@ This Java application implements an automated notification service that emails c
 
 Example notification email template ([`src/main/resources/notification_email.html`](src/main/resources/notification_email.html)):
 
-![Example Email Notification](doc/sample.png "Sample Email Notification")
+![Example Email Notification](doc/sample.jpg "Sample Email Notification")
 
 ## Prerequisites
 
