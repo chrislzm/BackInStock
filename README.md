@@ -2,11 +2,9 @@
 
 Make it easy for customers to sign up for and receive back in stock email alerts!
 
-Frontend sample screenshot:
-
 ![Example Notification Form](FrontEnd/doc/sample2.png "Example Notification Form")
 
-Email alert sample screenshot:
+Sample email alert:
 
 ![Example Email Notification](NotificationService/doc/sample.png "Example Email Notification")
 
