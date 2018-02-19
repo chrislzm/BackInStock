@@ -1,8 +1,12 @@
 package com.chrisleung.notifications.objects;
 
-public interface Variant {
-    public int getId();
+public interface ProductVariant {
+    public String getHandle();
     public int getProductId();
+    public int getVariantId();
+    public String getImageUrl();
     public int getInventoryQuantity();
-    public String getTitle();
+    public String getVariantTitle();
+    public String getProductTitle();
+    public String getFullTitle();
 }
