@@ -1,4 +1,4 @@
-# Back In Stock Notification Service
+# Back In Stock - Notification Service
 
 This Java application implements an automated notification service that emails customers when product variants they have requested notifications for are back in stock. It does this by periodically:
 1. Retrieving new notifications from a database
@@ -6,7 +6,7 @@ This Java application implements an automated notification service that emails c
 3. Emailing customers for any product variants that are back in stock
 4. Updating the database that the notification has been sent
 
-Example notification email (email template is included and fully customizable):
+Example notification email (template is included and fully customizable):
 
 ![Example Email Notification](doc/sample.png "Sample Email Notification")
 
@@ -14,7 +14,7 @@ Example notification email (email template is included and fully customizable):
 
 1. Java
 2. Gradle
-3. API Access to your ecommerce website
+3. API access to your ecommerce website
 4. SMTP email account
 5. Notifications Database server (included -- see the [Database Server REST API](../RestApi))
 
@@ -40,7 +40,7 @@ To use with Shopify:
 2. Give this application API access by going to the "Apps" section in your Shopify store's admin panel. Click on "Manage Private Apps", then "Create a new private app". Follow the instructions to generate the key and password.
 3. Update the Shopify configuration in the `application.properties` file. For the product and variant url settings, it should be `https://yourstorename.myshopify.com/admin/products/` and `https://yourstorename.myshopify.com/admin/variants/` respectively.
 
-This application can be run as a service, or launched on-demand. 
+This application can be run as a service or launched on-demand. 
 
 ## Enabling HTTPS
 
