@@ -1,37 +1,48 @@
-# Introduction
+# Back in Stock - Database Server Rest API
 
-This application implements a REST API for a MongoDB database that contains all stock notification information. This database is the primary data store and source of truth for the state of each notification.
+This Java application implements a REST API for a MongoDB server that contains all stock notification information. This database is the primary data store and source of truth for the state of all notifications.
 
-The database contains a single collection, and each object in the collection contains seven key/value mappings:
-* _id: The unique ID for the object
-* _class: The fully qualified Java class name
-* email: Email address of the customer that requested the notification
-* variantId: The product variant ID that is out stock/this notification is for
-* createdDate: The date this notification was created
-* sent (boolean): Whether an email notification has been sent to the customer
-* sentDate: The date the notification was emailed to the customer
+The database contains a single collection containing all Notification objects. Each Notification object the following key/value mappings:
+* `id` (String): The unique ID for the object
+* `email` (String): Email address of the customer that requested the notification
+* `variantId` (Integer): The product variant ID that is out stock/this notification is for
+* `createdDate` (Unix time): The date this notification was created
+* `sent` (boolean): Whether an email notification has been sent to the customer
+* `sentDate` (Unix time): The date the notification was sent to the customer
 
-# Installation Notes
+## Prerequisites
 
-1. Install MongoDB service
-2. Install Java
-3. Install Gradle
-4. Open network ports 8080 and 8090 for inbound connections
-5. Setup SSL in one of the following ways:
-    1. Generate your own
-        * Use the command `keytool -genkey -storetype PKCS12 -keyalg RSA -keysize 2048 -keystore keystore.p12 -validity 3650`. Remember your password, make sure the file is in the same directory as the JAR file, and also make sure that you set the hostname the same as the server you will be running this application on. The keytool may ask "What is your first and last name?"--the hostname should go here. 
-        * You'll also want to generate a .crt file which will need to be added to the NotificationService Java CA store . You can do this using the command `openssl pkcs12 -in keystore.p12 -clcerts -nokeys -out keystore.crt`. Then add the file to your JVM's cacerts file using the commend: `sudo keytool -importcert -file keystore.crt -alias stocknotificationsrestapi -keystore $(/usr/libexec/java_home)/jre/lib/security/cacerts -storepass changeit`. Note that the alias in the Java CA store is set to `stocknotificationsrestapi`
-        * If you make a mistake in the above step, you can remove the certificate from the Java CA store using the command `sudo keytool -delete -alias stocknotificationsrestapi -keystore $(/usr/libexec/java_home)/jre/lib/security/cacerts -storepass changeit`
-        * Note that `server.ssl.key-store-password` in the application.properties file must match the password you used when you generated the certificate
-    2. Create/Use Existing Certificate: Update SSL parameters under SSL Certificate accordingly in: src/main/resouces/application.properties
-        * Visit https://letsencrypt.org for information on getting a free SSL certificate
-6. Rename application.properties.blank to application.properties and add/update values
+1. Virtual private server/dedicated server with:
+    * MongoDB
+    * Java
+    * Static IP/domain name
+2. Gradle (required to compile this application, but not required to run it)
+3. SSL certificate (optional, but highly recommended)
+    * See Enabling SSL below for more information 
 
-For more instructions on running the REST API as a service, or if you are having trouble executing the JAR file, see: https://docs.spring.io/spring-boot/docs/current/reference/html/deployment-install.html
+## Installing
 
-# Running
+1. Open server network ports for inbound connections (defaults: 8080 for http, and 8090 for https)
+2. Rename application.properties.blank to application.properties and add/update values
+3. Build the application JAR on a system that has Java and Gradle installed using `./gradlew build`
 
-Compile and run the application using `./gradlew bootRun`
+## Deployment
 
-Build the JAR file using `./gradlew build` then run the JAR file using `./build/libs/RestApi-0.0.1-SNAPSHOT.jar`
-* Please note that the JAR file is "executable" because we have enabled the "executable" option in build.gradle. If this does not work on your system, feel free to remove this from build.gradle and execute the application with the command `java -jar build/libs/RestApi-0.0.1-SNAPSHOT.jar`
+Copy the executable JAR file to your server run it. If the JAR file does not execute on your system, execute the application with the command `java -jar RestApi-0.0.1-SNAPSHOT.jar`. You may need to remove the `executable = true` line from `build.gradle` and recompile the application first.
+
+For instructions on running this REST API as a service, or if you are having trouble executing the JAR file, see: https://docs.spring.io/spring-boot/docs/current/reference/html/deployment-install.html
+
+## Enabling SSL
+
+Create a SSL certificate in one of the following ways:
+* Method 1: Generate a self-signed certificate. (Disadvantage: Users must explicitly trust your certificate in order to connect via HTTPS. This normally needs to be done manually, which is undesirable for most websites.)
+    1. Run the keytool command `keytool -genkey -storetype PKCS12 -keyalg RSA -keysize 2048 -keystore keystore.p12 -validity 3650` and ensure:
+        * You correctly enter the hostname of the server that you will be running this application on. The keytool may ask "What is your first and last name?"--the hostname should go here. 
+        * Remember the password and update the `application.properties` file `server.ssl.key-store-password` with this password
+        * The generated `keystore.p12` is in the same directory as this application's JAR file
+    2. Generate a .crt file which will need to be added to the Java CA store on the system running the [Notification Service](../NotificationService). Do this with command `openssl pkcs12 -in keystore.p12 -clcerts -nokeys -out keystore.crt`. Then add the file to your JVM's cacerts file using the commend: `sudo keytool -importcert -file keystore.crt -alias stocknotificationsrestapi -keystore $(/usr/libexec/java_home)/jre/lib/security/cacerts -storepass changeit`. Note that the alias in the Java CA store has been set to `stocknotificationsrestapi`
+        * If you make a mistake in the step above, remove the certificate from the Java CA store using the command `sudo keytool -delete -alias stocknotificationsrestapi -keystore $(/usr/libexec/java_home)/jre/lib/security/cacerts -storepass changeit`
+* Method 2: Create/use certificate signed by a Certificate Authority. (Disadvantage: May take quite a bit of setup and/or cost money) 
+    * Visit [Let's Encrypt](https://letsencrypt.org) to get free SSL certificate. [This is a good guide](https://coderwall.com/p/e7gzbq/https-with-certbot-for-nginx-on-amazon-linux) on setting up a a Let's Encrypt SSL certificate with an Amazon Linux server
+
+Whichever method you choose, ensure the SSL settings in application.properties have been properly updated.
