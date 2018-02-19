@@ -15,8 +15,8 @@ This application consists of three components:
 1. [Frontend](FrontEnd) - Widget that allows a customer to request a back in stock notification on your website.
 2. [Notification Service](NotificationService) - Emails notifications to customers when products are back in stock.
 3. [Database REST API](RestApi) - CRUD API that stores all notification data:
-  * FrontEnd - Creates new notifications in this database
-  * Notification Service - Reads and updates this database's notifications
+    * FrontEnd - Creates new notifications in this database
+    * Notification Service - Reads and updates this database's notifications
 
 ## Prerequisites
 
