@@ -35,7 +35,7 @@ Refer to each component's README file:
 
 ## Important: The Difference Between "Products" and "Variants"
 
-A "product" is defined to have one or more "variants". For example a red ball (product) may be sold in different sizes (variants). The words "variant" and "product variant" may be used interchangeably throughout the code and documentation in this application (and in the case of the [ProductVariant interface](Objects/src/main/java/com/chrisleung/notifications/objects/ProductVariant.java), it refers to the combination of variant data with its respective product data into a si ngle object), whereas "product" alone refers generally to a product and all of its variants.
+A "product" is defined to have one or more "variants". For example a red ball (product) may be sold in different sizes (variants). The words "variant" and "product variant" may be used interchangeably throughout the code and documentation. In the case of the [ProductVariant interface](Objects/src/main/java/com/chrisleung/notifications/objects/ProductVariant.java), it refers to the combination of variant data with its respective product data into a single object. "Product" alone refers generally to a product and all of its variants.
 
 ## Author
 
