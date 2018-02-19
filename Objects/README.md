@@ -1,6 +1,6 @@
 # Back In Stock - Shared Objects
 
-This project contains shared dependencies for both the [Database REST API](RestApi) and the [Notification Service](NotificationService). We have put these classes and interfaces into this separate project for build convenience.
+This project contains shared Java dependencies for both the [Database REST API](RestApi) and the [Notification Service](NotificationService). We have put these classes and interfaces into this separate project for build convenience.
 
 This project does not need to be modified, but you may want to add any custom API integrations into this package. 
 
