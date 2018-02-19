@@ -6,7 +6,7 @@ This Java application implements an automated notification service that emails c
 3. Emailing customers for any product variants that are back in stock
 4. Updating the database that the notification has been sent
 
-Example notification email (template is included and fully customizable):
+Example notification email template ([`notification_email.html`](src/main/resources/notification_email.html)):
 
 ![Example Email Notification](doc/sample.png "Sample Email Notification")
 
@@ -25,7 +25,7 @@ Example notification email (template is included and fully customizable):
   * Implement the [`StoreApi`](../Objects/src/main/java/com/chrisleung/notifications/objects/StoreApi.java) and [`ProductVariant`](../Objects/src/main/java/com/chrisleung/notifications/objects/ProductVariant.java) interfaces. Refer to `ShopifyApi.java` and `ShopifyProductVariant.java` respectively as example implementations.
   * Update `Application.java` lines 42 and 61, replacing the default `ShopifyApi` with your own `StoreApi` implementation.
 5. Rename `application.properties.blank` to `application.properties` and update values (see Deployment below for notes on Shopify settings)
-6. Update `notification_email.html` template as desired -- this is the template for the email your customer will receive. 
+6. Update `notification_email.html` template as desired -- this is the template for the email your customer will receive.
 7. Compile and run the application. Either:
   * Run the command `./gradlew bootRun`, or
   * Build an executable JAR file using `./gradlew build`, which will create a JAR file in `./build/libs/notification-service-0.1.0.jar`
@@ -40,7 +40,7 @@ To use with Shopify:
 2. Give this application API access by going to the "Apps" section in your Shopify store's admin panel. Click on "Manage Private Apps", then "Create a new private app". Follow the instructions to generate the key and password.
 3. Update the Shopify configuration in the `application.properties` file. For the product and variant url settings, it should be `https://yourstorename.myshopify.com/admin/products/` and `https://yourstorename.myshopify.com/admin/variants/` respectively.
 
-This application can be run as a service or launched on-demand. 
+This application can be run as a service or launched on-demand.
 
 ## Enabling HTTPS
 

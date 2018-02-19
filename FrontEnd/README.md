@@ -2,7 +2,7 @@
 
 This is an example widget that allows customers to register for stock notifications. It can be modified and integrated with your existing online storefront.
 
-Example form ([src/demo.html](src/demo.html)):
+Example ([src/demo.html](src/demo.html)):
 
 ![Demo Notification Form](doc/sample.png "Demo Notification Form")
 
