@@ -36,7 +36,6 @@ public class DatabaseRestApiConfig {
     private String username;
     private String password;
     private String url;
-    private Integer refresh;
     public Param getParam() {
         return param;
     }
@@ -61,15 +60,9 @@ public class DatabaseRestApiConfig {
     public void setUrl(String url) {
         this.url = url;
     }
-    public Integer getRefresh() {
-        return refresh;
-    }
-    public void setRefresh(Integer refresh) {
-        this.refresh = refresh;
-    }
     @Override
     public String toString() {
         return "RestApi [param=" + param + ", username=" + username + ", password=" + password + ", url=" + url
-                + ", refresh=" + refresh + "]";
+                + "]";
     }
 }

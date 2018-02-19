@@ -1,7 +1,6 @@
 package com.chrisleung.notifications.service;
 
 import java.util.Date;
-import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -28,7 +27,6 @@ public class DatabaseRestApi {
     private String baseUrl;
     private String paramSent;
     private String paramCreatedDate;
-    private long sleepTime;
 
     @Autowired
     DatabaseRestApi(DatabaseRestApiConfig config, RestTemplate restTemplate) {
@@ -37,7 +35,6 @@ public class DatabaseRestApi {
         baseUrl = config.getUrl();
         paramSent = config.getParam().getSent();
         paramCreatedDate = config.getParam().getCreatedDate();
-        sleepTime = TimeUnit.SECONDS.toMillis(config.getRefresh());
     }
     
     public NotificationWrapper getAllUnsentNotifications() {
@@ -74,13 +71,5 @@ public class DatabaseRestApi {
         String url = String.format("%s/%s",baseUrl,n.getId());
         restTemplate.put(url, n);
         restTemplate.getInterceptors().remove(0);
-    }
-
-    /**
-     * Causes the calling thread to sleep for the amount of time specified in
-     * the configuration. Use this between polls on the database.
-     */
-    public void sleep() throws InterruptedException {
-        Thread.sleep(sleepTime);
     }
 }

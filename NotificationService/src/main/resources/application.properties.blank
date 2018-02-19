@@ -1,3 +1,5 @@
+# General Settings
+my.notifications.refresh.interval.seconds= # Number of seconds to wait between checks for new notifications+stock levels and sending emails
 # Notifications Database Rest API
 my.notifications.database.restapi.username=user
 my.notifications.database.restapi.password=password

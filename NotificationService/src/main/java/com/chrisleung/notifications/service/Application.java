@@ -9,8 +9,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -41,6 +43,9 @@ public class Application {
     @Autowired
     ShopifyApi shopifyApi;
     
+    @Value("${my.notifications.refresh.interval.seconds}")
+    private Integer sleepTime;
+    
     private StoreApi storeApi;
     
     private BlockingQueue<EmailNotification> emailQueue;    
@@ -59,7 +64,7 @@ public class Application {
 		return args -> {
 		    /* 0. Set the online store API to use */
 		    storeApi = shopifyApi;
-		    
+
 		    /* 1. Email Service Setup */
             emailQueue = emailService.getQueue();
        	    emailService.start();
@@ -130,7 +135,7 @@ public class Application {
         			        numOutOfStock));
         			
 			    /* 7. Sleep */
-        			notificationsApi.sleep();
+        			Thread.sleep(TimeUnit.SECONDS.toMillis(sleepTime));
 			    
         			/* 8. Fetch new notifications since last update */
 			    response = notificationsApi.getNewNotificationsSince(lastUpdate);
