@@ -1,12 +1,12 @@
 # Back In Stock - Shared Objects
 
-This project contains shared Java dependencies for both the [Database REST API](RestApi) and the [Notification Service](NotificationService). These classes and interfaces have been put into this separate project for build convenience.
+This project contains shared Java dependencies for both the [Database REST API](RestApi) and the [Notification Service](NotificationService). The classes and interfaces in this project have been put here for build convenience.
 
-This project does not need to be modified, but you may want to add any custom API integrations into this package. 
+This project does not need to be modified, but you may want to add any custom API integrations into this package.
 
 ## Deployment
 
-If you modify or add to this project, recompile its contents using the command `./gradlew build`. Be sure to also refresh + recompile all other projects that depend on this project. 
+If you modify or add to this project, recompile its contents using the command `./gradlew build`. Be sure to also refresh + recompile all other projects that depend on this project.
 
 ## Author
 
