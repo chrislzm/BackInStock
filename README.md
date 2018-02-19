@@ -1,6 +1,6 @@
 # Back in Stock
 
-Make it easy for your customers to sign up for and receive back in stock email alerts.
+Make it easy for your customers to sign up for and receive back in stock email alerts!
 
 This full-stack application is composed of the following components:
 1. [Frontend](FrontEnd) - Widget that allows a customer to request a back in stock notification on your website.
@@ -8,13 +8,15 @@ This full-stack application is composed of the following components:
 3. [Database REST API](RestApi) - CRUD API that stores all notification data.
   * FrontEnd - Creates new notifications in this database
   * Notification Service - Reads and updates this database's notifications
-4. [Objects](Objects) - Java objects that are shared between components.
+4. [Objects](Objects) - Java objects shared between components.
 
-Please see each component's README file for more information.
+Please refer to each component's README file for detailed information.
 
-Screenshots:
+Frontend screenshot:
 
 ![Example Notification Form](FrontEnd/doc/sample2.png "Example Notification Form")
+
+Email notification screenshot:
 
 ![Example Email Notification](NotificationService/doc/sample.png "Example Email Notification")
 
