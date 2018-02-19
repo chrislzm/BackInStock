@@ -1,14 +1,10 @@
 # Back in Stock
 
-Make it easy for customers to sign up for and receive back in stock email alerts!
-
 ![Example Notification Form](FrontEnd/doc/sample2.png "Example Notification Form")
 
 Sample email alert:
 
 ![Example Email Notification](NotificationService/doc/sample.png "Example Email Notification")
-
-## Components
 
 This application is composed of three components:
 
