@@ -4,27 +4,30 @@ This Java application implements a REST API for a MongoDB server that contains a
 
 ### API Endpoints
 
-| Method | EndPoint                | Parameters              | Auth | Description                      |
-|--------|-------------------------|-------------------------|------|----------------------------------|
-| POST   | /notifications          | none                    | No   |  Submit new notification         |
-| GET    | /notifications          | none                    | Yes  |  Get all notifications           |
-|        |                         | sent=[boolean]          |      |  Get sent/unsent notifications   |
-|        |                         | createdDate=[unix date] |      |  Get notifications created after |
-| GET    | /notifications/id       | none                    | Yes  |  Get a single notification       |
-| PUT    | /notifications/id       | none                    | Yes  |  Update a notification           |
-| DELETE | /notifications/id       | none                    | Yes  |  Delete a notification           |
+| Method | EndPoint            | Parameters              | Auth | Description                       |
+|--------|---------------------|-------------------------|------|-----------------------------------|
+| POST   | /notifications      | none                    | No   | Submit new notification           |
+| GET    | /notifications      | none                    | Yes  | Get all notifications             |
+|        |                     | sent=[boolean]          |      | Query: notification sent status   |
+|        |                     | createdDate=[unix date] |      | Query: notification created after |
+| GET    | /notifications/{id} | none                    | Yes  | Get a single notification         |
+| PUT    | /notifications/{id} | none                    | Yes  | Update a notification             |
+| DELETE | /notifications/{id} | none                    | Yes  | Delete a notification             |
 
-Auth = HTTP authentication required
+**Auth = Yes** means that HTTP basic authentication is required to access these endpoints.
 
-### Database Structure
+For the `POST` and `PUT` methods: The HTTP body content most contain a the Notification object in JSON.
 
-The database contains a single collection containing all Notification objects. Each Notification object contains the following key/value mappings:
-* `id` (String): The unique ID for the object
-* `email` (String): Email address of the customer that requested the notification
-* `variantId` (Integer): The product variant ID that is out stock/this notification is for
-* `createdDate` (Unix time): The date this notification was created
-* `sent` (boolean): Whether an email notification has been sent to the customer
-* `sentDate` (Unix time): The date the notification was sent to the customer
+### Notification Object
+
+The Notification JSON, Java, and MongoDB collection object all have the same structure:
+
+* `id` (String): The unique ID for the object - Generated automatically by this API when the notification is created
+* `email` (String): Email address of the customer that requested the notification - Submitted by the [Frontend](../FrontEnd)
+* `variantId` (Integer): The product variant ID that is out stock/this notification is for - Submitted by the [Frontend](../FrontEnd)
+* `createdDate` (Unix time): The date this notification was created - Generated automatically by this API when the notification is created
+* `sent` (boolean): Whether an email notification has been sent to the customer - Updated by the [Notification Service](../NotificationService)
+* `sentDate` (Unix time): The date the notification was sent to the customer - Updated by the [Notification Service](../NotificationService)
 
 ## Prerequisites
 
