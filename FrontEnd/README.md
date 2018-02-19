@@ -1,6 +1,6 @@
 # Frontend - Stock Notification Form
 
-This frontend application is an example stock notification widget that allows customers to register for stock notifications. It can be modified and integrated with your existing online storefront.
+This is an example stock notification widget that allows customers to register for stock notifications. It can be modified and integrated with your existing online storefront.
 
 Example form ([src/demo.html](src/demo.html)):
 
@@ -8,7 +8,7 @@ Example form ([src/demo.html](src/demo.html)):
 
 ## Prerequisites
 
-The frontend requires the [Stock Notifications Database REST API](../RestApi) to be running.
+Requires the [Stock Notifications Database REST API](../RestApi) to be running.
 
 ## Installing
 
@@ -22,8 +22,6 @@ The frontend requires the [Stock Notifications Database REST API](../RestApi) to
 Now just open `demo.html` in your browser and give it a run!
 
 ## Integration with Your Online Store
-
-In order to integrate this form with your online store, you will need to:
 
 1. Upload the jQuery and jQuery Modal dependencies to your website and update the code on your product page to include the dependencies
 3. Copy the entire `#stock-notification-form` code from `demo.html` into your product Page and update:
