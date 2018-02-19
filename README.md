@@ -32,10 +32,6 @@ Refer to each component's README file for instructions:
 * [Notification Service `README.md`](NotificationService/README.md)
 * [Database REST API `README.md`](RestApi/README.md)
 
-## "Products" and "Variants"
-
-A "product" is defined to have one or more "variants", e.g. a ball (product) may be sold in different colors and sizes (variants). The words "variant" and "product variant" may be used interchangeably throughout the code and documentation. In the case of the [ProductVariant interface](Objects/src/main/java/com/chrisleung/notifications/objects/ProductVariant.java), the words refer to the combination of a variant's data with its respective product data into a single object. "Product" alone refers generally to a product and all of its variants.
-
 ## Built with
 
 * [Spring](https://spring.io/) - Java framework used for the backend
@@ -46,6 +42,10 @@ A "product" is defined to have one or more "variants", e.g. a ball (product) may
 * [npm](https://www.npmjs.com/) - JavaScript dependency management
 * [jQuery](https://jquery.com/) - Frontend JavaScript library
 * [jQuery Modal](jquerymodal.com)
+
+## "Product" and "Variant" Definition
+
+A "product" is defined to have one or more "variants", e.g. a ball (product) may be sold in different colors and sizes (variants). The words "variant" and "product variant" may be used interchangeably throughout the code and documentation. In the case of the [ProductVariant interface](Objects/src/main/java/com/chrisleung/notifications/objects/ProductVariant.java), the words refer to the combination of a variant's data with its respective product data into a single object. "Product" alone refers generally to a product and all of its variants.
 
 ## Author
 
