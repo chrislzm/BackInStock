@@ -6,6 +6,8 @@ This Java application implements a service that automatically emails customers w
 3. Emailing customers for any product variants that are back in stock
 4. Updating the database that the notification has been sent
 
+![Example Email Notification](doc/sample.png "Sample Email Notification")
+
 # Requirements
 
 1. Java
