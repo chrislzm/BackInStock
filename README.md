@@ -22,7 +22,7 @@ This application is composed of three components:
 
 ## Installing & Deploying
 
-Refer to each component's README file for instructions:
+Please refer to each component's README file for instructions:
 * [Frontend `README.md`](FrontEnd/README.md)
 * [Notification Service `README.md`](NotificationService/README.md)
 * [Database REST API `README.md`](RestApi/README.md)
