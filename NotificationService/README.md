@@ -48,7 +48,7 @@ For security, it's highly recommended (though not required) that you enable HTTP
 1. Ensure the REST API URL in `application.properties` has `https` as the protocol identifier (not `http`)
 2. If you have a self-signed certificate it will need to be added to your Java runtime's CA store. For information on how to do this, please see the [REST API server README file](../RestApi/README.md)
 
-## Email Notification Template
+## Email Template
 
 The email subject template is located in the `application.properties` file in the `my.notifications.email.subject.template` setting.
 
