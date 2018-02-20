@@ -56,21 +56,23 @@ The email body template is located in [`src/main/resources/notification_email.ht
 
 If you update either template while the application is running, you must restart the application for the changes to take effect.
 
-The following tags can be used in both the email subject and body templates, and are replaced with actual values before emails are dispatched. 
- 
+The following tags can be used in both the email subject and body templates, and are replaced with actual values before emails are dispatched.
+
 | Tag               | Value                                                            |
 |-------------------|------------------------------------------------------------------|
 | {{shop.name}}     | `my.notifications.email.shop.name` in `application.properties`   |
-| {{shop.domain}}   | `my.notifications.email.shop.domain` in `application.properties` | 
+| {{shop.domain}}   | `my.notifications.email.shop.domain` in `application.properties` |
 | {{product.title}} | `ProductVariant` interface `getProductTitle()` return value      |
 | {{variant.title}} | `ProductVariant` interface `getVariantTitle()` return value      |
-| {{product.handle} | `ProductVariant` interface `getHandle()` return value            | 
+| {{product.handle} | `ProductVariant` interface `getHandle()` return value            |
 | {{product.image}} | `ProductVariant` interface `getImageUrl()` return value          |
 
 "Handle" refers to the unique handle used in the full URL path to this product variant. Example: http://mystore.com/products/{{product.handle}}.
 
 To add support for additional tags, modify the `replaceTemplateShopTagsWithValues` and `replaceTemplateProductVariantTagsWithValues` methods in `EmailService.java`.
 
-## Author
+## License
 
-Chris Leung - [chrislzm](https://github.com/chrislzm)
+Copyright (c) 2018 [Chris Leung](https://github.com/chrislzm)
+
+Licensed under the MIT License. You may obtain a copy of the License in the `LICENSE` file included with this project.

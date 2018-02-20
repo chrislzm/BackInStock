@@ -31,6 +31,8 @@ Now open `src/demo.html` in your browser and give it a run!
 4. In `stock-notification-frontend.js`, update `INPUT_VARIANT_SELECTOR` with the ID of the select element that contains the title text of the variant and the variant ID. If your product page isn't set up this way, you will need to modify this logic.
 5. Implement logic on your product page to show a "Notify Me When Available" button (that opens the modal, e.g. using an `onclick="openStockNotificationForm()"` attribute) whenever a product variant is out of stock.
 
-## Author
+## License
 
-Chris Leung - [chrislzm](https://github.com/chrislzm)
+Copyright (c) 2018 [Chris Leung](https://github.com/chrislzm)
+
+Licensed under the MIT License. You may obtain a copy of the License in the `LICENSE` file included with this project.

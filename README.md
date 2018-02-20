@@ -43,11 +43,8 @@ Refer to each component's README file for instructions:
 
 A "product" is defined to have one or more "variants", e.g. a ball (product) may be sold in different colors and sizes (variants). The words "variant" and "product variant" may be used interchangeably throughout the code and documentation. In the case of the [ProductVariant interface](Objects/src/main/java/com/chrisleung/notifications/objects/ProductVariant.java), the words refer to the combination of a variant's data with its respective product data into a single object. "Product" alone refers generally to a product and all of its variants.
 
-## Author
-
-Chris Leung - [chrislzm](https://github.com/chrislzm)
-
 ## License
 
-Copyright (c) 2018 Chris Leung
+Copyright (c) 2018 [Chris Leung](https://github.com/chrislzm)
+
 Licensed under the MIT License. You may obtain a copy of the License in the `LICENSE` file included with this project.

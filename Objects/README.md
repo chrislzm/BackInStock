@@ -8,6 +8,8 @@ This project does not need to be modified, but you may want to add any custom AP
 
 If you modify or add to this project, recompile its contents using the command `./gradlew build`. Be sure to also refresh + recompile all other projects that depend on this project.
 
-## Author
+## License
 
-Chris Leung - [chrislzm](https://github.com/chrislzm)
+Copyright (c) 2018 [Chris Leung](https://github.com/chrislzm)
+
+Licensed under the MIT License. You may obtain a copy of the License in the `LICENSE` file included with this project.
