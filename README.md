@@ -46,3 +46,8 @@ A "product" is defined to have one or more "variants", e.g. a ball (product) may
 ## Author
 
 Chris Leung - [chrislzm](https://github.com/chrislzm)
+
+## License
+
+Copyright (c) 2018 Chris Leung
+Licensed under the MIT License. You may obtain a copy of the License in the `LICENSE` file included with this project.
