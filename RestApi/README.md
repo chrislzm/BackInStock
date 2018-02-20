@@ -76,6 +76,8 @@ Disadvantage: May take quite a bit of setup and/or cost money.
 
 For a free CA-signed SSL Certificate visit [Let's Encrypt](https://letsencrypt.org). Check out [this good guide](https://coderwall.com/p/e7gzbq/https-with-certbot-for-nginx-on-amazon-linux) on setting up a a Let's Encrypt SSL certificate with an Amazon Linux server.
 
-## Author
+## License
 
-Chris Leung - [chrislzm](https://github.com/chrislzm)
+Copyright (c) 2018 [Chris Leung](https://github.com/chrislzm)
+
+Licensed under the MIT License. You may obtain a copy of the License in the [`LICENSE`](LICENSE) file included with this project.
