@@ -16,10 +16,9 @@ This application is composed of three components:
 
 ## Prerequisites
 
-1. Ecommerce website (Shopify support built-in)
-2. API access to your ecommerce platform
-3. SMTP email account
-4. Virtual private server or better
+1. Ecommerce website with API access (Shopify support built-in)
+2. SMTP email account
+3. Virtual private server or better
 
 ## Installing & Deploying
 
