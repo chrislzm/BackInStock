@@ -83,7 +83,9 @@ public class EmailService extends Thread {
         imgFileExtension = config.getProductImage().getFileExtension();
         imgSizePostfix = config.getProductImage().getSizePostfix();
         
-        // Replace any shopName and shopDomain email template tags with values (only needs to be done once)
+        // Replace any shopName and shopDomain email template tags with values.
+        // This only only needs to be done once, as the shop name and domain
+        // will not change. (Only the product variant and recipient data will.)
         String shopName = config.getShop().getName();
         String shopDomain = config.getShop().getDomain();
         subjectTemplate = replaceTemplateShopTagsWithValues(subjectTemplate, shopName, shopDomain);
