@@ -47,8 +47,6 @@ public class EmailService extends Thread {
     private Integer emailsPerHour;
     
     private String subjectTemplate;
-    private String shopName;
-    private String shopDomain;
     private String senderName;
     private String senderAddress;
     
@@ -80,12 +78,16 @@ public class EmailService extends Thread {
         enableRateLimit = config.getRate().getEnableLimit();
         emailsPerHour = config.getRate().getPerHour();
         subjectTemplate = config.getSubject().getTemplate();
-        shopName = config.getShop().getName();
-        shopDomain = config.getShop().getDomain();
         senderName = config.getSender().getName();
         senderAddress = config.getSender().getAddress();
         imgFileExtension = config.getProductImage().getFileExtension();
         imgSizePostfix = config.getProductImage().getSizePostfix();
+        
+        // Replace any shopName and shopDomain email template tags with values (only needs to be done once)
+        String shopName = config.getShop().getName();
+        String shopDomain = config.getShop().getDomain();
+        subjectTemplate = replaceTemplateShopTagsWithValues(subjectTemplate, shopName, shopDomain);
+        bodyTemplate = replaceTemplateShopTagsWithValues(bodyTemplate, shopName, shopDomain); 
     }
     
     @Override
@@ -148,17 +150,8 @@ public class EmailService extends Thread {
         
         String imageUrl = pv.getImageUrl();
         String emailImageUrl = imageUrl.substring(0, imageUrl.indexOf(imgFileExtension)) + imgSizePostfix + imgFileExtension;
-        String emailSubject = subjectTemplate
-                                .replace("{{shop.name}}", shopName)
-                                .replace("{{product.title}}", pv.getProductTitle());
-        
-        String emailBody = bodyTemplate
-                                .replace("{{shop.domain}}", shopDomain)
-                                .replace("{{product.handle}}", pv.getHandle())
-                                .replace("{{product.title}}", pv.getProductTitle())
-                                .replace("{{variant.title}}", pv.getVariantTitle())
-                                .replace("{{shop.name}}", shopName)
-                                .replace("{{product.image}}", emailImageUrl);
+        String emailSubject = replaceTemplateProductVariantTagsWithValues(subjectTemplate,pv,emailImageUrl);
+        String emailBody = replaceTemplateProductVariantTagsWithValues(bodyTemplate,pv,emailImageUrl);
                                 
         Email email = EmailBuilder.startingBlank()
                         .to(n.getEmail())
@@ -176,6 +169,18 @@ public class EmailService extends Thread {
             e.printStackTrace();
         }
         return success;
+    }
+    
+    private String replaceTemplateShopTagsWithValues(String template, String shopName, String shopDomain) {
+        return template.replace("{{shop.domain}}", shopDomain)
+                       .replace("{{shop.name}}", shopName);
+    }
+    
+    private String replaceTemplateProductVariantTagsWithValues(String s, ProductVariant pv, String emailImageUrl) {
+        return s.replace("{{product.handle}}", pv.getHandle())
+                .replace("{{product.title}}", pv.getProductTitle())
+                .replace("{{variant.title}}", pv.getVariantTitle())
+                .replace("{{product.image}}", emailImageUrl);
     }
     
     /**
