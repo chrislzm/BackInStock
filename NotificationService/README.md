@@ -48,6 +48,29 @@ For security, it's highly recommended (though not required) that you enable HTTP
 1. Ensure the REST API URL in `application.properties` has `https` as the protocol identifier (not `http`)
 2. If you have a self-signed certificate it will need to be added to your Java runtime's CA store. For information on how to do this, please see the [REST API server README file](../RestApi/README.md)
 
+## Email Notification Template
+
+The email subject template is located in the `application.properties` file in the `my.notifications.email.subject.template` setting.
+
+The email body template is located in [`src/main/resources/notification_email.html`](src/main/resources/notification_email.html). It is fully customizable.
+
+If you update either template while the application is running, you must restart the application for the changes to take effect.
+
+The following tags can be used in both the email subject and body templates, and are replaced with actual values before emails are dispatched. 
+ 
+| Tag               | Value                                                            |
+|-------------------|------------------------------------------------------------------|
+| {{shop.name}}     | `my.notifications.email.shop.name` in `application.properties`   |
+| {{shop.domain}}   | `my.notifications.email.shop.domain` in `application.properties` | 
+| {{product.title}} | `ProductVariant` interface `getProductTitle()` return value      |
+| {{variant.title}} | `ProductVariant` interface `getVariantTitle()` return value      |
+| {{product.handle} | `ProductVariant` interface `getHandle()` return value            | 
+| {{product.image}} | `ProductVariant` interface `getImageUrl()` return value          |
+
+"Handle" refers to the unique handle used in the full URL path to this product variant. Example: http://mystore.com/products/{{product.handle}}.
+
+To add support for additional tags, modify the `replaceTemplateShopTagsWithValues` and `replaceTemplateProductVariantTagsWithValues` methods in `EmailService.java`.
+
 ## Author
 
 Chris Leung - [chrislzm](https://github.com/chrislzm)
