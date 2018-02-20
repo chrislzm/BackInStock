@@ -12,4 +12,4 @@ If you modify or add to this project, recompile its contents using the command `
 
 Copyright (c) 2018 [Chris Leung](https://github.com/chrislzm)
 
-Licensed under the MIT License. You may obtain a copy of the License in the `LICENSE` file included with this project.
+Licensed under the MIT License. You may obtain a copy of the License in the [`LICENSE`](LICENSE) file included with this project.

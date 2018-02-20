@@ -35,4 +35,4 @@ Now open `src/demo.html` in your browser and give it a run!
 
 Copyright (c) 2018 [Chris Leung](https://github.com/chrislzm)
 
-Licensed under the MIT License. You may obtain a copy of the License in the `LICENSE` file included with this project.
+Licensed under the MIT License. You may obtain a copy of the License in the [`LICENSE`](LICENSE) file included with this project.
