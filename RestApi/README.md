@@ -2,33 +2,6 @@
 
 This Java application implements a CRUD REST API for a MongoDB server that contains all stock notification information. This database is the primary data store and source of truth for the state of all notifications.
 
-### API Endpoints
-
-| Method | EndPoint            | Parameters              | Auth | Description                         |
-|--------|---------------------|-------------------------|------|-------------------------------------|
-| POST   | /notifications      | none                    | No   | Submit new notification             |
-| GET    | /notifications      | none                    | Yes  | Get all notifications               |
-|        |                     | sent=[boolean]          |      | Query on sent status == [boolean]   |
-|        |                     | createdDate=[unix date] |      | Query on createdDate >= [unix date] |
-| GET    | /notifications/{id} | none                    | Yes  | Get a single notification           |
-| PUT    | /notifications/{id} | none                    | Yes  | Update a notification               |
-| DELETE | /notifications/{id} | none                    | Yes  | Delete a notification               |
-
-**Auth = Yes** means that HTTP basic authentication is required to access these endpoints.
-
-For the `POST` and `PUT` methods: The HTTP body content most contain a Notification object in JSON.
-
-### Notification Object
-
-The JSON, Java, and MongoDB collection Notification object all have the same structure:
-
-* `id` (String): The unique ID for the object - Generated automatically by this API when the notification is created
-* `email` (String): Email address of the customer that requested the notification - Submitted by the [Frontend](../FrontEnd)
-* `variantId` (Integer): The product variant ID that is out stock/this notification is for - Submitted by the [Frontend](../FrontEnd)
-* `createdDate` (Unix time): The date this notification was created - Generated automatically by this API when the notification is created
-* `sent` (boolean): Whether an email notification has been sent to the customer - Updated by the [Notification Service](../NotificationService)
-* `sentDate` (Unix time): The date the notification was sent to the customer - Updated by the [Notification Service](../NotificationService)
-
 ## Prerequisites
 
 1. Virtual private server or dedicated server with:
@@ -75,6 +48,35 @@ Disadvantage: Users must explicitly trust your certificate in order to connect v
 Disadvantage: May take quite a bit of setup and/or cost money.
 
 For a free CA-signed SSL Certificate visit [Let's Encrypt](https://letsencrypt.org). Check out [this good guide](https://coderwall.com/p/e7gzbq/https-with-certbot-for-nginx-on-amazon-linux) on setting up a a Let's Encrypt SSL certificate with an Amazon Linux server.
+
+## Developer Reference
+
+### Notification Object
+
+The JSON, Java, and MongoDB collection Notification object all have the same structure:
+
+* `id` (String): The unique ID for the object - Generated automatically by this API when the notification is created
+* `email` (String): Email address of the customer that requested the notification - Submitted by the [Frontend](../FrontEnd)
+* `variantId` (Integer): The product variant ID that is out stock/this notification is for - Submitted by the [Frontend](../FrontEnd)
+* `createdDate` (Unix time): The date this notification was created - Generated automatically by this API when the notification is created
+* `sent` (boolean): Whether an email notification has been sent to the customer - Updated by the [Notification Service](../NotificationService)
+* `sentDate` (Unix time): The date the notification was sent to the customer - Updated by the [Notification Service](../NotificationService)
+
+### REST API Endpoints
+
+| Method | EndPoint            | Parameters              | Auth | Description                         |
+|--------|---------------------|-------------------------|------|-------------------------------------|
+| POST   | /notifications      | none                    | No   | Submit new notification             |
+| GET    | /notifications      | none                    | Yes  | Get all notifications               |
+|        |                     | sent=[boolean]          |      | Query on sent status == [boolean]   |
+|        |                     | createdDate=[unix date] |      | Query on createdDate >= [unix date] |
+| GET    | /notifications/{id} | none                    | Yes  | Get a single notification           |
+| PUT    | /notifications/{id} | none                    | Yes  | Update a notification               |
+| DELETE | /notifications/{id} | none                    | Yes  | Delete a notification               |
+
+**Auth = Yes** means that HTTP basic authentication is required to access these endpoints.
+
+For the `POST` and `PUT` methods: The HTTP body content most contain a Notification object in JSON.
 
 ## License
 
