@@ -34,7 +34,7 @@ Here are two ways to create a SSL certificate:
 
 ### Method 1: Generate a self-signed certificate
 
-Disadvantage: Users must explicitly trust your certificate in order to connect via HTTPS. This normally needs to be done manually, which is undesirable for most websites.
+Disadvantages: Unless the website visitor manually/explicitly trusts the certificate, it will cause calls to this REST API via HTTPS to fail and/or cause browser security warnings to appear. This method can be useful, however, if you want to test the service in a controlled environment and have not yet procured an SSL certificate.
 
 1. Run the keytool command `keytool -genkey -storetype PKCS12 -keyalg RSA -keysize 2048 -keystore keystore.p12 -validity 3650` and ensure:
     * You correctly enter the hostname of the server that you will be running this application on. The keytool may ask "What is your first and last name?"--the hostname should go here.
