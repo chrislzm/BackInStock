@@ -27,7 +27,7 @@ For instructions on running this application as a service, or if you are having 
 ## Enabling HTTPS
 
 In order to enable HTTPS:
-1. Copy the SSL certificate to the same directory has the application JAR file
+1. Copy your SSL certificate to the same directory has the application JAR file
 2. Update SSL settings in `application.properties`
 
 Here are two ways to create a SSL certificate:
