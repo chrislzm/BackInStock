@@ -26,7 +26,7 @@ Example notification email template ([`src/main/resources/notification_email.htm
     * Implement the [`StoreApi`](../Objects/src/main/java/com/chrisleung/notifications/objects/StoreApi.java) and [`ProductVariant`](../Objects/src/main/java/com/chrisleung/notifications/objects/ProductVariant.java) Java interfaces for your ecommerce platform. Refer to [`ShopifyApi.java`](src/main/java/com/chrisleung/notifications/service/ShopifyApi.java) and [`ShopifyProductVariant.java`](src/main/java/com/chrisleung/notifications/service/ShopifyProductVariant.java) respectively as example implementations
     * In `Application.java` replace the default `ShopifyApi` with your own `StoreApi` implementation (on lines 44 and 66)
 5. Rename `application.properties.blank` to `application.properties` and update values (see Deployment below for notes on Shopify settings)
-6. Modify the `notification_email.html` template (see Email Template below) -- this is the template for the email your customer will receive
+6. Modify the email subject and body templates (see Email Template below)
 7. Compile the application
     * Run the command `./gradlew bootRun` (will compile and run) or
     * Build an executable JAR file using `./gradlew build`, which will create a JAR file in `./build/libs/notification-service-0.1.0.jar`
@@ -50,13 +50,13 @@ For security, it's highly recommended (though not required) that you enable HTTP
 
 ## Email Template
 
-The email subject template is located in the `application.properties` file in the `my.notifications.email.subject.template` setting.
-
-The email body template is located in [`src/main/resources/notification_email.html`](src/main/resources/notification_email.html). It is fully customizable.
+The back in stock notification email subject and body can be customized.
+* Email subject template is located in the `application.properties` file in the `my.notifications.email.subject.template` setting
+* Email body template is located in [`src/main/resources/notification_email.html`](src/main/resources/notification_email.html)
 
 If you update either template while the application is running, you must restart the application for the changes to take effect.
 
-The following tags can be used in both the email subject and body templates, and are replaced with actual values before emails are dispatched.
+The following tags can be used in both the email subject and body templates, and are replaced with their respective values before an email is sent.
 
 | Tag               | Value                                                            |
 |-------------------|------------------------------------------------------------------|
