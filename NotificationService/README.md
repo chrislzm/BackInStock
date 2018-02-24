@@ -26,7 +26,7 @@ Example notification email template ([`src/main/resources/notification_email.htm
     * Implement the [`StoreApi`](../Objects/src/main/java/com/chrisleung/notifications/objects/StoreApi.java) and [`ProductVariant`](../Objects/src/main/java/com/chrisleung/notifications/objects/ProductVariant.java) Java interfaces for your ecommerce platform. Refer to [`ShopifyApi.java`](src/main/java/com/chrisleung/notifications/service/ShopifyApi.java) and [`ShopifyProductVariant.java`](src/main/java/com/chrisleung/notifications/service/ShopifyProductVariant.java) respectively as example implementations
     * In `Application.java` replace the default `ShopifyApi` with your own `StoreApi` implementation (on lines 44 and 66)
 5. Rename `application.properties.blank` to `application.properties` and update values (see Deployment below for notes on Shopify settings)
-6. Modify the `notification_email.html` template as desired -- this is the template for the email your customer will receive
+6. Modify the `notification_email.html` template (see Email Template below) -- this is the template for the email your customer will receive
 7. Compile the application
     * Run the command `./gradlew bootRun` (will compile and run) or
     * Build an executable JAR file using `./gradlew build`, which will create a JAR file in `./build/libs/notification-service-0.1.0.jar`
