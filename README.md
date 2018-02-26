@@ -38,9 +38,10 @@ Please refer to each component's README file for instructions:
 * [jQuery](https://jquery.com/) - Frontend JavaScript library
 * [jQuery Modal](jquerymodal.com)
 
-## "Product" and "Variant" Definition
+## "Product" and "Variant" Definitions
 
-A "product" is defined to have one or more "variants", e.g. a ball (product) may be sold in different colors and sizes (variants). The words "variant" and "product variant" may be used interchangeably throughout the code and documentation. In the case of the [ProductVariant interface](Objects/src/main/java/com/chrisleung/notifications/objects/ProductVariant.java), the words refer to the combination of a variant's data with its respective product data into a single object. "Product" alone refers generally to a product and all of its variants.
+* "Product" refers generally to a product and all of its variants. A product can have one or more "variants", e.g. a ball (product) can be sold in different colors and sizes (variants).
+* The words "variant" and "product variant" are used throughout the code and documentation and mean the same thing. In the case of the [ProductVariant interface](Objects/src/main/java/com/chrisleung/notifications/objects/ProductVariant.java), the words refer to the combination of a variant's data with its respective product data into a single object.
 
 ## License
 
