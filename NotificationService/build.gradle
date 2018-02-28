@@ -4,7 +4,6 @@ buildscript {
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:1.5.9.RELEASE")
-        files('/Users/cleung/version-control/java/StockNotifications/RestApi/build/libs/RestApi-0.0.1-SNAPSHOT.jar')
     }
 }
 
