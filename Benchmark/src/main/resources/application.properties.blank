@@ -1,0 +1,2 @@
+# General Settings
+restapi.benchmark.endpoint=http://localhost:8080/notifications
