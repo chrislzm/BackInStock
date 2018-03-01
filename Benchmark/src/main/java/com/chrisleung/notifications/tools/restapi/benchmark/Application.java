@@ -1,6 +1,7 @@
 package com.chrisleung.notifications.tools.restapi.benchmark;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -16,16 +17,17 @@ import org.springframework.web.client.RestTemplate;
 import com.chrisleung.notifications.objects.*;
 
 /**
- * This class implements a simple benchmarking tool for the REST API. It
- * measures performance of single endpoint exposed to the world: Submitting
- * a new notification.
+ * This class implements a simple benchmarking tool for the Database REST API.
+ * It measures performance of the single endpoint exposed to the world:
+ * Submittinga new notification.
  * 
  * @author Chris Leung
  */
 @SpringBootApplication
 public class Application {
         
-    static final String ENDPOINT = "https://service.artofsilk.com:8090/notifications";
+    @Value("${restapi.benchmark.endpoint}")
+    private String url;
     
     @Autowired
     private RestTemplate restTemplate;
@@ -51,7 +53,7 @@ public class Application {
 		    //set your entity to send
 		    HttpEntity<Notification> entity = new HttpEntity<>(obj,headers);
 
-		    ResponseEntity<Response> response = restTemplate.exchange(ENDPOINT, HttpMethod.POST, entity, Response.class);
+		    ResponseEntity<Response> response = restTemplate.exchange(url, HttpMethod.POST, entity, Response.class);
 		    System.out.println("RESPONSE: " + response.getBody().getSaved());
 		};
 	}
