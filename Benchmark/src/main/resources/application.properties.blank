@@ -1,6 +1,7 @@
 # General Settings
 restapi.benchmark.endpoint=http://localhost:8080/notifications # REST API endpoint
-restapi.benchmark.requests.total=10000 # Total number of requests to attempt
-restapi.benchmark.requests.concurrent=1000 # Maximum number of concurrent connections
+restapi.benchmark.request.type=post # REST API method, choose from: post, get, put, delete
+restapi.benchmark.request.total=10000 # Total number of requests to attempt
+restapi.benchmark.request.concurrent=1000 # Maximum number of concurrent connections
 restapi.benchmark.request.email=myemailAddress@somedomain.com # Anything--just for testing
 restapi.benchmark.timelimit=60 # Max amount of time in seconds for the test to run

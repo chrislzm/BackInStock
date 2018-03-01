@@ -29,15 +29,17 @@ public class Application {
         
     @Value("${restapi.benchmark.endpoint}")
     private String endpoint;
-    @Value("${restapi.benchmark.requests.total}")
+    @Value("${restapi.benchmark.request.total}")
     private int numRequests;
-    @Value("${restapi.benchmark.requests.concurrent}")
+    @Value("${restapi.benchmark.request.concurrent}")
     private int numConcurrent;
     @Value("${restapi.benchmark.request.email}")
     private String email;
     @Value("${restapi.benchmark.timelimit}")
     private int timelimit;
-
+    @Value("${restapi.benchmark.request.type}")
+    private String requestType;
+    
     private ArrayList<Date> completedTimes;
 
     @Autowired
