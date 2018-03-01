@@ -1,9 +1,11 @@
 package com.chrisleung.notifications.tools.restapi.benchmark;
 
 import java.io.BufferedWriter;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -50,8 +52,8 @@ public class Application {
     private String outputFilename;
 
     @Autowired
-    private RestTemplate restTemplate;
-
+    private RestTemplate restTemplate;    
+    
 	public static void main(String args[]) {
 		SpringApplication.run(Application.class, args);
 	}
@@ -64,36 +66,80 @@ public class Application {
 	@Bean
 	public CommandLineRunner run() throws Exception {
 		return args -> {
+	        ExecutorService threadpool = Executors.newFixedThreadPool(numConcurrent);
+
+	        HttpHeaders headers = new HttpHeaders();
+	        headers.setContentType(MediaType.APPLICATION_JSON);
+	        
+	        ArrayList<Object[]> completedData = new ArrayList<>();
+	        completedData.ensureCapacity(numRequests);
 	        
 		    switch(requestType) {
 		    case "post":
-		        postBenchmark();
+		        postBenchmark(threadpool,headers,completedData);
 		        break;
-		        
+		    case "get":
+		        getBenchmark(threadpool,headers,completedData);
+		        break;
+	        default:
 		    }
 
 		};
 	}
 	
-	private void postBenchmark() throws Exception {
-        /* Create the jobs first */
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        ArrayList<Object[]> completedData = new ArrayList<>();
-        completedData.ensureCapacity(numRequests);
-        PostNotificationJob[] jobs = new PostNotificationJob[numRequests];
+	private void postBenchmark(ExecutorService threadpool,HttpHeaders headers,ArrayList<Object[]> completedData) throws Exception {
+         
+        Runnable[] jobs = new Runnable[numRequests];
+        
+        /* Create jobs */
         for(int i=0; i<numRequests; i++) {
             jobs[i] = new PostNotificationJob(restTemplate,endpoint,headers,email,i,completedData);
         }
         
-        /* Submit jobs */
-        ExecutorService threadPool = Executors.newFixedThreadPool(numConcurrent);
-        for(PostNotificationJob job : jobs) {
-            threadPool.execute(job);
+        /* Run jobs */
+        runJobs(jobs,threadpool,completedData);
+
+        /* Write IDs to file */
+        BufferedWriter writer = new BufferedWriter(new FileWriter(outputFilename,true));
+        for(Object[] data : completedData) {
+            writer.write((String)data[1]+'\n');
         }
-        threadPool.shutdown();
+        writer.close();
+	}
+	
+	private void getBenchmark(ExecutorService threadpool,HttpHeaders headers,ArrayList<Object[]> completedData) throws Exception {
+	    BasicAuthorizationInterceptor auth  = new BasicAuthorizationInterceptor(username, password);
+        restTemplate.getInterceptors().add(auth);
+
+        Scanner scanner = new Scanner(new FileReader(outputFilename));
+        int count = 0;
+        while(scanner.hasNext()) {
+            count++;
+            scanner.nextLine();
+        }
+        scanner.close();
+        scanner = new Scanner(new FileReader(outputFilename));
+        
+        /* Create jobs */
+        
+        Runnable[] jobs = new Runnable[count];
+        for(int i=0; i<count; i++) {
+            jobs[i] = new GetNotificationJob(restTemplate, endpoint, scanner.next(), headers, completedData);
+        }
+        scanner.close();
+        
+        /* Run jobs */
+        runJobs(jobs,threadpool,completedData);
+	}
+	
+	private void runJobs(Runnable[] jobs, ExecutorService threadpool, ArrayList<Object[]> completedData) throws Exception {
+        /* Submit jobs */
+        for(Runnable job : jobs) {
+            threadpool.execute(job);
+        }
+        threadpool.shutdown();
         Date start = new Date();
-        threadPool.awaitTermination(timelimit, TimeUnit.SECONDS);
+        threadpool.awaitTermination(timelimit, TimeUnit.SECONDS);
         
         /* Find the first job after the shutdown was submitted */
         for(int i=0; i<completedData.size(); i++) {
@@ -103,20 +149,9 @@ public class Application {
                 long elapsed = last.getTime() - first.getTime();
                 int numCompleted = completedData.size()-i;
                 /* Log Status */
-                System.out.println(String.format("Completed %s/%s requests with %s concurrent connections in %s seconds. Average = %s requests/second", numCompleted,numRequests,numConcurrent,elapsed/1000.0f,numCompleted/(elapsed/1000.0f)));
+                System.out.println(String.format("Completed %s/%s %s requests with %s concurrent connections in %s seconds. Average = %s requests/second", numCompleted,numRequests,requestType,numConcurrent,elapsed/1000.0f,numCompleted/(elapsed/1000.0f)));
                 break;
             }
         }
-        BufferedWriter writer = new BufferedWriter(new FileWriter(outputFilename,true));
-        for(Object[] data : completedData) {
-            writer.write((String)data[1]+'\n');
-        }
-        writer.close();
-	}
-	
-	private void getBenchmark() throws Exception {
-	    BasicAuthorizationInterceptor auth  = new BasicAuthorizationInterceptor(username, password);
-        restTemplate.getInterceptors().add(auth);
-        
 	}
 }
