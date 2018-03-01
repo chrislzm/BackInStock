@@ -1,2 +1,5 @@
 # General Settings
 restapi.benchmark.endpoint=http://localhost:8080/notifications
+restapi.benchmark.requests.total=10000
+restapi.benchmark.requests.concurrent=1000
+restapi.benchmark.request.email=myemailAddress@somedomain.com
