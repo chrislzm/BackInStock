@@ -69,13 +69,14 @@ public class NotificationController {
     }
 
     @RequestMapping(method=RequestMethod.POST, value="/notifications")
-    public Map<String,Boolean> save(@RequestBody Notification notification) {
-        Map<String,Boolean> response = new HashMap<>();
+    public Map<String,Object> save(@RequestBody Notification notification) {
+        Map<String,Object> response = new HashMap<>();
         List<Notification> results = notificationRepository.findByEmailAndVariantIdAndSentFalse(notification.getEmail(), notification.getVariantId());
         boolean saved = false;
         if(results.size() == 0) {
-            notificationRepository.save(notification);
+            notification = notificationRepository.save(notification);
             saved = true;
+            response.put("id", notification.getId());
         }
         response.put("saved", saved);
         return response;
