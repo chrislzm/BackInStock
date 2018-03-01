@@ -1,9 +1,11 @@
 package com.chrisleung.notifications.tools.restapi.benchmark;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,6 +36,10 @@ public class Application {
     private int numConcurrent;
     @Value("${restapi.benchmark.request.email}")
     private String email;
+    @Value("${restapi.benchmark.timelimit}")
+    private int timelimit;
+
+    private ArrayList<Date> completedTimes;
 
     @Autowired
     private RestTemplate restTemplate;
@@ -55,21 +61,34 @@ public class Application {
 	        PostNotificationJob[] jobs = new PostNotificationJob[numRequests];
 	        
 	        /* Create the jobs first */
+	        completedTimes = new ArrayList<>();
+	        completedTimes.ensureCapacity(numRequests);
 		    for(int i=0; i<numRequests; i++) {
-		        jobs[i] = new PostNotificationJob(restTemplate,endpoint,headers,email,i);
+		        jobs[i] = new PostNotificationJob(restTemplate,endpoint,headers,email,i,completedTimes);
 		    }
 		    
 		    /* Submit jobs */
-		    Date start = new Date();
             ExecutorService threadPool = Executors.newFixedThreadPool(numConcurrent);
             for(PostNotificationJob job : jobs) {
                 threadPool.execute(job);
             }
             threadPool.shutdown();
-            threadPool.awaitTermination(60, TimeUnit.SECONDS);
-            Date end = new Date();
-            long elapsed = end.getTime()-start.getTime();
-            System.out.println(String.format("Completed %s requests with %s concurrent connections in %s seconds. Average = %s requests/second", numRequests,numConcurrent,elapsed/1000.0f,numRequests/(elapsed/1000.0f)));
+            Date start = new Date();
+            threadPool.awaitTermination(timelimit, TimeUnit.SECONDS);
+            
+            /* Find the first job after the shutdown was submitted */
+            for(int i=0; i<completedTimes.size(); i++) {
+                if(completedTimes.get(i).getTime() >= start.getTime()) {
+                    Date first = completedTimes.get(i);
+                    Date last = completedTimes.get(completedTimes.size()-1);
+                    long elapsed = last.getTime() - first.getTime();
+                    int numCompleted = completedTimes.size()-i;
+                    /* Log Status */
+                    System.out.println(String.format("Completed %s/%s requests with %s concurrent connections in %s seconds. Average = %s requests/second", numCompleted,numRequests,numConcurrent,elapsed/1000.0f,numCompleted/(elapsed/1000.0f)));
+                    break;
+                }
+            }
+
 		};
 	}
 }
