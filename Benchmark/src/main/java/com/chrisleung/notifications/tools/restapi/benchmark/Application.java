@@ -97,7 +97,7 @@ public class Application {
         }
         
         /* Run jobs */
-        runJobs(jobs,threadpool,completedData);
+        runBenchmark(jobs,threadpool,completedData);
 
         /* Write IDs to file */
         BufferedWriter writer = new BufferedWriter(new FileWriter(outputFilename,true));
@@ -119,9 +119,9 @@ public class Application {
         }
         scanner.close();
         scanner = new Scanner(new FileReader(outputFilename));
+        count = Math.min(count, numRequests);
         
         /* Create jobs */
-        
         Runnable[] jobs = new Runnable[count];
         for(int i=0; i<count; i++) {
             jobs[i] = new GetNotificationJob(restTemplate, endpoint, scanner.next(), headers, completedData);
@@ -129,10 +129,10 @@ public class Application {
         scanner.close();
         
         /* Run jobs */
-        runJobs(jobs,threadpool,completedData);
+        runBenchmark(jobs,threadpool,completedData);
 	}
 	
-	private void runJobs(Runnable[] jobs, ExecutorService threadpool, ArrayList<Object[]> completedData) throws Exception {
+	private void runBenchmark(Runnable[] jobs, ExecutorService threadpool, ArrayList<Object[]> completedData) throws Exception {
         /* Submit jobs */
         for(Runnable job : jobs) {
             threadpool.execute(job);
