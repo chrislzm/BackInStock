@@ -57,39 +57,48 @@ public class Application {
 	@Bean
 	public CommandLineRunner run() throws Exception {
 		return args -> {
-	        HttpHeaders headers = new HttpHeaders();
-	        headers.setContentType(MediaType.APPLICATION_JSON);
-	        PostNotificationJob[] jobs = new PostNotificationJob[numRequests];
 	        
-	        /* Create the jobs first */
-	        completedTimes = new ArrayList<>();
-	        completedTimes.ensureCapacity(numRequests);
-		    for(int i=0; i<numRequests; i++) {
-		        jobs[i] = new PostNotificationJob(restTemplate,endpoint,headers,email,i,completedTimes);
+		    switch(requestType) {
+		    case "post":
+		        postBenchmark();
+		        break;
+		        
 		    }
-		    
-		    /* Submit jobs */
-            ExecutorService threadPool = Executors.newFixedThreadPool(numConcurrent);
-            for(PostNotificationJob job : jobs) {
-                threadPool.execute(job);
-            }
-            threadPool.shutdown();
-            Date start = new Date();
-            threadPool.awaitTermination(timelimit, TimeUnit.SECONDS);
-            
-            /* Find the first job after the shutdown was submitted */
-            for(int i=0; i<completedTimes.size(); i++) {
-                if(completedTimes.get(i).getTime() >= start.getTime()) {
-                    Date first = completedTimes.get(i);
-                    Date last = completedTimes.get(completedTimes.size()-1);
-                    long elapsed = last.getTime() - first.getTime();
-                    int numCompleted = completedTimes.size()-i;
-                    /* Log Status */
-                    System.out.println(String.format("Completed %s/%s requests with %s concurrent connections in %s seconds. Average = %s requests/second", numCompleted,numRequests,numConcurrent,elapsed/1000.0f,numCompleted/(elapsed/1000.0f)));
-                    break;
-                }
-            }
 
 		};
+	}
+	
+	private void postBenchmark() throws Exception {
+        /* Create the jobs first */
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        completedTimes = new ArrayList<>();
+        completedTimes.ensureCapacity(numRequests);
+        PostNotificationJob[] jobs = new PostNotificationJob[numRequests];
+        for(int i=0; i<numRequests; i++) {
+            jobs[i] = new PostNotificationJob(restTemplate,endpoint,headers,email,i,completedTimes);
+        }
+        
+        /* Submit jobs */
+        ExecutorService threadPool = Executors.newFixedThreadPool(numConcurrent);
+        for(PostNotificationJob job : jobs) {
+            threadPool.execute(job);
+        }
+        threadPool.shutdown();
+        Date start = new Date();
+        threadPool.awaitTermination(timelimit, TimeUnit.SECONDS);
+        
+        /* Find the first job after the shutdown was submitted */
+        for(int i=0; i<completedTimes.size(); i++) {
+            if(completedTimes.get(i).getTime() >= start.getTime()) {
+                Date first = completedTimes.get(i);
+                Date last = completedTimes.get(completedTimes.size()-1);
+                long elapsed = last.getTime() - first.getTime();
+                int numCompleted = completedTimes.size()-i;
+                /* Log Status */
+                System.out.println(String.format("Completed %s/%s requests with %s concurrent connections in %s seconds. Average = %s requests/second", numCompleted,numRequests,numConcurrent,elapsed/1000.0f,numCompleted/(elapsed/1000.0f)));
+                break;
+            }
+        }
 	}
 }
