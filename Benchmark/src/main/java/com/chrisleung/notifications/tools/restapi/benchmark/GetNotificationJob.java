@@ -20,8 +20,6 @@ public class GetNotificationJob implements Runnable {
     GetNotificationJob(RestTemplate r, String url, HttpHeaders headers, int index, ArrayList<Date> c) {
         restTemplate = r;
         endPoint = url;
-        Notification obj = new Notification(email,index);
-        entity = new HttpEntity<>(obj,headers);
         completedTimes = c;
     }
     
