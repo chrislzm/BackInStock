@@ -6,6 +6,7 @@ import java.util.Date;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import com.chrisleung.notifications.objects.Notification;
@@ -15,9 +16,9 @@ public class PostNotificationJob implements Runnable {
     RestTemplate restTemplate;
     HttpEntity<Notification> entity;
     String endPoint;
-    ArrayList<Date> completedTimes;
+    ArrayList<Object[]> completedTimes;
     
-    PostNotificationJob(RestTemplate r, String url, HttpHeaders headers, String email, int index, ArrayList<Date> c) {
+    PostNotificationJob(RestTemplate r, String url, HttpHeaders headers, String email, int index, ArrayList<Object[]> c) {
         restTemplate = r;
         endPoint = url;
         Notification obj = new Notification(email,index);
@@ -27,9 +28,12 @@ public class PostNotificationJob implements Runnable {
     
     @Override
     public void run() {
-        restTemplate.exchange(endPoint, HttpMethod.POST, entity, Response.class);
+        ResponseEntity<Response> response = restTemplate.exchange(endPoint, HttpMethod.POST, entity, Response.class);
+        Object[] completedInfo = new Object[2];
+        completedInfo[0] = new Date();
+        completedInfo[1] = response.getBody().getId();
         synchronized(completedTimes) {
-            completedTimes.add(new Date());
+            completedTimes.add(completedInfo);
         }
     }
 }

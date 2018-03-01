@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Response {
+    String id;
     Boolean saved;
 
     public Boolean getSaved() {
@@ -17,6 +18,14 @@ public class Response {
 
     public void setSaved(Boolean saved) {
         this.saved = saved;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
     
 }

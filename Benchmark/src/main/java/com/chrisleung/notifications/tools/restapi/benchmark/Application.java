@@ -1,5 +1,7 @@
 package com.chrisleung.notifications.tools.restapi.benchmark;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.concurrent.ExecutorService;
@@ -15,6 +17,7 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.client.support.BasicAuthorizationInterceptor;
 import org.springframework.web.client.RestTemplate;
 
 /**
@@ -27,7 +30,7 @@ import org.springframework.web.client.RestTemplate;
 @SpringBootApplication
 public class Application {
         
-    @Value("${restapi.benchmark.endpoint}")
+    @Value("${restapi.endpoint}")
     private String endpoint;
     @Value("${restapi.benchmark.request.total}")
     private int numRequests;
@@ -39,8 +42,12 @@ public class Application {
     private int timelimit;
     @Value("${restapi.benchmark.request.type}")
     private String requestType;
-    
-    private ArrayList<Date> completedTimes;
+    @Value("${restapi.username}")
+    private String username;
+    @Value("${restapi.password}")
+    private String password;
+    @Value("${restapi.benchmark.notification.id.output.file}")
+    private String outputFilename;
 
     @Autowired
     private RestTemplate restTemplate;
@@ -72,11 +79,11 @@ public class Application {
         /* Create the jobs first */
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        completedTimes = new ArrayList<>();
-        completedTimes.ensureCapacity(numRequests);
+        ArrayList<Object[]> completedData = new ArrayList<>();
+        completedData.ensureCapacity(numRequests);
         PostNotificationJob[] jobs = new PostNotificationJob[numRequests];
         for(int i=0; i<numRequests; i++) {
-            jobs[i] = new PostNotificationJob(restTemplate,endpoint,headers,email,i,completedTimes);
+            jobs[i] = new PostNotificationJob(restTemplate,endpoint,headers,email,i,completedData);
         }
         
         /* Submit jobs */
@@ -89,16 +96,27 @@ public class Application {
         threadPool.awaitTermination(timelimit, TimeUnit.SECONDS);
         
         /* Find the first job after the shutdown was submitted */
-        for(int i=0; i<completedTimes.size(); i++) {
-            if(completedTimes.get(i).getTime() >= start.getTime()) {
-                Date first = completedTimes.get(i);
-                Date last = completedTimes.get(completedTimes.size()-1);
+        for(int i=0; i<completedData.size(); i++) {
+            if(((Date)completedData.get(i)[0]).getTime() >= start.getTime()) {
+                Date first = (Date)completedData.get(i)[0];
+                Date last = (Date)completedData.get(completedData.size()-1)[0];
                 long elapsed = last.getTime() - first.getTime();
-                int numCompleted = completedTimes.size()-i;
+                int numCompleted = completedData.size()-i;
                 /* Log Status */
                 System.out.println(String.format("Completed %s/%s requests with %s concurrent connections in %s seconds. Average = %s requests/second", numCompleted,numRequests,numConcurrent,elapsed/1000.0f,numCompleted/(elapsed/1000.0f)));
                 break;
             }
         }
+        BufferedWriter writer = new BufferedWriter(new FileWriter(outputFilename,true));
+        for(Object[] data : completedData) {
+            writer.write((String)data[1]+'\n');
+        }
+        writer.close();
+	}
+	
+	private void getBenchmark() throws Exception {
+	    BasicAuthorizationInterceptor auth  = new BasicAuthorizationInterceptor(username, password);
+        restTemplate.getInterceptors().add(auth);
+        
 	}
 }
