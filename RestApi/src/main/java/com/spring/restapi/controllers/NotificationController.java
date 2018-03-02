@@ -72,13 +72,13 @@ public class NotificationController {
     public Map<String,Object> save(@RequestBody Notification notification) {
         Map<String,Object> response = new HashMap<>();
         List<Notification> results = notificationRepository.findByEmailAndVariantIdAndSentFalse(notification.getEmail(), notification.getVariantId());
-        boolean saved = false;
+        boolean success = false;
         if(results.size() == 0) {
             notification = notificationRepository.save(notification);
-            saved = true;
+            success = true;
             response.put("id", notification.getId());
         }
-        response.put("saved", saved);
+        response.put("success", success);
         return response;
     }
 
@@ -108,11 +108,13 @@ public class NotificationController {
     }
 
     @RequestMapping(method=RequestMethod.DELETE, value="/notifications/{id}")
-    public String delete(@PathVariable String id) {
+    public Map<String,Object> delete(@PathVariable String id) {
         Notification notification = notificationRepository.findOne(id);
         notificationRepository.delete(notification);
-
-        return "notification deleted";
+        Map<String,Object> response = new HashMap<>();
+        response.put("success", true);
+        response.put("id", id);
+        return response;
     }
     
     private NotificationWrapper wrapSingleNotification(Notification n, Date d) {
