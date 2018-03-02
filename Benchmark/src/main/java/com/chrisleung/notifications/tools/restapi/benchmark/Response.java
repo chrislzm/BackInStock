@@ -10,14 +10,14 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Response {
     String id;
-    Boolean saved;
+    Boolean success;
 
-    public Boolean getSaved() {
-        return saved;
+    public Boolean getSuccess() {
+        return success;
     }
 
-    public void setSaved(Boolean saved) {
-        this.saved = saved;
+    public void setSuccess(Boolean success) {
+        this.success = success;
     }
 
     public String getId() {
