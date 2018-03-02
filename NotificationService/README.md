@@ -71,6 +71,16 @@ The following tags can be used in both the email subject and body templates, and
 
 To add support for additional tags, modify the `replaceTemplateShopTagsWithValues` and `replaceTemplateProductVariantTagsWithValues` methods in `EmailService.java`.
 
+### Developer Reference
+
+This project can be easily edited in [Eclipse for Java](http://www.eclipse.org/downloads/eclipse-packages/):
+1. Ensure both Gradle and Eclipse are installed
+2. Download this repository to your computer
+3. In Eclipse, open **File** then **Import...**
+4. Under **Gradle**, select **Existing Gradle Project** and click **Next** 
+5. On the **Import Gradle Project** click **Browse** and open the root directory of the project
+6. Click **Finish**
+
 ## License
 
 Copyright (c) 2018 [Chris Leung](https://github.com/chrislzm)

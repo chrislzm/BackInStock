@@ -51,6 +51,14 @@ For a free CA-signed SSL Certificate visit [Let's Encrypt](https://letsencrypt.o
 
 ## Developer Reference
 
+This project can be easily edited in [Eclipse for Java](http://www.eclipse.org/downloads/eclipse-packages/):
+1. Ensure both Gradle and Eclipse are installed
+2. Download this repository to your computer
+3. In Eclipse, open **File** then **Import...**
+4. Under **Gradle**, select **Existing Gradle Project** and click **Next** 
+5. On the **Import Gradle Project** click **Browse** and open the root directory of the project
+6. Click **Finish**
+
 ### Notification Object
 
 The Notification JSON object, Java class and MongoDB document all have the same structure:
