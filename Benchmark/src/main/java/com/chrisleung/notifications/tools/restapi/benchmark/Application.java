@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -175,6 +176,24 @@ public class Application {
         /* Run jobs */
         runBenchmark(jobs,threadpool,completedData,REQUEST_TYPE_DELETE);
         
+        /* Delete deleted ids from file */
+        scanner = new Scanner(new FileReader(outputFilename));
+        HashSet<String> remainingIds = new HashSet<>();
+        while(scanner.hasNextLine()) {
+            remainingIds.add(scanner.nextLine());
+        }
+        scanner.close();
+        for(Object[] data : completedData) {
+            String id = (String)data[1];
+            if(remainingIds.contains(id)) {
+                remainingIds.remove(id);
+            }
+        }
+        BufferedWriter writer = new BufferedWriter(new FileWriter(outputFilename));
+        for(String id : remainingIds) {
+            writer.write(id+'\n');
+        }
+        writer.close();
 	}
 	
 	private void setupAuth() {
