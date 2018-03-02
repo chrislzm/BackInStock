@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
@@ -38,12 +39,7 @@ import org.springframework.web.client.RestTemplate;
  */
 @SpringBootApplication
 public class Application {
-
-    static final String REQUEST_TYPE_ALL = "all";
-    static final String REQUEST_TYPE_POST = "post";
-    static final String REQUEST_TYPE_GET = "get";
-    static final String REQUEST_TYPE_UPDATE = "update";
-    static final String REQUEST_TYPE_DELETE = "delete";
+    
     static final int EMAIL_ADDRESS_LENGTH = 9; // total length will be 2x this plus 4 (@ and .com chars)
     
     private static final Logger log = LoggerFactory.getLogger(Application.class);
@@ -67,7 +63,7 @@ public class Application {
     @Value("${restapi.benchmark.runs}")
     private int runs;
 
-    private Map<String,Float> best;
+    private Map<RequestType,Float> best;
     private RandomString randomString;
     
     @Autowired
@@ -94,26 +90,27 @@ public class Application {
             completedData.ensureCapacity(numRequests);
             
             best = new HashMap<>();
+            
             randomString = new RandomString(EMAIL_ADDRESS_LENGTH);
 
             for(int i=0; i<runs; i++) {
                 log.info(String.format("\nBenchmark Run %s/%s", i+1, runs));
-                if(requestType.equals(REQUEST_TYPE_ALL) || requestType.equals(REQUEST_TYPE_POST)) {
+                if(requestType.equals(RequestType.ALL.toString()) || requestType.equals(RequestType.POST.toString())) {
                     threadpool = Executors.newFixedThreadPool(numConcurrent);
                     postBenchmark(threadpool,headers,completedData);
                     completedData.clear();
                 }
-                if(requestType.equals(REQUEST_TYPE_ALL) || requestType.equals(REQUEST_TYPE_GET)) {
+                if(requestType.equals(RequestType.ALL.toString()) || requestType.equals(RequestType.GET.toString())) {
                     threadpool = Executors.newFixedThreadPool(numConcurrent);
                     getBenchmark(threadpool,completedData);
                     completedData.clear();
                 }
-                if(requestType.equals(REQUEST_TYPE_ALL) || requestType.equals(REQUEST_TYPE_UPDATE)) {
+                if(requestType.equals(RequestType.ALL.toString()) || requestType.equals(RequestType.PUT.toString())) {
                     threadpool = Executors.newFixedThreadPool(numConcurrent);
                     updateBenchmark(threadpool,headers,completedData);
                     completedData.clear();
                 }
-                if(requestType.equals(REQUEST_TYPE_ALL) || requestType.equals(REQUEST_TYPE_DELETE)) {
+                if(requestType.equals(RequestType.ALL.toString()) || requestType.equals(RequestType.DELETE.toString())) {
                     threadpool = Executors.newFixedThreadPool(numConcurrent);
                     deleteBenchmark(threadpool,completedData);
                     completedData.clear();
@@ -133,7 +130,7 @@ public class Application {
         }
 
         /* Run jobs */
-        runBenchmark(jobs,threadpool,completedData,REQUEST_TYPE_POST);
+        runBenchmark(jobs,threadpool,completedData,RequestType.POST);
 
         /* Write IDs to file */
         BufferedWriter writer = new BufferedWriter(new FileWriter(outputFilename,true));
@@ -155,7 +152,7 @@ public class Application {
         scanner.close();
 
         /* Run jobs */
-        runBenchmark(jobs,threadpool,completedData,REQUEST_TYPE_GET);
+        runBenchmark(jobs,threadpool,completedData,RequestType.GET);
     }
 
     private void updateBenchmark(ExecutorService threadpool,HttpHeaders headers,ArrayList<Object[]> completedData) throws Exception {
@@ -170,7 +167,7 @@ public class Application {
         scanner.close();
 
         /* Run jobs */
-        runBenchmark(jobs,threadpool,completedData,REQUEST_TYPE_UPDATE);	    
+        runBenchmark(jobs,threadpool,completedData,RequestType.PUT);	    
     }
 
     private void deleteBenchmark(ExecutorService threadpool, ArrayList<Object[]> completedData) throws Exception {
@@ -186,7 +183,7 @@ public class Application {
         scanner.close();
 
         /* Run jobs */
-        runBenchmark(jobs,threadpool,completedData,REQUEST_TYPE_DELETE);
+        runBenchmark(jobs,threadpool,completedData,RequestType.DELETE);
 
         /* Delete deleted ids from file */
         scanner = new Scanner(new FileReader(outputFilename));
@@ -232,7 +229,7 @@ public class Application {
         return (int)(Math.random() * Integer.MAX_VALUE);
     }
 
-    private void runBenchmark(Runnable[] jobs, ExecutorService threadpool, ArrayList<Object[]> completedData, String type) throws Exception {
+    private void runBenchmark(Runnable[] jobs, ExecutorService threadpool, ArrayList<Object[]> completedData, RequestType requestType) throws Exception {
         /* Submit jobs */
         for(Runnable job : jobs) {
             threadpool.execute(job);
@@ -251,10 +248,10 @@ public class Application {
                 /* Log Status */
                 float seconds = elapsed/1000.0f;
                 float rate = numCompleted/seconds;
-                float record = best.getOrDefault(type, 0.0f);
+                float record = best.getOrDefault(requestType, 0.0f);
                 record = Math.max(record, rate);
-                best.put(type, record);
-                log.info(String.format("\nCompleted %s %s requests with %s concurrent connections in %ss. Average = %s req/s. Best = %s req/s", numCompleted,type,numConcurrent,seconds,rate,record));
+                best.put(requestType, record);
+                log.info(String.format("\nCompleted %s %s requests with %s concurrent connections in %ss. Average = %s req/s. Best = %s req/s", numCompleted,requestType.toString(),numConcurrent,seconds,rate,record));
                 break;
             }
         }
