@@ -18,7 +18,6 @@ public class DeleteNotificationJob extends SingleNotificationJob {
         ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.DELETE, null, String.class);
         synchronized(completedData) {
             completedData.add(new Object[] {new Date(),response});
-            System.out.print("DELETED: " + response);
         }
     }
 }
