@@ -44,7 +44,8 @@ public class Application {
     static final String REQUEST_TYPE_GET = "get";
     static final String REQUEST_TYPE_UPDATE = "update";
     static final String REQUEST_TYPE_DELETE = "delete";
-
+    static final int EMAIL_ADDRESS_LENGTH = 9; // total length will be 2x this plus 4 (@ and .com chars)
+    
     private static final Logger log = LoggerFactory.getLogger(Application.class);
 
     @Value("${restapi.endpoint}")
@@ -53,8 +54,6 @@ public class Application {
     private int numRequests;
     @Value("${restapi.benchmark.request.concurrent}")
     private int numConcurrent;
-    @Value("${restapi.benchmark.request.email}")
-    private String email;
     @Value("${restapi.benchmark.timelimit}")
     private int timelimit;
     @Value("${restapi.benchmark.request.type}")
@@ -69,6 +68,7 @@ public class Application {
     private int runs;
 
     private Map<String,Float> best;
+    private RandomString randomString;
     
     @Autowired
     private RestTemplate restTemplate;    
@@ -94,9 +94,10 @@ public class Application {
             completedData.ensureCapacity(numRequests);
             
             best = new HashMap<>();
+            randomString = new RandomString(EMAIL_ADDRESS_LENGTH);
 
             for(int i=0; i<runs; i++) {
-                log.info(String.format("Benchmark Run %s/%s", i+1, runs));
+                log.info(String.format("\nBenchmark Run %s/%s", i+1, runs));
                 if(requestType.equals(REQUEST_TYPE_ALL) || requestType.equals(REQUEST_TYPE_POST)) {
                     threadpool = Executors.newFixedThreadPool(numConcurrent);
                     postBenchmark(threadpool,headers,completedData);
@@ -118,6 +119,7 @@ public class Application {
                     completedData.clear();
                 }
             }
+            log.info(String.format("\nTotal Runs: %s", runs));
         };
     }
 
@@ -127,7 +129,7 @@ public class Application {
 
         /* Create jobs */
         for(int i=0; i<numRequests; i++) {
-            jobs[i] = new PostNotificationJob(restTemplate,endpoint,headers,email,i,completedData);
+            jobs[i] = new PostNotificationJob(restTemplate,endpoint,headers,getRandomEmail(),getRandomVariantId(),completedData);
         }
 
         /* Run jobs */
@@ -162,10 +164,8 @@ public class Application {
         Scanner scanner = new Scanner(new FileReader(outputFilename));        
         /* Create jobs */
         Runnable[] jobs = new Runnable[numIds];
-        String randomEmail=Math.random()*Integer.MAX_VALUE + '@' + Math.random()*Integer.MAX_VALUE + ".com";
-        int randomVariantId = (int)(Math.random() * Integer.MAX_VALUE);
         for(int i=0; i<numIds; i++) {
-            jobs[i] = new UpdateNotificationJob(restTemplate, endpoint, scanner.next(), headers, randomEmail, randomVariantId, completedData);
+            jobs[i] = new UpdateNotificationJob(restTemplate, endpoint, scanner.next(), headers, getRandomEmail(), getRandomVariantId(), completedData);
         }
         scanner.close();
 
@@ -223,6 +223,14 @@ public class Application {
         scanner.close();
         return count;
     }
+    
+    private String getRandomEmail() {
+        return randomString.nextString() + '@' + randomString.nextString() + ".com";
+    }
+    
+    private int getRandomVariantId() {
+        return (int)(Math.random() * Integer.MAX_VALUE);
+    }
 
     private void runBenchmark(Runnable[] jobs, ExecutorService threadpool, ArrayList<Object[]> completedData, String type) throws Exception {
         /* Submit jobs */
@@ -246,7 +254,7 @@ public class Application {
                 float record = best.getOrDefault(type, 0.0f);
                 record = Math.max(record, rate);
                 best.put(type, record);
-                log.info(String.format("Completed %s %s requests with %s concurrent connections in %ss. Average = %s req/s. Best = %s req/s", numCompleted,type,numConcurrent,seconds,rate,record));
+                log.info(String.format("\nCompleted %s %s requests with %s concurrent connections in %ss. Average = %s req/s. Best = %s req/s", numCompleted,type,numConcurrent,seconds,rate,record));
                 break;
             }
         }
