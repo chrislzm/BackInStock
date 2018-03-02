@@ -19,7 +19,7 @@ public class Notification {
     @Id
     String id;
     String email;
-    Integer variantId;
+    Long variantId;
     @DateTimeFormat(iso = ISO.DATE_TIME)
 	Date createdDate;
     Boolean sent;
@@ -31,7 +31,7 @@ public class Notification {
     	this.sent = new Boolean(false);
     }
     
-    public Notification(String email, Integer variantId) {
+    public Notification(String email, Long variantId) {
     	this();
     	this.email = email;
     	this.variantId = variantId;
@@ -61,11 +61,11 @@ public class Notification {
 		this.createdDate = createdDate;
 	}
 	
-	public Integer getVariantId() {
+	public Long getVariantId() {
 		return variantId;
 	}
 
-	public void setVariantId(Integer variantId) {
+	public void setVariantId(Long variantId) {
 		this.variantId = variantId;
 	}
 

@@ -11,8 +11,8 @@ public interface ProductVariant {
      * product variant. Example: http://mystore.com/products/{{product.handle}}
      */
     public String getHandle();
-    public int getProductId();
-    public int getVariantId();
+    public long getProductId();
+    public long getVariantId();
     public String getImageUrl();
     public int getInventoryQuantity();
     public String getVariantTitle();

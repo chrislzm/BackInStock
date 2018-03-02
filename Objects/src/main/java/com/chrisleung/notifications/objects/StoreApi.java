@@ -6,5 +6,5 @@ package com.chrisleung.notifications.objects;
  * @author Chris Leung
  */
 public interface StoreApi {
-    public ProductVariant getProductVariant(int variantId);
+    public ProductVariant getProductVariant(long variantId);
 }

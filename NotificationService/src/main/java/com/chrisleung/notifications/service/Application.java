@@ -80,7 +80,7 @@ public class Application {
 			
 			/* 3. Program Loop Setup */
             // The main data structure: variant-ID to notifications map
-            Map<Integer,List<Notification>> variantNotificationMap = new HashMap<Integer,List<Notification>>();
+            Map<Long,List<Notification>> variantNotificationMap = new HashMap<Long,List<Notification>>();
             int totalQueued = 0; // For log output
             
             logger.message("Starting Notification Service...");
@@ -102,7 +102,7 @@ public class Application {
 			    /* 5. Detect variants that are back in stock */
                 int numOutOfStock = 0; // For log output
                 List<ProductVariant> inStock = new ArrayList<>();
-			    for(Integer variantId : variantNotificationMap.keySet()) {
+			    for(Long variantId : variantNotificationMap.keySet()) {
 			        ProductVariant pv = storeApi.getProductVariant(variantId);
                     if(pv.getInventoryQuantity() > 0) {
                         inStock.add(pv);

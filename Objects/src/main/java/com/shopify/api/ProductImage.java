@@ -15,7 +15,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class ProductImage {
     
     private String src;
-    private Integer id;
+    private Long id;
     
     public String getSrc() {
         return src;
@@ -25,11 +25,11 @@ public class ProductImage {
         this.src = src;
     }
     
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

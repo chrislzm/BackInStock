@@ -29,7 +29,7 @@ public class ShopifyApi implements StoreApi {
     private String urlPostfix;
     private BasicAuthorizationInterceptor auth; // For Username+Password auth
     private RestTemplate restTemplate;
-    private Map<Integer,ProductVariant> cache;
+    private Map<Long,ProductVariant> cache;
     
     @Autowired
     ShopifyApi(ShopifyApiConfig config, RestTemplate restTemplate) {
@@ -41,7 +41,7 @@ public class ShopifyApi implements StoreApi {
         this.cache = new HashMap<>();
     }
     
-    public Variant getVariant(int variantId) {
+    public Variant getVariant(long variantId) {
         restTemplate.getInterceptors().add(auth);
         String url = String.format("%s%s%s",variantUrl,variantId,urlPostfix);
         ResponseEntity<VariantWrapper> shopifyResponse = restTemplate.exchange(url, HttpMethod.GET, null, VariantWrapper.class);
@@ -49,7 +49,7 @@ public class ShopifyApi implements StoreApi {
         return shopifyResponse.getBody().getVariant();
     }
 
-    public Product getProduct(int productId) {        
+    public Product getProduct(long productId) {        
         restTemplate.getInterceptors().add(auth);
         String url = String.format("%s%s%s",productUrl,productId,urlPostfix);
         ResponseEntity<ProductWrapper> shopifyResponse = restTemplate.exchange(url, HttpMethod.GET, null, ProductWrapper.class);
@@ -58,7 +58,7 @@ public class ShopifyApi implements StoreApi {
     }
 
     @Override
-    public ProductVariant getProductVariant(int variantId) {
+    public ProductVariant getProductVariant(long variantId) {
         if(!cache.containsKey(variantId)) {
             Variant v = getVariant(variantId);
             Product p = getProduct(v.getProduct_id());

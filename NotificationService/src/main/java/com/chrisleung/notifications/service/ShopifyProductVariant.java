@@ -19,12 +19,12 @@ public class ShopifyProductVariant implements ProductVariant {
     }
     
     @Override
-    public int getProductId() {
+    public long getProductId() {
         return product.getId();
     }
     
     @Override
-    public int getVariantId() {
+    public long getVariantId() {
         return variant.getId();
     }
 

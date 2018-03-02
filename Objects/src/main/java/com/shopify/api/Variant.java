@@ -12,8 +12,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Variant {
     
-    private Integer id;
-    private Integer product_id;
+    private Long id;
+    private Long product_id;
     private String title;
     private String price;
     private String sku;
@@ -30,7 +30,7 @@ public class Variant {
     private Boolean taxable ;
     private String barcode;
     private Integer grams;
-    private Integer image_id;
+    private Long image_id;
     private Integer inventory_quantity;
     private Float weight;
     private String weight_unit;
@@ -47,19 +47,19 @@ public class Variant {
                 '}';
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public Integer getProduct_id() {
+    public Long getProduct_id() {
         return product_id;
     }
 
-    public void setProduct_id(Integer product_id) {
+    public void setProduct_id(Long product_id) {
         this.product_id = product_id;
     }
 
@@ -191,11 +191,11 @@ public class Variant {
         this.grams = grams;
     }
 
-    public Integer getImage_id() {
+    public Long getImage_id() {
         return image_id;
     }
 
-    public void setImage_id(Integer image_id) {
+    public void setImage_id(Long image_id) {
         this.image_id = image_id;
     }
 
