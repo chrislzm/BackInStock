@@ -22,6 +22,17 @@ This documentation is not complete. This application is under active development
 
 Run the JAR file. If the JAR file does not execute on your system, execute the application with the command `java -jar build/libs/restapi-benchmark-0.1.0.jar`. You may need to remove the `executable = true` line from `build.gradle` and recompile the application first.
 
+### Command Line Arguments
+
+Please note that any or all of the settings in `application.properties` can also be overridden with command line arguments. Example: `--restapi.benchmark.request.total=1000`
+
+## Development Notes
+
+To Do:
+* Add/Update code documentation
+* Refactor (e.g. create interfaces/abstract classes) so that it's easier to add and test other REST APIs
+* Add ability to disable randomly generated data
+
 ## License
 
 Copyright (c) 2018 [Chris Leung](https://github.com/chrislzm)
