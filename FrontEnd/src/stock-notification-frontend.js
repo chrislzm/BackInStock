@@ -63,7 +63,7 @@ function onSubmit(form){
   if(isValidEmail(json['email'])) {
     showStatus("Submitting...");
     submitNotification(json).then(function(response) {
-      if(response['saved']) {
+      if(response['success']) {
         $(NOTIFICATION_FORM_EMAIL).hide();
         $(NOTIFICATION_FORM_SUBMIT).hide();
         showStatus("Your notification has been saved. <a href='#' rel='modal:close'>Close</a>");
