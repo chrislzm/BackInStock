@@ -31,9 +31,7 @@ import org.springframework.http.client.support.BasicAuthorizationInterceptor;
 import org.springframework.web.client.RestTemplate;
 
 /**
- * This class implements a simple benchmarking tool for the Database REST API.
- * It measures performance of the single endpoint exposed to the world:
- * Submittinga new notification.
+ * This class implements a simple benchmarking tool for a CRUD REST API.
  * 
  * @author Chris Leung
  */
@@ -62,6 +60,10 @@ public class Application {
     private String outputFilename;
     @Value("${restapi.benchmark.runs}")
     private int runs;
+    @Value("${restapi.benchmark.randomData}")
+    private boolean randomData;
+    
+    private int totalRequests;
 
     private Map<RequestType,List<Float>> allRates;
     private RandomString randomString;
@@ -82,7 +84,8 @@ public class Application {
     public CommandLineRunner run() throws Exception {
         return args -> {
             ExecutorService threadpool;
-
+            totalRequests = 0;
+            
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
 
@@ -96,7 +99,7 @@ public class Application {
             randomString = new RandomString(EMAIL_ADDRESS_LENGTH);
 
             for(int i=0; i<runs; i++) {
-                log.info(String.format("\nBenchmark Run %s/%s", i+1, runs));
+                log.info(String.format("\nREST API Benchmark Run %s/%s", i+1, runs,numConcurrent));
                 if(requestType.equals(RequestType.ALL.toString()) || requestType.equals(RequestType.POST.toString())) {
                     threadpool = Executors.newFixedThreadPool(numConcurrent);
                     postBenchmark(threadpool,headers,completedData);
@@ -130,7 +133,7 @@ public class Application {
                     totalDataPoints++;
                 }
             }
-            log.info(String.format("\nTotal Runs: %s.\nOverall Rates - Best: %s req/s. Worst: %s req/s. Average: %s.", runs,overallBest,overallWorst,overallAverage));
+            log.info(String.format("\nSummary: Total Requests = %s, Total Runs = %s, Concurrent Connections = %s, Random Data = %s\nOverall: Best = %s req/s, Worst = %s req/s, Average = %s req/s",totalRequests,runs,numConcurrent,randomData,overallBest,overallWorst,overallAverage));
         };
     }
 
@@ -259,6 +262,7 @@ public class Application {
                 Date last = (Date)completedData.get(completedData.size()-1)[0];
                 long elapsed = last.getTime() - first.getTime();
                 int numCompleted = completedData.size()-i;
+                totalRequests += numCompleted;
                 /* Log Status */
                 float seconds = elapsed/1000.0f;
                 float currentRate = numCompleted/seconds;
@@ -273,7 +277,7 @@ public class Application {
                     bestRate = Math.max(bestRate, rate);
                 }
                 averageRate /= rates.size();
-                log.info(String.format("\nCompleted %s %s rqs w/%s connections in %ss (%s rq/s). Worst: %s rq/s, Best: %s rq/s, Avg: %s rq/s", numCompleted,requestType.toString(),numConcurrent,seconds,currentRate,worstRate,bestRate,averageRate));
+                log.info(String.format("\nCompleted %s %s requests in %ss (%s req/s). Best = %s req/s, Worst = %s req/s, Average = %s req/s", numCompleted,requestType.toString(),seconds,currentRate,bestRate,worstRate,averageRate));
                 break;
             }
         }

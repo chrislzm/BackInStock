@@ -7,4 +7,5 @@ restapi.benchmark.request.total=10000 # Total number of requests to attempt
 restapi.benchmark.request.concurrent=1000 # Maximum number of concurrent connections
 restapi.benchmark.timelimit=60 # Max amount of time in seconds for the test to run
 restapi.benchmark.runs=1 # Number of times to run the test
+restapi.benchmark.randomData=true # Generate random data for POST and PUT requests
 restapi.benchmark.notification.id.output.file=ids.txt # Output file for stored notification ids
