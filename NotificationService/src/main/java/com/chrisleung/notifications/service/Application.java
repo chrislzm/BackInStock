@@ -151,7 +151,10 @@ public class Application {
                     }
                 }
                 lastUpdate = response.getCurrentDate();
-			}			
+                
+                /* 9. Remove old ProductVariant data so we can see any inventory updates */
+                storeApi.clearCache();
+			}
 		};
 	}
 }
