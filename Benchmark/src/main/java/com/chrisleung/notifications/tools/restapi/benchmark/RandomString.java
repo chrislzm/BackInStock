@@ -5,6 +5,9 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.Random;
 
+/**
+ * @link https://stackoverflow.com/a/41156/7602403
+ */
 public class RandomString {
 
     /**
