@@ -73,17 +73,16 @@ public class Application {
 	        
 	        ArrayList<Object[]> completedData = new ArrayList<>();
 	        completedData.ensureCapacity(numRequests);
-	        
-		    switch(requestType) {
-		    case "post":
+	       
+		    if(requestType.equals("all") || requestType.equals("post")) {
 		        postBenchmark(threadpool,headers,completedData);
-		        break;
-		    case "get":
-		        getBenchmark(threadpool,headers,completedData);
-		        break;
-	        default:
 		    }
-
+		    if(requestType.equals("all") || requestType.equals("get")) {
+		        getBenchmark(threadpool,completedData);
+            }
+		    if(requestType.equals("all") || requestType.equals("delete")) {
+                deleteBenchmark(threadpool,completedData);
+            }
 		};
 	}
 	
@@ -107,9 +106,8 @@ public class Application {
         writer.close();
 	}
 	
-	private void getBenchmark(ExecutorService threadpool,HttpHeaders headers,ArrayList<Object[]> completedData) throws Exception {
-	    BasicAuthorizationInterceptor auth  = new BasicAuthorizationInterceptor(username, password);
-        restTemplate.getInterceptors().add(auth);
+	private void getBenchmark(ExecutorService threadpool, ArrayList<Object[]> completedData) throws Exception {
+	    setupAuth();
 
         Scanner scanner = new Scanner(new FileReader(outputFilename));
         int count = 0;
@@ -124,12 +122,42 @@ public class Application {
         /* Create jobs */
         Runnable[] jobs = new Runnable[count];
         for(int i=0; i<count; i++) {
-            jobs[i] = new GetNotificationJob(restTemplate, endpoint, scanner.next(), headers, completedData);
+            jobs[i] = new GetNotificationJob(restTemplate, endpoint, scanner.next(), completedData);
         }
         scanner.close();
         
         /* Run jobs */
         runBenchmark(jobs,threadpool,completedData);
+	}
+	
+	private void deleteBenchmark(ExecutorService threadpool, ArrayList<Object[]> completedData) throws Exception {
+        setupAuth();
+        
+        Scanner scanner = new Scanner(new FileReader(outputFilename));
+        int count = 0;
+        while(scanner.hasNext()) {
+            count++;
+            scanner.nextLine();
+        }
+        scanner.close();
+        scanner = new Scanner(new FileReader(outputFilename));
+        count = Math.min(count, numRequests);
+        
+        /* Create jobs */
+        Runnable[] jobs = new Runnable[count];
+        for(int i=0; i<count; i++) {
+            jobs[i] = new DeleteNotificationJob(restTemplate, endpoint, scanner.next(), completedData);
+        }
+        scanner.close();
+        
+        /* Run jobs */
+        runBenchmark(jobs,threadpool,completedData);
+        
+	}
+	
+	private void setupAuth() {
+        BasicAuthorizationInterceptor auth  = new BasicAuthorizationInterceptor(username, password);
+        restTemplate.getInterceptors().add(auth);
 	}
 	
 	private void runBenchmark(Runnable[] jobs, ExecutorService threadpool, ArrayList<Object[]> completedData) throws Exception {
