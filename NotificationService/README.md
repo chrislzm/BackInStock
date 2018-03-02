@@ -71,15 +71,19 @@ The following tags can be used in both the email subject and body templates, and
 
 To add support for additional tags, modify the `replaceTemplateShopTagsWithValues` and `replaceTemplateProductVariantTagsWithValues` methods in `EmailService.java`.
 
-### Developer Reference
+## Developer Reference
 
 This project can be easily edited in [Eclipse for Java](http://www.eclipse.org/downloads/eclipse-packages/):
 1. Ensure both Gradle and Eclipse are installed
 2. Download this repository to your computer
 3. In Eclipse, open **File** then **Import...**
-4. Under **Gradle**, select **Existing Gradle Project** and click **Next** 
+4. Under **Gradle**, select **Existing Gradle Project** and click **Next**
 5. On the **Import Gradle Project** click **Browse** and open the root directory of the project
 6. Click **Finish**
+
+### To Do
+
+* Shopify Integration: Verify with Shopify that the Product, Variant, and Image ID fields are Long integer datatypes, and that this will not change in the future. (This REST API expects a long Integer. An invalid datatype would cause this REST API to send an error to the frontend and prevent the customer from submitting a new notification.)
 
 ## License
 
