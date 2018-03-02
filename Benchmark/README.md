@@ -1,18 +1,20 @@
 # Back In Stock - REST API Benchmarking Tool
 
-This Java application implements an simple benchmarking tool that measures performance of the single publicly exposed endpoint: submitting a new notification.
+This Java application implements an simple benchmarking tool that measures performance of a CRUD REST API.
 
-This documentation is not complete. The application is unstable and under active development.
+This documentation is not complete. This application is under active development.
 
 ## Prerequisites
 
 1. Java
 2. Gradle
-3. Internet connection
+3. Fast internet connection
 
 ## Installing
 
-1. Compile the application
+1. Code each request for your API: Use the `PostNotificationJob`,  `GetNotificationJob`, `UpdateNotificationJob`, and `DeleteNotificationJob` as examples for POST, GET, PUT, and DELETE http methods respectively
+2. Rename `application.properties.blank` to `application.properties` and update values
+3. Compile the application
     * Run the command `./gradlew bootRun` (will compile and run) or
     * Build an executable JAR file using `./gradlew build`, which will create a JAR file in `./build/libs/notification-service-0.1.0.jar`
 
