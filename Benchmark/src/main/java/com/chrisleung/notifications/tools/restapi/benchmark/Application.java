@@ -63,7 +63,7 @@ public class Application {
     @Value("${restapi.benchmark.runs}")
     private int runs;
 
-    private Map<RequestType,Float> best;
+    private Map<RequestType,List<Float>> allRates;
     private RandomString randomString;
     
     @Autowired
@@ -89,8 +89,10 @@ public class Application {
             ArrayList<Object[]> completedData = new ArrayList<>();
             completedData.ensureCapacity(numRequests);
             
-            best = new HashMap<>();
-            
+            allRates = new HashMap<>();
+            for(RequestType t : RequestType.values()) {
+                allRates.put(t, new ArrayList<>());
+            }
             randomString = new RandomString(EMAIL_ADDRESS_LENGTH);
 
             for(int i=0; i<runs; i++) {
@@ -116,7 +118,19 @@ public class Application {
                     completedData.clear();
                 }
             }
-            log.info(String.format("\nTotal Runs: %s", runs));
+            float totalDataPoints = 0;
+            float overallAverage = 0;
+            float overallBest = 0;
+            float overallWorst = Float.MAX_VALUE;
+            for(RequestType t : RequestType.values()) {
+                for(float datapoint : allRates.get(t)) {
+                    overallBest = Math.max(datapoint, overallBest);
+                    overallWorst = Math.min(datapoint, overallWorst);
+                    overallAverage = ((overallAverage*totalDataPoints) + datapoint) / (totalDataPoints+1);
+                    totalDataPoints++;
+                }
+            }
+            log.info(String.format("\nTotal Runs: %s.\nOverall Rates - Best: %s req/s. Worst: %s req/s. Average: %s.", runs,overallBest,overallWorst,overallAverage));
         };
     }
 
@@ -247,11 +261,19 @@ public class Application {
                 int numCompleted = completedData.size()-i;
                 /* Log Status */
                 float seconds = elapsed/1000.0f;
-                float rate = numCompleted/seconds;
-                float record = best.getOrDefault(requestType, 0.0f);
-                record = Math.max(record, rate);
-                best.put(requestType, record);
-                log.info(String.format("\nCompleted %s %s requests with %s concurrent connections in %ss. Average = %s req/s. Best = %s req/s", numCompleted,requestType.toString(),numConcurrent,seconds,rate,record));
+                float currentRate = numCompleted/seconds;
+                float bestRate = 0;
+                float worstRate = Float.MAX_VALUE;
+                List<Float> rates = allRates.get(requestType);
+                rates.add(currentRate);
+                float averageRate = 0;
+                for(float rate : rates) {
+                    averageRate += rate;
+                    worstRate = Math.min(worstRate, rate);
+                    bestRate = Math.max(bestRate, rate);
+                }
+                averageRate /= rates.size();
+                log.info(String.format("\nCompleted %s %s rqs w/%s connections in %ss (%s rq/s). Worst: %s rq/s, Best: %s rq/s, Avg: %s rq/s", numCompleted,requestType.toString(),numConcurrent,seconds,currentRate,worstRate,bestRate,averageRate));
                 break;
             }
         }
