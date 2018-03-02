@@ -83,15 +83,22 @@ public class Application {
 	       
 		    if(requestType.equals(REQUEST_TYPE_ALL) || requestType.equals(REQUEST_TYPE_POST)) {
 		        postBenchmark(threadpool,headers,completedData);
+		        completedData.clear();
 		    }
 		    if(requestType.equals(REQUEST_TYPE_ALL) || requestType.equals(REQUEST_TYPE_GET)) {
+		        threadpool = Executors.newFixedThreadPool(numConcurrent);
 		        getBenchmark(threadpool,completedData);
+		        completedData.clear();
             }
             if(requestType.equals(REQUEST_TYPE_ALL) || requestType.equals(REQUEST_TYPE_UPDATE)) {
+                threadpool = Executors.newFixedThreadPool(numConcurrent);
                 updateBenchmark(threadpool,headers,completedData);
+                completedData.clear();
             }
 		    if(requestType.equals(REQUEST_TYPE_ALL) || requestType.equals(REQUEST_TYPE_DELETE)) {
+		        threadpool = Executors.newFixedThreadPool(numConcurrent);
                 deleteBenchmark(threadpool,completedData);
+                completedData.clear();
             }
 		};
 	}
@@ -171,7 +178,7 @@ public class Application {
 	private int getNumIdRecords() throws FileNotFoundException {
         Scanner scanner = new Scanner(new FileReader(outputFilename));
         int count = 0;
-        while(scanner.hasNext()) {
+        while(scanner.hasNextLine()) {
             count++;
             scanner.nextLine();
         }
@@ -196,7 +203,7 @@ public class Application {
                 long elapsed = last.getTime() - first.getTime();
                 int numCompleted = completedData.size()-i;
                 /* Log Status */
-                System.out.println(String.format("Completed %s/%s %s requests with %s concurrent connections in %s seconds. Average = %s requests/second", numCompleted,numRequests,type,numConcurrent,elapsed/1000.0f,numCompleted/(elapsed/1000.0f)));
+                System.out.println(String.format("Completed %s %s requests with %s concurrent connections in %s seconds. Average = %s requests/second", numCompleted,type,numConcurrent,elapsed/1000.0f,numCompleted/(elapsed/1000.0f)));
                 break;
             }
         }
