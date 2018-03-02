@@ -2,7 +2,7 @@
 restapi.endpoint=http://localhost:8080/notifications # REST API endpoint
 restapi.username=user # Username for HTTP authentication
 restapi.password=password # Password for HTTP authentication
-restapi.benchmark.request.type=post # REST API method, choose from: post, get, put, delete
+restapi.benchmark.request.type=ALL # REST API method, choose from: POST, GET, PUT, DELETE. Use ALL to test every method.
 restapi.benchmark.request.total=10000 # Total number of requests to attempt
 restapi.benchmark.request.concurrent=1000 # Maximum number of concurrent connections
 restapi.benchmark.timelimit=60 # Max amount of time in seconds for the test to run
