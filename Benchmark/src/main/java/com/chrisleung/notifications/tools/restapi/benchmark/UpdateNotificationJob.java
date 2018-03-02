@@ -29,9 +29,7 @@ public class UpdateNotificationJob extends SingleNotificationJob {
     @Override
     public void run() {
         ResponseEntity<NotificationWrapper> response = restTemplate.exchange(url, HttpMethod.PUT, entity, NotificationWrapper.class);
-        Object[] completedInfo = new Object[2];
-        completedInfo[0] = new Date();
-        completedInfo[1] = response.getBody().getNotifications().iterator().next().getId();
+        Object[] completedInfo = new Object[] {new Date(),response.getBody().getNotifications().iterator().next().getId()};
         synchronized(completedData) {
             completedData.add(completedInfo);
         }

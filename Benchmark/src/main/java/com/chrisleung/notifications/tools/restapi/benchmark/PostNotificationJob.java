@@ -29,9 +29,7 @@ public class PostNotificationJob implements Runnable {
     @Override
     public void run() {
         ResponseEntity<Response> response = restTemplate.exchange(endPoint, HttpMethod.POST, entity, Response.class);
-        Object[] completedInfo = new Object[2];
-        completedInfo[0] = new Date();
-        completedInfo[1] = response.getBody().getId();
+        Object[] completedInfo = new Object[] {new Date(), response.getBody().getId()};
         synchronized(completedData) {
             completedData.add(completedInfo);
         }

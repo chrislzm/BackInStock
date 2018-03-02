@@ -17,8 +17,9 @@ public class GetNotificationJob extends SingleNotificationJob {
     @Override
     public void run() {
         ResponseEntity<NotificationWrapper> response = restTemplate.exchange(url, HttpMethod.GET, null, NotificationWrapper.class);
+        Object[] completedInfo = new Object[] {new Date(), response.getBody().getNotifications().iterator().next().getId()};
         synchronized(completedData) {
-            completedData.add(new Object[] {new Date(),response.getBody().getNotifications().iterator().next().getId()});
+            completedData.add(completedInfo);
         }
     }
 }
