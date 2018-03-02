@@ -15,13 +15,10 @@ import com.chrisleung.notifications.objects.NotificationWrapper;
 public class UpdateNotificationJob extends SingleNotificationJob {
 
     HttpEntity<Notification> entity;
-    
-    static final String UPDATED_EMAIL = "Random@random.com";
-    static final int UPDATED_VARIANT_ID = 999999999;
-    
-    UpdateNotificationJob(RestTemplate r, String endpoint, String id, HttpHeaders headers, ArrayList<Object[]> c) {
+
+    UpdateNotificationJob(RestTemplate r, String endpoint, String id, HttpHeaders headers, String updatedEmail, int updatedVariantId, ArrayList<Object[]> c) {
         super(r, endpoint, id, c);
-        Notification obj = new Notification(UPDATED_EMAIL,UPDATED_VARIANT_ID);
+        Notification obj = new Notification(updatedEmail,updatedVariantId);
         obj.setId(id);
         entity = new HttpEntity<>(obj,headers);
     }

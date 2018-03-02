@@ -11,6 +11,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
@@ -38,6 +41,8 @@ public class Application {
     static final String REQUEST_TYPE_GET = "get";
     static final String REQUEST_TYPE_UPDATE = "update";
     static final String REQUEST_TYPE_DELETE = "delete";
+
+    private static final Logger log = LoggerFactory.getLogger(Application.class);
     
     @Value("${restapi.endpoint}")
     private String endpoint;
@@ -144,8 +149,10 @@ public class Application {
         Scanner scanner = new Scanner(new FileReader(outputFilename));        
         /* Create jobs */
         Runnable[] jobs = new Runnable[numIds];
+        String randomEmail=Math.random()*Integer.MAX_VALUE + '@' + Math.random()*Integer.MAX_VALUE + ".com";
+        int randomVariantId = (int)(Math.random() * Integer.MAX_VALUE);
         for(int i=0; i<numIds; i++) {
-            jobs[i] = new UpdateNotificationJob(restTemplate, endpoint, scanner.next(), headers, completedData);
+            jobs[i] = new UpdateNotificationJob(restTemplate, endpoint, scanner.next(), headers, randomEmail, randomVariantId, completedData);
         }
         scanner.close();
         
@@ -203,7 +210,7 @@ public class Application {
                 long elapsed = last.getTime() - first.getTime();
                 int numCompleted = completedData.size()-i;
                 /* Log Status */
-                System.out.println(String.format("Completed %s %s requests with %s concurrent connections in %s seconds. Average = %s requests/second", numCompleted,type,numConcurrent,elapsed/1000.0f,numCompleted/(elapsed/1000.0f)));
+                log.info(String.format("Completed %s %s requests with %s concurrent connections in %s seconds. Average = %s requests/second", numCompleted,type,numConcurrent,elapsed/1000.0f,numCompleted/(elapsed/1000.0f)));
                 break;
             }
         }
