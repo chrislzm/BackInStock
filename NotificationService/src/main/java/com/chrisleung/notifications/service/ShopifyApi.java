@@ -66,4 +66,9 @@ public class ShopifyApi implements StoreApi {
         }
         return cache.get(variantId);
     }
+    
+    @Override
+    public void clearCache() {
+        cache.clear();
+    }
 }
