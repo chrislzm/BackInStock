@@ -1,6 +1,7 @@
 package com.chrisleung.notifications.tools.restapi.benchmark;
 
 import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
@@ -32,6 +33,12 @@ import org.springframework.web.client.RestTemplate;
 @SpringBootApplication
 public class Application {
         
+    static final String REQUEST_TYPE_ALL = "all";
+    static final String REQUEST_TYPE_POST = "post";
+    static final String REQUEST_TYPE_GET = "get";
+    static final String REQUEST_TYPE_UPDATE = "update";
+    static final String REQUEST_TYPE_DELETE = "delete";
+    
     @Value("${restapi.endpoint}")
     private String endpoint;
     @Value("${restapi.benchmark.request.total}")
@@ -74,13 +81,16 @@ public class Application {
 	        ArrayList<Object[]> completedData = new ArrayList<>();
 	        completedData.ensureCapacity(numRequests);
 	       
-		    if(requestType.equals("all") || requestType.equals("post")) {
+		    if(requestType.equals(REQUEST_TYPE_ALL) || requestType.equals(REQUEST_TYPE_POST)) {
 		        postBenchmark(threadpool,headers,completedData);
 		    }
-		    if(requestType.equals("all") || requestType.equals("get")) {
+		    if(requestType.equals(REQUEST_TYPE_ALL) || requestType.equals(REQUEST_TYPE_GET)) {
 		        getBenchmark(threadpool,completedData);
             }
-		    if(requestType.equals("all") || requestType.equals("delete")) {
+            if(requestType.equals(REQUEST_TYPE_ALL) || requestType.equals(REQUEST_TYPE_UPDATE)) {
+                updateBenchmark(threadpool,headers,completedData);
+            }
+		    if(requestType.equals(REQUEST_TYPE_ALL) || requestType.equals(REQUEST_TYPE_DELETE)) {
                 deleteBenchmark(threadpool,completedData);
             }
 		};
@@ -96,7 +106,7 @@ public class Application {
         }
         
         /* Run jobs */
-        runBenchmark(jobs,threadpool,completedData);
+        runBenchmark(jobs,threadpool,completedData,REQUEST_TYPE_POST);
 
         /* Write IDs to file */
         BufferedWriter writer = new BufferedWriter(new FileWriter(outputFilename,true));
@@ -108,50 +118,48 @@ public class Application {
 	
 	private void getBenchmark(ExecutorService threadpool, ArrayList<Object[]> completedData) throws Exception {
 	    setupAuth();
-
-        Scanner scanner = new Scanner(new FileReader(outputFilename));
-        int count = 0;
-        while(scanner.hasNext()) {
-            count++;
-            scanner.nextLine();
-        }
-        scanner.close();
-        scanner = new Scanner(new FileReader(outputFilename));
-        count = Math.min(count, numRequests);
-        
+        int numIds = Math.min(getNumIdRecords(), numRequests);
+        Scanner scanner = new Scanner(new FileReader(outputFilename));        
         /* Create jobs */
-        Runnable[] jobs = new Runnable[count];
-        for(int i=0; i<count; i++) {
+        Runnable[] jobs = new Runnable[numIds];
+        for(int i=0; i<numIds; i++) {
             jobs[i] = new GetNotificationJob(restTemplate, endpoint, scanner.next(), completedData);
         }
         scanner.close();
         
         /* Run jobs */
-        runBenchmark(jobs,threadpool,completedData);
+        runBenchmark(jobs,threadpool,completedData,REQUEST_TYPE_GET);
+	}
+	
+	private void updateBenchmark(ExecutorService threadpool,HttpHeaders headers,ArrayList<Object[]> completedData) throws Exception {
+        setupAuth();
+        int numIds = Math.min(getNumIdRecords(), numRequests);
+        Scanner scanner = new Scanner(new FileReader(outputFilename));        
+        /* Create jobs */
+        Runnable[] jobs = new Runnable[numIds];
+        for(int i=0; i<numIds; i++) {
+            jobs[i] = new UpdateNotificationJob(restTemplate, endpoint, scanner.next(), headers, completedData);
+        }
+        scanner.close();
+        
+        /* Run jobs */
+        runBenchmark(jobs,threadpool,completedData,REQUEST_TYPE_UPDATE);	    
 	}
 	
 	private void deleteBenchmark(ExecutorService threadpool, ArrayList<Object[]> completedData) throws Exception {
         setupAuth();
-        
+        int numIds = Math.min(getNumIdRecords(), numRequests);
         Scanner scanner = new Scanner(new FileReader(outputFilename));
-        int count = 0;
-        while(scanner.hasNext()) {
-            count++;
-            scanner.nextLine();
-        }
-        scanner.close();
-        scanner = new Scanner(new FileReader(outputFilename));
-        count = Math.min(count, numRequests);
         
         /* Create jobs */
-        Runnable[] jobs = new Runnable[count];
-        for(int i=0; i<count; i++) {
+        Runnable[] jobs = new Runnable[numIds];
+        for(int i=0; i<numIds; i++) {
             jobs[i] = new DeleteNotificationJob(restTemplate, endpoint, scanner.next(), completedData);
         }
         scanner.close();
         
         /* Run jobs */
-        runBenchmark(jobs,threadpool,completedData);
+        runBenchmark(jobs,threadpool,completedData,REQUEST_TYPE_DELETE);
         
 	}
 	
@@ -160,7 +168,18 @@ public class Application {
         restTemplate.getInterceptors().add(auth);
 	}
 	
-	private void runBenchmark(Runnable[] jobs, ExecutorService threadpool, ArrayList<Object[]> completedData) throws Exception {
+	private int getNumIdRecords() throws FileNotFoundException {
+        Scanner scanner = new Scanner(new FileReader(outputFilename));
+        int count = 0;
+        while(scanner.hasNext()) {
+            count++;
+            scanner.nextLine();
+        }
+        scanner.close();
+        return count;
+	}
+	
+	private void runBenchmark(Runnable[] jobs, ExecutorService threadpool, ArrayList<Object[]> completedData, String type) throws Exception {
         /* Submit jobs */
         for(Runnable job : jobs) {
             threadpool.execute(job);
@@ -177,7 +196,7 @@ public class Application {
                 long elapsed = last.getTime() - first.getTime();
                 int numCompleted = completedData.size()-i;
                 /* Log Status */
-                System.out.println(String.format("Completed %s/%s %s requests with %s concurrent connections in %s seconds. Average = %s requests/second", numCompleted,numRequests,requestType,numConcurrent,elapsed/1000.0f,numCompleted/(elapsed/1000.0f)));
+                System.out.println(String.format("Completed %s/%s %s requests with %s concurrent connections in %s seconds. Average = %s requests/second", numCompleted,numRequests,type,numConcurrent,elapsed/1000.0f,numCompleted/(elapsed/1000.0f)));
                 break;
             }
         }
