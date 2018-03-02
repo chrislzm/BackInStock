@@ -32,7 +32,6 @@ public class UpdateNotificationJob extends SingleNotificationJob {
         Object[] completedInfo = new Object[2];
         completedInfo[0] = new Date();
         completedInfo[1] = response.getBody().getNotifications().iterator().next().getId();
-        System.out.println("Updated notification: " + response.getBody().getNotifications().iterator().next().toString());
         synchronized(completedData) {
             completedData.add(completedInfo);
         }
