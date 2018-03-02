@@ -49,6 +49,8 @@ Disadvantage: May take quite a bit of setup and/or cost money.
 
 For a free CA-signed SSL Certificate visit [Let's Encrypt](https://letsencrypt.org). Check out [this good guide](https://coderwall.com/p/e7gzbq/https-with-certbot-for-nginx-on-amazon-linux) on setting up a a Let's Encrypt SSL certificate with an Amazon Linux server.
 
+After you receive the certificate, which should be located in `/etc/letsencrypt/live/yourdomain.com/` (in Linux), you'll need convert the .pem file (which Spring does not support) to p12 (which Spring supports). To do this, run the command `openssl pkcs12 -export -in fullchain.pem -inkey privkey.pem -out keystore.p12 -name tomcat -CAfile chain.pem -caname root`, then move the keystore.p12 file to the same directory as the application JAR file. Here we've added the option `-name tomcat`; make sure to update the `server.ssl.keyAlias` setting in `application.properties` to `tomcat` as well.
+
 ## Developer Reference
 
 This project can be easily edited in [Eclipse for Java](http://www.eclipse.org/downloads/eclipse-packages/):
