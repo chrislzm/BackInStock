@@ -89,6 +89,10 @@ The Notification JSON object, Java class and MongoDB document all have the same 
 
 For the `POST` and `PUT` methods: The HTTP body content most contain a Notification object in JSON.
 
+## Benchmarking Performance
+
+The [REST API Benchmark](https://github.com/chrislzm/RestApiBenchmark) tool is preconfigured to test this API's performance. 
+
 ## License
 
 Copyright (c) 2018 [Chris Leung](https://github.com/chrislzm)
