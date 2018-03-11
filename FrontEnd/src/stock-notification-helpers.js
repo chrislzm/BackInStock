@@ -4,18 +4,18 @@
 */
 
 /**
- * Converts form data to a JSON object
+ * Converts form data to an object where the field name is mapped to its value
  * @param  {Object} form HTML DOM Form Object
- * @return {Object}      JSON object
+ * @return {Object}      Object with form input name:value mappings
  */
-function getFormDataAsJSON(form){
+function getFormDataAsObject(form){
   var $form = $(form)
-  var unindexed_array = $form.serializeArray();
-  var indexed_array = {};
-  $.map(unindexed_array, function(n, i){
-      indexed_array[n['name']] = n['value'];
+  var serializedArray = $form.serializeArray();
+  var output = {};
+  $.map(serializedArray, function(n, i){
+      output[n['name']] = n['value'];
   });
-  return indexed_array;
+  return output;
 }
 
 /**

@@ -1,5 +1,7 @@
 /**
  * @fileoverview Stock Notifications Frontend - Form Modal Functions and Constants
+ * @requires stock-notification-api.js
+ * @requires stock-notification-helpers.js
  * @author Chris Leung
 */
 
@@ -59,7 +61,7 @@ function openStockNotificationForm() {
 function onSubmit(form){
   // Copy selected variant ID from product page into hidden form field
   $(NOTIFICATION_FORM_VARIANT).val($(INPUT_VARIANT_SELECTOR).val());
-  var json = getFormDataAsJSON(form);
+  var json = getFormDataAsObject(form);
   if(isValidEmail(json['email'])) {
     showStatus("Submitting...");
     submitNotification(json).then(function(response) {
