@@ -29,6 +29,7 @@ For instructions on running this application as a service, or if you are having 
 In order to enable HTTPS:
 1. Copy your SSL certificate to the same directory has the application JAR file
 2. Update SSL settings in `application.properties`
+3. Restart this REST API server (this must be done whenever the SSL certificate is renewed)
 
 Here are two ways to create a SSL certificate:
 
