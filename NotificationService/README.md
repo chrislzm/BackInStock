@@ -1,8 +1,8 @@
 # Back In Stock - Notification Service
 
-This Java application implements an automated notification service that emails customers when product variants they have requested notifications for are back in stock. It does this in a loop that:
-1. Checks inventory levels for product variants
-2. Emails notifications to customers for product variants that are back in stock
+This Java application implements an automated notification service that monitors inventory levels and emails customers when product variants they have requested notifications for are back in stock. It does this in a loop that:
+1. Retrieves inventory levels of product variants
+2. Emails notifications to customers for product variants that are back in stock (inventory level is > 0)
 3. Updates notifications in the database to "sent=true" along with the date+time they were sent
 4. Sleeps for a designated amount of time
 5. Retrieves new notifications from the database
@@ -17,7 +17,7 @@ Example notification email template ([`src/main/resources/notification_email.htm
 2. Gradle
 3. API access to your ecommerce website
 4. SMTP email account
-5. Notifications Database server (included -- see the [Database Server REST API](../RestApi))
+5. Notifications Database server (included: [Database Server REST API](../RestApi))
 
 ## Installing
 
@@ -33,7 +33,7 @@ Example notification email template ([`src/main/resources/notification_email.htm
 
 ## Deployment
 
-This application can be run as a service or launched on-demand. If the JAR file does not execute on your system, execute the application with the command `java -jar build/libs/notification-service-0.1.0.jar`. You may need to remove the `executable = true` line from `build.gradle` and recompile the application first.
+This application can be run on-demand or as a service. If the JAR file does not execute on your system, execute the application with the command `java -jar build/libs/notification-service-0.1.0.jar`. You may need to remove the `executable = true` line from `build.gradle` and recompile the application first.
 
 ### Shopify Setup
 1. Ensure each Shopify product variant has been assigned a corresponding product image. This can be done in either:
@@ -80,10 +80,6 @@ This project can be easily edited in [Eclipse for Java](http://www.eclipse.org/d
 4. Under **Gradle**, select **Existing Gradle Project** and click **Next**
 5. On the **Import Gradle Project** click **Browse** and open the root directory of the project
 6. Click **Finish**
-
-### To Do
-
-* Shopify Integration: Verify with Shopify that the Product, Variant, and Image ID fields are Long integer datatypes, and that this will not change in the future. (This REST API expects a long Integer. An invalid datatype would cause this REST API to send an error to the frontend and prevent the customer from submitting a new notification.)
 
 ## License
 
