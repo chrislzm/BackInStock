@@ -93,7 +93,7 @@ For the `POST` and `PUT` methods: The HTTP body content most contain a Notificat
 ### To Do
 
 * Shopify Integration: We need to verify with Shopify that the Product ID, Variant ID, and Image ID fields are Long integer datatypes, and that this will not change in the future. (The REST API expects a long Integer. An invalid datatype would cause this REST API to send an error to the frontend and prevent the customer from submitting a new notification.)
-* Add support for buffered writes to data store to avoid write bottlenecks
+* Add support for buffered write (and accompanying WAL) to data store to avoid write bottlenecks
 
 ## Benchmarking Performance
 
