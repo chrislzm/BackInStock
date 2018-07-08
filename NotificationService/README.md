@@ -81,6 +81,10 @@ This project can be easily edited in [Eclipse for Java](http://www.eclipse.org/d
 5. On the **Import Gradle Project** click **Browse** and open the root directory of the project
 6. Click **Finish**
 
+### To Do
+
+* Edge case: Detect deleted products
+
 ## License
 
 Copyright (c) 2018 [Chris Leung](https://github.com/chrislzm)
